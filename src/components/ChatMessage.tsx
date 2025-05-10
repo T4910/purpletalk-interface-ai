@@ -1,13 +1,18 @@
 
 import { Message } from "@/store/useChatStore";
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 
 interface ChatMessageProps {
   message: Message;
+  onViewProperties?: () => void;
 }
 
-const ChatMessage = ({ message }: ChatMessageProps) => {
+const ChatMessage = ({ message, onViewProperties }: ChatMessageProps) => {
   const isUser = message.role === "user";
+  
+  // Check if this is the last AI message where we should show the button
+  const showPropertiesButton = message.id === "2" && !isUser;
   
   return (
     <div
@@ -40,6 +45,17 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
             {message.content.split('\n').map((paragraph, i) => (
               <p key={i} className={paragraph.trim() === '' ? 'h-4' : 'mb-2 leading-relaxed'}>{paragraph}</p>
             ))}
+            
+            {showPropertiesButton && (
+              <div className="mt-4">
+                <Button 
+                  onClick={onViewProperties}
+                  className="bg-gradient-to-r from-purple-600 to-indigo-600 hover:opacity-90 rounded-md"
+                >
+                  View properties
+                </Button>
+              </div>
+            )}
           </div>
         </div>
       </div>

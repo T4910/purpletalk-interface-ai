@@ -1,12 +1,15 @@
 
-import React, { useState } from "react";
+import React from "react";
 import { Button } from "@/components/ui/button";
 import { Plus, X, Bookmark, ChevronLeft } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-const Sidebar = () => {
-  const [isOpen, setIsOpen] = useState(true);
-  
+interface SidebarProps {
+  isOpen: boolean;
+  setIsOpen: (isOpen: boolean) => void;
+}
+
+const Sidebar = ({ isOpen, setIsOpen }: SidebarProps) => {
   // Group chats by date
   const chatsByDate = {
     "Today": [

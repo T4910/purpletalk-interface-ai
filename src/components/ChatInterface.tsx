@@ -1,16 +1,19 @@
 
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { useChatStore } from "@/store/useChatStore";
 import { aiService } from "@/services/aiService";
 import ChatMessage from "./ChatMessage";
 import ChatInput from "./ChatInput";
 import Sidebar from "./Sidebar";
+import PropertiesPanel from "./PropertiesPanel";
 import { Badge } from "@/components/ui/badge";
 
 const ChatInterface = () => {
   const { messages, addMessage } = useChatStore();
   const chatContainerRef = useRef<HTMLDivElement>(null);
+  const [showProperties, setShowProperties] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   
   // Auto-scroll to bottom when new messages arrive
   useEffect(() => {
@@ -30,12 +33,22 @@ const ChatInterface = () => {
     addMessage(content, "user");
     sendMessage(content);
   };
+
+  const handleViewProperties = () => {
+    // Close sidebar if open
+    setIsSidebarOpen(false);
+    // Show properties panel
+    setShowProperties(true);
+  };
   
   return (
     <div className="flex h-screen bg-chat-bg text-foreground">
-      <Sidebar />
+      <Sidebar isOpen={isSidebarOpen} setIsOpen={setIsSidebarOpen} />
       
-      <div className="flex-1 flex flex-col h-full overflow-hidden ml-0 transition-all duration-300">
+      <div className={cn(
+        "flex-1 flex flex-col h-full overflow-hidden ml-0 transition-all duration-300",
+        showProperties ? "w-1/2" : "w-full"
+      )}>
         <div className="h-14 border-b border-border/50 flex items-center px-4 justify-between">
           <div className="flex items-center gap-3">
             <span className="font-medium">Gemini</span>
@@ -50,7 +63,11 @@ const ChatInterface = () => {
           className="flex-1 overflow-y-auto scrollbar-thin"
         >
           {messages.map((message) => (
-            <ChatMessage key={message.id} message={message} />
+            <ChatMessage 
+              key={message.id} 
+              message={message} 
+              onViewProperties={handleViewProperties}
+            />
           ))}
           
           {isLoading && (
@@ -82,8 +99,17 @@ const ChatInterface = () => {
           LibreChat v0.7.8-rc1 - Every AI for Everyone.
         </div>
       </div>
+
+      {showProperties && (
+        <div className="flex-1 h-full border-l border-border/50 overflow-hidden">
+          <PropertiesPanel onClose={() => setShowProperties(false)} />
+        </div>
+      )}
     </div>
   );
 };
+
+// Helper function from utils
+const cn = (...classes: any[]) => classes.filter(Boolean).join(" ");
 
 export default ChatInterface;
