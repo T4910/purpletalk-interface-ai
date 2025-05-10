@@ -1,10 +1,13 @@
 
+import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { PhoneCall, MessageSquare } from "lucide-react";
+import { PhoneCall, MessageSquare, Heart, ExternalLink } from "lucide-react";
+import PropertyDetail from "./PropertyDetail";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
-interface Property {
+export interface Property {
   id: string;
   title: string;
   location: string;
@@ -15,6 +18,11 @@ interface Property {
   isPremium: boolean;
   updatedDate: string;
   imageUrl: string;
+  description?: string;
+  toilets?: number;
+  address?: string;
+  detailedFeatures?: string[];
+  pid?: string;
 }
 
 const mockProperties: Property[] = [
@@ -28,7 +36,25 @@ const mockProperties: Property[] = [
     features: ["ALL ROOM ENSUIT", "24 HOURS ELECTRICITY", "24 HOURS SECURITY"],
     isPremium: true,
     updatedDate: "Updated 10 May 2025, Added 28 Mar 2025",
-    imageUrl: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1770&q=80"
+    imageUrl: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1770&q=80",
+    description: "FOR SALE!!! 5BED DETACHED+BQ!!! LOCATION:IKEJA GRA LAGOS... TITLE:CERTIFICATE OF OCCUPANCY... PRICE:1.2BILLION..",
+    toilets: 6,
+    address: "Ikeja Gra Ikeja Lagos",
+    pid: "2MSPS",
+    detailedFeatures: [
+      "Big Compound",
+      "24 Hours Security",
+      "24 hours Electricity",
+      "All Room Ensuit",
+      "Jacuzzi",
+      "CCTV Cameras",
+      "Parking Space",
+      "Water Treatment",
+      "Drainage System",
+      "POP Ceiling",
+      "C of O",
+      "Security"
+    ]
   },
   {
     id: "2",
@@ -40,11 +66,25 @@ const mockProperties: Property[] = [
     features: ["SUPERMARKET NEARBY", "ALL ROOM ENSUIT", "24 HOURS SECURITY"],
     isPremium: true,
     updatedDate: "Updated 10 May 2025, Added 13 Jan 2025",
-    imageUrl: "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1770&q=80"
+    imageUrl: "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1770&q=80",
+    description: "A beautiful 5 bedroom house in the heart of Lekki Phase 1. Perfect for a family looking for comfort and luxury.",
+    toilets: 5,
+    address: "Off Admiralty Way Lekki Phase 1 Lagos",
+    pid: "1MJKH",
+    detailedFeatures: [
+      "24 Hours Security",
+      "24 hours Electricity",
+      "All Room Ensuit",
+      "Swimming Pool",
+      "CCTV Cameras",
+      "Parking Space",
+      "Water Treatment",
+      "C of O"
+    ]
   }
 ];
 
-const PropertyCard = ({ property }: { property: Property }) => {
+const PropertyCard = ({ property, onSelect }: { property: Property, onSelect: (property: Property) => void }) => {
   return (
     <Card className="overflow-hidden mb-6 rounded-xl shadow-sm">
       <div className="flex flex-col md:flex-row">
@@ -67,7 +107,12 @@ const PropertyCard = ({ property }: { property: Property }) => {
         <div className="flex-1 p-4">
           <div className="flex justify-between">
             <div>
-              <h3 className="text-lg font-medium">{property.title}</h3>
+              <h3 
+                className="text-lg font-medium cursor-pointer hover:text-purple-600 transition-colors"
+                onClick={() => onSelect(property)}
+              >
+                {property.title}
+              </h3>
               <p className="text-sm text-muted-foreground">{property.location}</p>
               <p className="text-xs text-muted-foreground mt-1">{property.id === "1" ? "5bed Detached+bq!!! / House FOR Sale" : "5 Bedroom House / House FOR Sale"}</p>
               
@@ -82,7 +127,7 @@ const PropertyCard = ({ property }: { property: Property }) => {
             
             <div className="text-right">
               <p className="text-lg font-bold">{property.price}</p>
-              <p className="text-xs text-muted-foreground">PID: {property.id === "1" ? "2MSPS" : "1MJKH"}</p>
+              <p className="text-xs text-muted-foreground">PID: {property.pid}</p>
               <div className="flex items-center mt-2 justify-end">
                 <p className="text-sm">{property.beds} Beds {property.baths} Baths</p>
               </div>
@@ -116,12 +161,35 @@ const PropertyCard = ({ property }: { property: Property }) => {
 };
 
 const PropertyListing = () => {
+  const [selectedProperty, setSelectedProperty] = useState<Property | null>(null);
+
+  const handleSelectProperty = (property: Property) => {
+    setSelectedProperty(property);
+  };
+
+  const handleBackToListing = () => {
+    setSelectedProperty(null);
+  };
+
   return (
-    <div className="space-y-4">
-      {mockProperties.map(property => (
-        <PropertyCard key={property.id} property={property} />
-      ))}
-    </div>
+    <ScrollArea className="h-full pr-4">
+      {selectedProperty ? (
+        <PropertyDetail 
+          property={selectedProperty} 
+          onBack={handleBackToListing} 
+        />
+      ) : (
+        <div className="space-y-4">
+          {mockProperties.map(property => (
+            <PropertyCard 
+              key={property.id} 
+              property={property} 
+              onSelect={handleSelectProperty} 
+            />
+          ))}
+        </div>
+      )}
+    </ScrollArea>
   );
 };
 
