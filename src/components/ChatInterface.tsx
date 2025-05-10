@@ -35,11 +35,11 @@ const ChatInterface = () => {
     <div className="flex h-screen bg-chat-bg text-foreground">
       <Sidebar />
       
-      <div className="flex-1 flex flex-col h-full overflow-hidden">
-        <div className="h-14 border-b border-border flex items-center px-4 justify-between">
+      <div className="flex-1 flex flex-col h-full overflow-hidden ml-0 transition-all duration-300">
+        <div className="h-14 border-b border-border/50 flex items-center px-4 justify-between">
           <div className="flex items-center gap-3">
             <span className="font-medium">Gemini</span>
-            <Badge variant="secondary" className="bg-secondary/50 text-xs font-normal">
+            <Badge variant="secondary" className="bg-secondary/30 text-xs font-normal rounded-full">
               gemini-2.0-flash
             </Badge>
           </div>
@@ -78,7 +78,7 @@ const ChatInterface = () => {
         
         <ChatInput onSendMessage={handleSendMessage} isLoading={isLoading} />
         
-        <div className="text-xs text-center text-muted-foreground py-2 border-t border-border">
+        <div className="text-xs text-center text-muted-foreground py-2 border-t border-border/50">
           LibreChat v0.7.8-rc1 - Every AI for Everyone.
         </div>
       </div>

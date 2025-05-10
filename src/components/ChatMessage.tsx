@@ -12,11 +12,11 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
   return (
     <div
       className={cn(
-        "py-4 px-4 md:px-6 flex animate-fade-in",
-        isUser ? "bg-transparent" : "bg-secondary/30"
+        "py-5 px-4 md:px-6 flex animate-fade-in",
+        isUser ? "bg-transparent" : "bg-secondary/10"
       )}
     >
-      <div className="max-w-4xl mx-auto w-full flex gap-4 md:gap-6">
+      <div className="max-w-3xl mx-auto w-full flex gap-4 md:gap-6">
         <div className="flex-shrink-0 mt-1">
           {isUser ? (
             <div className="w-8 h-8 rounded-full bg-chat-user text-white flex items-center justify-center">
@@ -38,7 +38,7 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
         <div className="w-full">
           <div className="prose prose-invert max-w-none">
             {message.content.split('\n').map((paragraph, i) => (
-              <p key={i} className={paragraph.trim() === '' ? 'h-4' : 'mb-2'}>{paragraph}</p>
+              <p key={i} className={paragraph.trim() === '' ? 'h-4' : 'mb-2 leading-relaxed'}>{paragraph}</p>
             ))}
           </div>
         </div>

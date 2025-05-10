@@ -2,7 +2,11 @@
 import ChatInterface from "@/components/ChatInterface";
 
 const Index = () => {
-  return <ChatInterface />;
+  return (
+    <div className="h-screen w-screen overflow-hidden">
+      <ChatInterface />
+    </div>
+  );
 };
 
 export default Index;

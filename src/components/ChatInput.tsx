@@ -22,21 +22,21 @@ const ChatInput = ({ onSendMessage, isLoading }: ChatInputProps) => {
   };
 
   return (
-    <div className="border-t border-border bg-chat-input-bg p-4">
-      <form onSubmit={handleSubmit} className="flex gap-2 items-end max-w-4xl mx-auto">
-        <div className="relative flex-1 rounded-lg bg-secondary/50">
+    <div className="border-t border-border/50 bg-chat-bg p-4">
+      <form onSubmit={handleSubmit} className="flex gap-2 items-end max-w-3xl mx-auto">
+        <div className="relative flex-1 rounded-2xl bg-chat-input-bg">
           <div className="absolute bottom-2 left-3 text-muted-foreground">
             <Button 
               type="button" 
               variant="ghost" 
               size="icon" 
-              className="h-8 w-8 text-muted-foreground hover:text-foreground hover:bg-secondary/80"
+              className="h-8 w-8 text-muted-foreground hover:text-foreground hover:bg-secondary/50 rounded-full"
             >
               <Paperclip className="h-5 w-5" />
             </Button>
           </div>
           <textarea
-            className="w-full bg-transparent border-0 resize-none px-12 py-3 max-h-40 focus:ring-0 focus:outline-none scrollbar-thin"
+            className="w-full bg-transparent border-0 resize-none px-12 py-3 max-h-40 focus:ring-0 focus:outline-none scrollbar-thin rounded-2xl"
             placeholder="Message Gemini"
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}

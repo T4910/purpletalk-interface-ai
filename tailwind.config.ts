@@ -53,7 +53,7 @@ export default {
 					DEFAULT: 'hsl(var(--card))',
 					foreground: 'hsl(var(--card-foreground))'
 				},
-        // Custom colors for our chat interface
+        // Custom colors for our chat interface with more purple tint
         chat: {
           'bg': '#1A1F2C',
           'user': '#8B5CF6',
