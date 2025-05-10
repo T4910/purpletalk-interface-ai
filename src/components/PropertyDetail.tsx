@@ -59,17 +59,14 @@ const PropertyDetail = ({ property, onBack }: PropertyDetailProps) => {
             <Share size={20} />
           </Button>
           
-          <Button
-            variant="ghost"
-            size="sm"
-            className="rounded-full"
-            as="a"
-            href="#"
-            target="_blank"
+          <a 
+            href="#" 
+            target="_blank" 
             rel="noopener noreferrer"
+            className="inline-flex items-center justify-center rounded-full h-9 w-9 text-sm font-medium ring-offset-background transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
           >
             <ExternalLink size={20} />
-          </Button>
+          </a>
         </div>
       </div>
 
