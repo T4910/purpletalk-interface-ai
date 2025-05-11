@@ -3,12 +3,11 @@ import { X, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import PropertyListing from "./PropertyListing";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { usePropertiesPanel } from "@/hooks/usePropertiesPanel";
 
-interface PropertiesPanelProps {
-  onClose: () => void;
-}
-
-const PropertiesPanel = ({ onClose }: PropertiesPanelProps) => {
+const PropertiesPanel = () => {
+  const { close } = usePropertiesPanel();
+  
   return (
     <div className="flex flex-col h-full">
       <div className="flex justify-between items-center p-4 border-b border-border/50">
@@ -16,7 +15,7 @@ const PropertiesPanel = ({ onClose }: PropertiesPanelProps) => {
           variant="ghost" 
           size="icon" 
           className="h-8 w-8 rounded-full"
-          onClick={onClose}
+          onClick={close}
         >
           <X className="h-4 w-4" />
         </Button>

@@ -1,13 +1,12 @@
 
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import Sidebar from "@/components/Sidebar";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
-import { cn } from "@/lib/utils";
+import AppSidebar from "@/components/AppSidebar";
+import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
 
 const NewChat = () => {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const navigate = useNavigate();
   
   const handleStartChat = () => {
@@ -18,70 +17,71 @@ const NewChat = () => {
   };
   
   return (
-    <div className="flex h-screen bg-chat-bg text-foreground">
-      <Sidebar isOpen={isSidebarOpen} setIsOpen={setIsSidebarOpen} />
-      
-      <div className={cn(
-        "flex-1 flex flex-col h-full overflow-hidden ml-0 transition-all duration-300",
-        "w-full"
-      )}>
-        <div className="h-14 border-b border-border/50 flex items-center px-4 justify-between">
-          <div className="flex items-center gap-3">
-            <span className="font-medium">Gemini</span>
-          </div>
-        </div>
+    <SidebarProvider>
+      <div className="h-screen w-screen flex overflow-hidden bg-chat-bg text-foreground">
+        <AppSidebar />
         
-        <div className="flex-1 flex flex-col items-center justify-center p-4">
-          <div className="w-full max-w-md mx-auto text-center">
-            <div className="mb-6">
-              <div className="w-16 h-16 mx-auto rounded-full bg-gradient-to-br from-indigo-400 to-purple-600 flex items-center justify-center">
-                <div className="w-8 h-8 text-white">
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M12 8V4H8" />
-                    <rect width="16" height="12" x="4" y="8" rx="2" />
-                    <path d="m6 20 4-4" />
-                    <path d="m18 20-4-4" />
-                  </svg>
+        <SidebarInset>
+          <div className="flex flex-col h-full w-full">
+            <div className="h-14 border-b border-border/50 flex items-center px-4 justify-between">
+              <div className="flex items-center gap-3">
+                <span className="font-medium">Gemini</span>
+              </div>
+            </div>
+            
+            <div className="flex-1 flex flex-col items-center justify-center p-4">
+              <div className="w-full max-w-md mx-auto text-center">
+                <div className="mb-6">
+                  <div className="w-16 h-16 mx-auto rounded-full bg-gradient-to-br from-indigo-400 to-purple-600 flex items-center justify-center">
+                    <div className="w-8 h-8 text-white">
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M12 8V4H8" />
+                        <rect width="16" height="12" x="4" y="8" rx="2" />
+                        <path d="m6 20 4-4" />
+                        <path d="m18 20-4-4" />
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+                
+                <h1 className="text-2xl font-bold mb-2">Good afternoon</h1>
+                <p className="text-muted-foreground mb-8">How can I help you today?</p>
+                
+                <div className="space-y-3">
+                  <Button 
+                    onClick={handleStartChat}
+                    className="w-full py-6 bg-chat-input-bg hover:bg-chat-input-bg/80 text-left justify-start rounded-xl border border-border/50"
+                  >
+                    <ArrowLeft className="mr-3" />
+                    Help me find a property in Lagos
+                  </Button>
+                  
+                  <Button 
+                    onClick={handleStartChat}
+                    className="w-full py-6 bg-chat-input-bg hover:bg-chat-input-bg/80 text-left justify-start rounded-xl border border-border/50"
+                  >
+                    <ArrowLeft className="mr-3" />
+                    I need a 3-bedroom flat in Abuja
+                  </Button>
+                  
+                  <Button 
+                    onClick={handleStartChat}
+                    className="w-full py-6 bg-chat-input-bg hover:bg-chat-input-bg/80 text-left justify-start rounded-xl border border-border/50"
+                  >
+                    <ArrowLeft className="mr-3" />
+                    Help me set up a property search alert
+                  </Button>
                 </div>
               </div>
             </div>
             
-            <h1 className="text-2xl font-bold mb-2">Good afternoon</h1>
-            <p className="text-muted-foreground mb-8">How can I help you today?</p>
-            
-            <div className="space-y-3">
-              <Button 
-                onClick={handleStartChat}
-                className="w-full py-6 bg-chat-input-bg hover:bg-chat-input-bg/80 text-left justify-start rounded-xl border border-border/50"
-              >
-                <ArrowLeft className="mr-3" />
-                Help me find a property in Lagos
-              </Button>
-              
-              <Button 
-                onClick={handleStartChat}
-                className="w-full py-6 bg-chat-input-bg hover:bg-chat-input-bg/80 text-left justify-start rounded-xl border border-border/50"
-              >
-                <ArrowLeft className="mr-3" />
-                I need a 3-bedroom flat in Abuja
-              </Button>
-              
-              <Button 
-                onClick={handleStartChat}
-                className="w-full py-6 bg-chat-input-bg hover:bg-chat-input-bg/80 text-left justify-start rounded-xl border border-border/50"
-              >
-                <ArrowLeft className="mr-3" />
-                Help me set up a property search alert
-              </Button>
+            <div className="text-xs text-center text-muted-foreground py-2 border-t border-border/50">
+              Realyze v0.7.8-rc1 - Every AI for Everyone.
             </div>
           </div>
-        </div>
-        
-        <div className="text-xs text-center text-muted-foreground py-2 border-t border-border/50">
-          Realyze v0.7.8-rc1 - Every AI for Everyone.
-        </div>
+        </SidebarInset>
       </div>
-    </div>
+    </SidebarProvider>
   );
 };
 
