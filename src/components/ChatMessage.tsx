@@ -21,7 +21,7 @@ const ChatMessage = ({ message, onViewProperties }: ChatMessageProps) => {
         isUser ? "bg-transparent" : "bg-secondary/10"
       )}
     >
-      <div className="max-w-3xl mx-auto w-full flex gap-4 md:gap-6">
+      <div className={`${isUser ? "" : ""} max-w-3xl mx-auto w-full flex gap-4 md:gap-6`}>
         <div className="flex-shrink-0 mt-1">
           {isUser ? (
             <div className="w-8 h-8 rounded-full bg-chat-user text-white flex items-center justify-center">

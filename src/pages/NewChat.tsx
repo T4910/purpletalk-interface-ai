@@ -1,10 +1,9 @@
-
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "@tanstack/react-router"; // Changed import
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import AppSidebar from "@/components/AppSidebar";
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
+import ChatInput from "@/components/ChatInput";
 
 const NewChat = () => {
   const navigate = useNavigate();
@@ -13,7 +12,8 @@ const NewChat = () => {
     // In a real app, you would create a new chat ID here via API call
     // For now, we'll navigate to a dummy chat ID
     const newChatId = "chat-" + Date.now().toString();
-    navigate(`/c/${newChatId}`);
+    // Changed navigation method to use params
+    navigate({ to: '/c/$id' , params: { id: newChatId } });
   };
   
   return (
@@ -29,8 +29,8 @@ const NewChat = () => {
               </div>
             </div>
             
-            <div className="flex-1 flex flex-col items-center justify-center p-4">
-              <div className="w-full max-w-md mx-auto text-center">
+            <div className="flex-1 flex flex-col items-center justify-center max-md:px-0 max-md:pb-0 p-4">
+              <div className="w-full max-w-md md:mx-auto text-center">
                 <div className="mb-6">
                   <div className="w-16 h-16 mx-auto rounded-full bg-gradient-to-br from-indigo-400 to-purple-600 flex items-center justify-center">
                     <div className="w-8 h-8 text-white">
@@ -47,12 +47,12 @@ const NewChat = () => {
                 <h1 className="text-2xl font-bold mb-2">Good afternoon</h1>
                 <p className="text-muted-foreground mb-8">How can I help you today?</p>
                 
-                <div className="space-y-3">
+                <div className="space-y-3 mb-4 max-md:px-4">
                   <Button 
                     onClick={handleStartChat}
                     className="w-full py-6 bg-chat-input-bg hover:bg-chat-input-bg/80 text-left justify-start rounded-xl border border-border/50"
                   >
-                    <ArrowLeft className="mr-3" />
+                    <ArrowLeft className="mr-1" />
                     Help me find a property in Lagos
                   </Button>
                   
@@ -60,18 +60,12 @@ const NewChat = () => {
                     onClick={handleStartChat}
                     className="w-full py-6 bg-chat-input-bg hover:bg-chat-input-bg/80 text-left justify-start rounded-xl border border-border/50"
                   >
-                    <ArrowLeft className="mr-3" />
+                    <ArrowLeft className="mr-1" />
                     I need a 3-bedroom flat in Abuja
                   </Button>
-                  
-                  <Button 
-                    onClick={handleStartChat}
-                    className="w-full py-6 bg-chat-input-bg hover:bg-chat-input-bg/80 text-left justify-start rounded-xl border border-border/50"
-                  >
-                    <ArrowLeft className="mr-3" />
-                    Help me set up a property search alert
-                  </Button>
                 </div>
+
+                <ChatInput onSendMessage={() => {}} isLoading={false} />
               </div>
             </div>
             

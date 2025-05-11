@@ -1,6 +1,5 @@
-
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "@tanstack/react-router"; // Changed import and added useNavigate
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -14,6 +13,7 @@ const Signup = () => {
   const [password, setPassword] = useState("");
   const [passwordConfirm, setPasswordConfirm] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate(); // Get the navigate function
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -40,7 +40,8 @@ const Signup = () => {
       setIsLoading(false);
       toast.success("Account created! Redirecting to login...");
       setTimeout(() => {
-        window.location.href = "/login";
+        // Use navigate from Tanstack Router
+        navigate({ to: "/login" }); // Changed navigation method
       }, 1500);
     }, 1500);
   };
@@ -49,7 +50,8 @@ const Signup = () => {
     <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-chat-bg to-gray-950 p-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <Link to="/" className="text-3xl font-bold text-primary">Realyze</Link>
+          {/* Changed Link component and props */}
+          <Link to="/" className="text-3xl font-bold text-primary underline">Realyze</Link>
           <p className="text-muted-foreground mt-2">Find your dream property with AI</p>
         </div>
         
@@ -142,7 +144,8 @@ const Signup = () => {
             <div className="text-center w-full">
               <p className="text-sm text-muted-foreground">
                 Already have an account?{" "}
-                <Link to="/login" className="text-primary hover:underline">
+                {/* Changed Link component and props */}
+                <Link to="/login" className="text-primary underline hover:underline">
                   Sign in
                 </Link>
               </p>

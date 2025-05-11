@@ -1,6 +1,5 @@
-
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link } from "@tanstack/react-router"; // Changed import
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -36,7 +35,8 @@ const RequestPasswordReset = () => {
       <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-chat-bg to-gray-950 p-4">
         <div className="w-full max-w-md">
           <div className="text-center mb-8">
-            <Link to="/" className="text-3xl font-bold text-primary">Realyze</Link>
+            {/* Changed Link component and props */}
+            <Link to="/" className="text-3xl font-bold text-primary underline">Realyze</Link>
             <p className="text-muted-foreground mt-2">Find your dream property with AI</p>
           </div>
           
@@ -62,6 +62,7 @@ const RequestPasswordReset = () => {
             </CardContent>
             <CardFooter>
               <div className="text-center w-full">
+                {/* Changed Link component and props */}
                 <Link to="/login" className="text-primary hover:underline text-sm">
                   Back to login
                 </Link>
@@ -77,7 +78,8 @@ const RequestPasswordReset = () => {
     <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-chat-bg to-gray-950 p-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <Link to="/" className="text-3xl font-bold text-primary">Realyze</Link>
+          {/* Changed Link component and props */}
+          <Link to="/" className="text-3xl font-bold text-primary underline">Realyze</Link>
           <p className="text-muted-foreground mt-2">Reset your password</p>
         </div>
         
@@ -118,7 +120,8 @@ const RequestPasswordReset = () => {
           </CardContent>
           <CardFooter>
             <div className="text-center w-full">
-              <Link to="/login" className="text-primary hover:underline text-sm">
+              {/* Changed Link component and props */}
+              <Link to="/login" className="text-primary underline hover:underline text-sm">
                 Back to login
               </Link>
             </div>

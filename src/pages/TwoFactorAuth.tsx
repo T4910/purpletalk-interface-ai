@@ -1,6 +1,5 @@
-
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "@tanstack/react-router"; // Changed import and added useNavigate
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -11,6 +10,7 @@ const TwoFactorAuth = () => {
   const [code, setCode] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [timeLeft, setTimeLeft] = useState(30);
+  const navigate = useNavigate(); // Get the navigate function
 
   // Countdown timer for code expiration
   useEffect(() => {
@@ -40,7 +40,8 @@ const TwoFactorAuth = () => {
     setTimeout(() => {
       setIsLoading(false);
       toast.success("Verification successful! Redirecting...");
-      window.location.href = "/";
+      // Use navigate from Tanstack Router
+      navigate({ to: "/app" }); // Changed navigation method
     }, 1500);
   };
 
@@ -48,7 +49,8 @@ const TwoFactorAuth = () => {
     <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-chat-bg to-gray-950 p-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <Link to="/" className="text-3xl font-bold text-primary">Realyze</Link>
+          {/* Changed Link component and props */}
+          <Link to="/" className="text-3xl font-bold text-primary underline">Realyze</Link>
           <p className="text-muted-foreground mt-2">Secure authentication</p>
         </div>
         
@@ -99,7 +101,8 @@ const TwoFactorAuth = () => {
           </CardContent>
           <CardFooter>
             <div className="text-center w-full">
-              <Link to="/login" className="text-primary hover:underline text-sm">
+              {/* Changed Link component and props */}
+              <Link to="/login" className="text-primary underline text-sm">
                 Back to login
               </Link>
             </div>

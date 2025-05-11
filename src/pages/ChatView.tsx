@@ -1,13 +1,15 @@
 
-import { useParams } from "react-router-dom";
 import ChatInterface from "@/components/ChatInterface";
 import AppSidebar from "@/components/AppSidebar";
 import PropertiesPanel from "@/components/PropertiesPanel";
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
 import { usePropertiesPanel } from "@/hooks/usePropertiesPanel";
+import { getRouteApi } from "@tanstack/react-router";
+
+const route = getRouteApi('/c/$id')
 
 const ChatView = () => {
-  const { id } = useParams<{ id: string }>();
+  const { id } = route.useParams();
   const { isOpen: showProperties } = usePropertiesPanel();
   
   return (

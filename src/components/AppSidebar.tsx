@@ -1,8 +1,7 @@
-
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { Plus, Bookmark, User, ChevronLeft } from "lucide-react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "@tanstack/react-router"; // Changed import
 import {
   Sidebar,
   SidebarContent,
@@ -17,6 +16,7 @@ import {
   SidebarTrigger,
   useSidebar
 } from "@/components/ui/sidebar";
+import { Outlet } from "@tanstack/react-router";
 
 const AppSidebar = () => {
   const navigate = useNavigate();
@@ -35,7 +35,7 @@ const AppSidebar = () => {
   };
   
   const handleNewChat = () => {
-    navigate('/c/new');
+    navigate({ to: '/c/new' }); // Changed navigation method
   };
   
   return (
@@ -71,7 +71,8 @@ const AppSidebar = () => {
                 {chats.map(chat => (
                   <SidebarMenuItem key={chat.id}>
                     <SidebarMenuButton asChild>
-                      <Link to={`/c/${chat.id}`}>
+                      {/* Changed Link component and props */}
+                      <Link to={"/c/$id"} params={{ id: chat.id }}>
                         <span>{chat.title}</span>
                       </Link>
                     </SidebarMenuButton>

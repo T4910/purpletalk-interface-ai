@@ -1,6 +1,4 @@
-
-import { useState, useRef, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link } from "@tanstack/react-router"; // Changed import
 import { Button } from "@/components/ui/button";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { 
@@ -12,89 +10,78 @@ import {
   Compass, 
   Github
 } from "lucide-react";
+import { TextAnimate } from "@/components/magicui/text-animate";
+import { AnimatedGradientText } from "@/components/magicui/animated-gradient-text";
 
 const Landing = () => {
-  // For hero section animation
-  const [isVisible, setIsVisible] = useState(false);
-  const heroRef = useRef<HTMLDivElement>(null);
-
-  // For features section animation
-  const featuresRef = useRef<HTMLDivElement>(null);
-  const [featuresVisible, setFeaturesVisible] = useState(false);
-
-  const checkVisibility = () => {
-    if (heroRef.current) {
-      setIsVisible(true);
-    }
-    
-    if (featuresRef.current) {
-      const rect = featuresRef.current.getBoundingClientRect();
-      if (rect.top <= window.innerHeight * 0.75) {
-        setFeaturesVisible(true);
-      }
-    }
-  };
-
-  useEffect(() => {
-    checkVisibility();
-    window.addEventListener('scroll', checkVisibility);
-    return () => window.removeEventListener('scroll', checkVisibility);
-  }, []);
-
   return (
-    <div className="min-h-screen bg-gradient-to-br from-chat-bg to-gray-950 text-white overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-chat-bg to-gray-950 text-white overflow-auto">
       {/* Navbar */}
       <header className="fixed top-0 left-0 right-0 z-50 border-b border-white/10 backdrop-blur-lg bg-black/20">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
+          {/* Changed Link component and props */}
           <Link to="/" className="text-2xl font-bold text-primary flex items-center gap-2">
             <Home className="h-6 w-6" />
             Realyze
           </Link>
           <nav className="hidden md:flex items-center space-x-8">
-            <Link to="/#features" className="text-sm text-gray-300 hover:text-white transition-colors">Features</Link>
-            <Link to="/#how-it-works" className="text-sm text-gray-300 hover:text-white transition-colors">How It Works</Link>
+            {/* Changed Link component and props */}
+            <Link to="/" hash="features" className="text-sm text-gray-300 hover:text-white transition-colors">Features</Link>
+            {/* Changed Link component and props */}
+            <Link to="/" hash="how-it-works" className="text-sm text-gray-300 hover:text-white transition-colors">How It Works</Link>
+            {/* Changed Link component and props */}
             <Link to="/login" className="text-sm text-gray-300 hover:text-white transition-colors">Sign In</Link>
           </nav>
-          <Button as={Link} to="/signup" className="hidden md:flex bg-primary hover:bg-primary/90">
-            Get Started
+          {/* Changed Link component and props */}
+          <Button asChild>
+            <Link to="/signup" className="hidden md:flex bg-primary hover:bg-primary/90">
+              Get Started
+            </Link>
           </Button>
-          <Button as={Link} to="/signup" className="md:hidden" size="sm">
-            Sign Up
+          {/* Changed Link component and props */}
+          <Button asChild size="sm" className="md:hidden">
+            <Link to="/signup">
+              Sign Up
+            </Link>
           </Button>
         </div>
       </header>
 
       {/* Hero Section */}
       <section 
-        ref={heroRef}
-        className="relative pt-32 pb-20 md:pt-40 md:pb-32 overflow-hidden"
+        className="relative pt-32 pb-20 md:pt-40 md:pb-32 "
       >
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto text-center">
-            <h1 
-              className={`text-4xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent transition-all duration-700 ${
-                isVisible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'
-              }`}
+            <AnimatedGradientText
+              speed={2}
+              colorFrom="#a888fb"
+              colorTo="#a680ea"
+              className="text-4xl md:text-6xl font-bold"
             >
-              Find Your Dream Home with AI-Powered Real Estate
-            </h1>
+              <TextAnimate animation="slideUp" by="word" as="span" duration={1} once>
+                Find Your Dream Home with AI-Powered Real Estate
+              </TextAnimate>
+            </AnimatedGradientText>
             <p 
-              className={`text-lg md:text-xl text-gray-300 mb-8 max-w-2xl mx-auto transition-all duration-700 delay-300 ${
-                isVisible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'
-              }`}
+              className={`text-lg md:text-xl text-gray-300 mt-6 mb-8 max-w-2xl mx-auto transition-all duration-700 delay-300`}
             >
               Realyze uses AI to understand your preferences and help you discover the perfect property faster and easier than ever before.
             </p>
             <div 
-              className={`flex flex-col sm:flex-row items-center justify-center gap-4 transition-all duration-700 delay-500 ${
-                isVisible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'
-              }`}
+              className={`flex flex-col sm:flex-row items-center justify-center gap-4 transition-all duration-700 delay-500`}
             >
-              <Button as={Link} to="/signup" className="bg-primary hover:bg-primary/90 px-8 py-6 text-lg">
-                Get Started
+              {/* Changed Link component and props */}
+              <Button asChild className="bg-primary hover:bg-primary/90 px-8 py-6 text-lg">
+                <Link to="/signup">
+                  Get Started
+                </Link>
               </Button>
-              <Button as={Link} to="/login" variant="outline" className="border-white/20 hover:bg-white/10 px-8 py-6 text-lg">
-                Sign In
+              {/* Changed Link component and props */}
+              <Button asChild variant="outline" className="border-white/20 hover:bg-white/10 px-8 py-6 text-lg">
+                <Link to="/login">
+                  Sign In
+                </Link>
               </Button>
             </div>
           </div>
@@ -108,7 +95,6 @@ const Landing = () => {
       {/* Features Section */}
       <section 
         id="features"
-        ref={featuresRef}
         className="py-20 bg-gradient-to-b from-transparent to-gray-900"
       >
         <div className="container mx-auto px-4">
@@ -117,9 +103,7 @@ const Landing = () => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {/* Feature 1 */}
             <div 
-              className={`bg-secondary/20 border border-white/10 rounded-xl p-6 transition-all duration-500 hover:-translate-y-1 hover:shadow-lg ${
-                featuresVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
-              }`}
+              className={`bg-secondary/20 border border-white/10 rounded-xl p-6 transition-all duration-500 hover:-translate-y-1 hover:shadow-lg`}
               style={{ transitionDelay: '0ms' }}
             >
               <div className="bg-primary/20 w-12 h-12 rounded-lg flex items-center justify-center mb-4">
@@ -133,9 +117,7 @@ const Landing = () => {
             
             {/* Feature 2 */}
             <div 
-              className={`bg-secondary/20 border border-white/10 rounded-xl p-6 transition-all duration-500 hover:-translate-y-1 hover:shadow-lg ${
-                featuresVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
-              }`}
+              className={`bg-secondary/20 border border-white/10 rounded-xl p-6 transition-all duration-500 hover:-translate-y-1 hover:shadow-lg`}
               style={{ transitionDelay: '150ms' }}
             >
               <div className="bg-primary/20 w-12 h-12 rounded-lg flex items-center justify-center mb-4">
@@ -149,9 +131,7 @@ const Landing = () => {
             
             {/* Feature 3 */}
             <div 
-              className={`bg-secondary/20 border border-white/10 rounded-xl p-6 transition-all duration-500 hover:-translate-y-1 hover:shadow-lg ${
-                featuresVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
-              }`}
+              className={`bg-secondary/20 border border-white/10 rounded-xl p-6 transition-all duration-500 hover:-translate-y-1 hover:shadow-lg`}
               style={{ transitionDelay: '300ms' }}
             >
               <div className="bg-primary/20 w-12 h-12 rounded-lg flex items-center justify-center mb-4">
@@ -218,8 +198,11 @@ const Landing = () => {
                 <p className="text-lg text-gray-300 mb-8">
                   Watch how easy it is to find your perfect property using our AI-powered chat interface. No more endless browsing through listings.
                 </p>
-                <Button as={Link} to="/signup" className="bg-primary hover:bg-primary/90">
-                  Try it yourself
+                {/* Changed Link component and props */}
+                <Button asChild className="bg-primary hover:bg-primary/90">
+                  <Link to="/signup">
+                    Try it yourself
+                  </Link>
                 </Button>
               </div>
               <div className="bg-gradient-to-tr from-primary/20 to-accent/20 rounded-xl p-3">
@@ -248,8 +231,11 @@ const Landing = () => {
             <p className="text-lg md:text-xl text-gray-300 mb-8 max-w-2xl mx-auto">
               Join thousands of users who've already found their perfect property with Realyze's AI-powered search.
             </p>
-            <Button as={Link} to="/signup" className="bg-primary hover:bg-primary/90 px-8 py-6 text-lg">
-              Get Started for Free
+            {/* Changed Link component and props */}
+            <Button asChild className="bg-primary hover:bg-primary/90 px-8 py-6 text-lg">
+              <Link to="/signup">
+                Get Started for Free
+              </Link>
             </Button>
           </div>
         </div>
@@ -260,6 +246,7 @@ const Landing = () => {
         <div className="container mx-auto px-4">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <div className="mb-8 md:mb-0">
+              {/* Changed Link component and props */}
               <Link to="/" className="text-xl font-bold text-primary flex items-center gap-2">
                 <Home className="h-5 w-5" />
                 Realyze
@@ -273,28 +260,31 @@ const Landing = () => {
               <div>
                 <h3 className="text-white font-medium mb-4">Product</h3>
                 <ul className="space-y-2">
-                  <li><Link to="/#features" className="text-gray-400 hover:text-white text-sm">Features</Link></li>
-                  <li><Link to="/#how-it-works" className="text-gray-400 hover:text-white text-sm">How it Works</Link></li>
+                  {/* Changed Link component and props */}
+                  <li><Link to="/" hash="features" className="text-gray-400 hover:text-white text-sm">Features</Link></li>
+                  {/* Changed Link component and props */}
+                  <li><Link to="/" hash="how-it-works" className="text-gray-400 hover:text-white text-sm">How it Works</Link></li>
+                  {/* Changed Link component and props */}
                   <li><Link to="/signup" className="text-gray-400 hover:text-white text-sm">Sign Up</Link></li>
                 </ul>
               </div>
               <div>
                 <h3 className="text-white font-medium mb-4">Support</h3>
                 <ul className="space-y-2">
-                  <li><a href="#" className="text-gray-400 hover:text-white text-sm">Help Center</a></li>
-                  <li><a href="#" className="text-gray-400 hover:text-white text-sm">Contact Us</a></li>
-                  <li><a href="#" className="text-gray-400 hover:text-white text-sm">Privacy Policy</a></li>
+                  <li><Link to="/" hash="" className="text-gray-400 hover:text-white text-sm">Help Center</Link></li>
+                  <li><Link to="/" hash="" className="text-gray-400 hover:text-white text-sm">Contact Us</Link></li>
+                  <li><Link to="/" hash="" className="text-gray-400 hover:text-white text-sm">Privacy Policy</Link></li>
                 </ul>
               </div>
               <div className="col-span-2 md:col-span-1 mt-8 md:mt-0">
                 <h3 className="text-white font-medium mb-4">Contributors</h3>
                 <div className="flex items-center justify-center md:justify-start space-x-4">
-                  <a href="https://github.com/yourusername" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white">
+                  <Link href="https://github.com/yourusername" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white">
                     <div className="flex items-center gap-2">
                       <Github className="h-5 w-5" />
                       <span className="text-sm">GitHub</span>
                     </div>
-                  </a>
+                  </Link>
                 </div>
               </div>
             </div>

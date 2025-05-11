@@ -1,5 +1,6 @@
+// Suggested code may be subject to a license. Learn more: ~LicenseLog:682806347.
 
-import { useState } from "react";
+import { useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { useChatStore } from "@/store/useChatStore";
 import { SendIcon, Paperclip } from "lucide-react";
@@ -11,6 +12,16 @@ interface ChatInputProps {
 
 const ChatInput = ({ onSendMessage, isLoading }: ChatInputProps) => {
   const { inputValue, setInputValue } = useChatStore();
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  useEffect(() => {
+    if (textareaRef.current) {
+      textareaRef.current.style.height = "auto";
+      // Set the height to the scrollHeight, but cap it at max-h-96
+      const newHeight = Math.min(textareaRef.current.scrollHeight, 160); // 384px is equivalent to max-h-96 (96 * 4)
+      textareaRef.current.style.height = `${newHeight}px`;
+    }
+  }, [inputValue]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -36,9 +47,10 @@ const ChatInput = ({ onSendMessage, isLoading }: ChatInputProps) => {
             </Button>
           </div>
           <textarea
-            className="w-full bg-transparent border-0 resize-none px-12 py-3 max-h-40 focus:ring-0 focus:outline-none scrollbar-thin rounded-2xl"
+            ref={textareaRef}
+            className="w-full bg-transparent border-0 resize-none px-12 py-3 max-h-40 focus:ring-0 focus:outline-none scrollbar-thin rounded-2xl overflow-y-auto"
             placeholder="Message Gemini"
-            value={inputValue}
+            value={inputValue.trimStart()} // Prevent leading spaces in the state
             onChange={(e) => setInputValue(e.target.value)}
             rows={1}
             onKeyDown={(e) => {

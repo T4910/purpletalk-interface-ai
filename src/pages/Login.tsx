@@ -1,6 +1,5 @@
-
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "@tanstack/react-router"; // Changed import and added useNavigate
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -12,6 +11,7 @@ const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate(); // Get the navigate function
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -28,8 +28,8 @@ const Login = () => {
       setIsLoading(false);
       // Simulate successful login
       toast.success("Login successful! Redirecting...");
-      // In a real app, would redirect to app or 2FA
-      window.location.href = "/2fa";
+      // Use navigate from Tanstack Router
+      navigate({ to: "/2fa" }); // Changed navigation method
     }, 1500);
   };
 
@@ -37,7 +37,7 @@ const Login = () => {
     <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-chat-bg to-gray-950 p-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <Link to="/" className="text-3xl font-bold text-primary">Realyze</Link>
+          <Link to="/" className="text-3xl font-bold text-primary underline">Realyze</Link>
           <p className="text-muted-foreground mt-2">Find your dream property with AI</p>
         </div>
         
@@ -99,7 +99,7 @@ const Login = () => {
             <div className="text-center w-full">
               <p className="text-sm text-muted-foreground">
                 Don't have an account?{" "}
-                <Link to="/signup" className="text-primary hover:underline">
+                <Link to="/signup" className="text-primary underline hover:underline">
                   Sign up
                 </Link>
               </p>
