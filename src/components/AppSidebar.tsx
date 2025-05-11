@@ -1,7 +1,7 @@
 
 import React from "react";
 import { Button } from "@/components/ui/button";
-import { Plus, Bookmark, User } from "lucide-react";
+import { Plus, Bookmark, User, ChevronLeft } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import {
   Sidebar,
@@ -13,11 +13,14 @@ import {
   SidebarHeader,
   SidebarMenu,
   SidebarMenuItem,
-  SidebarMenuButton
+  SidebarMenuButton,
+  SidebarTrigger,
+  useSidebar
 } from "@/components/ui/sidebar";
 
 const AppSidebar = () => {
   const navigate = useNavigate();
+  const { toggleSidebar } = useSidebar();
   
   // Group chats by date
   const chatsByDate = {
@@ -38,13 +41,23 @@ const AppSidebar = () => {
   return (
     <Sidebar>
       <SidebarHeader>
-        <div className="flex gap-2 px-2">
-          <Button variant="outline" className="justify-start gap-2 bg-sidebar w-full" onClick={handleNewChat}>
-            <Plus className="h-4 w-4" />
-            <span className="text-sm">New chat</span>
-          </Button>
-          <Button variant="outline" className="w-10 p-0 bg-sidebar rounded-md">
-            <Bookmark className="h-4 w-4" />
+        <div className="flex gap-2 px-2 justify-between items-center">
+          <div className="flex gap-2 flex-1">
+            <Button variant="outline" className="justify-start gap-2 bg-sidebar w-full" onClick={handleNewChat}>
+              <Plus className="h-4 w-4" />
+              <span className="text-sm">New chat</span>
+            </Button>
+            <Button variant="outline" className="w-10 p-0 bg-sidebar rounded-md">
+              <Bookmark className="h-4 w-4" />
+            </Button>
+          </div>
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            className="h-8 w-8" 
+            onClick={toggleSidebar}
+          >
+            <ChevronLeft className="h-4 w-4" />
           </Button>
         </div>
       </SidebarHeader>

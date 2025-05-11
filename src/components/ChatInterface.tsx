@@ -8,6 +8,8 @@ import ChatInput from "./ChatInput";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { usePropertiesPanel } from "@/hooks/usePropertiesPanel";
+import { SidebarTrigger, useSidebar } from "@/components/ui/sidebar";
+import { ChevronRight } from "lucide-react";
 
 interface ChatInterfaceProps {
   chatId?: string;
@@ -17,6 +19,8 @@ const ChatInterface = ({ chatId }: ChatInterfaceProps) => {
   const { messages, addMessage } = useChatStore();
   const chatContainerRef = useRef<HTMLDivElement>(null);
   const { isOpen: showProperties, open: openProperties } = usePropertiesPanel();
+  const { state: sidebarState } = useSidebar();
+  const isSidebarCollapsed = sidebarState === "collapsed";
   
   // Auto-scroll to bottom when new messages arrive
   useEffect(() => {
@@ -54,6 +58,11 @@ const ChatInterface = ({ chatId }: ChatInterfaceProps) => {
     )}>
       <div className="h-14 border-b border-border/50 flex items-center px-4 justify-between">
         <div className="flex items-center gap-3">
+          {isSidebarCollapsed && (
+            <SidebarTrigger className="mr-2">
+              <ChevronRight className="h-4 w-4" />
+            </SidebarTrigger>
+          )}
           <span className="font-medium">Gemini</span>
           <Badge variant="secondary" className="bg-secondary/30 text-xs font-normal rounded-full">
             gemini-2.0-flash
