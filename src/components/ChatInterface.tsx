@@ -6,11 +6,8 @@ import { aiService } from "@/services/aiService";
 import ChatMessage from "./ChatMessage";
 import ChatInput from "./ChatInput";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { usePropertiesPanel } from "@/hooks/usePropertiesPanel";
-import { useSidebarCollapse } from "@/hooks/useSidebarCollapse";
 
 interface ChatInterfaceProps {
   chatId?: string;
@@ -20,7 +17,6 @@ const ChatInterface = ({ chatId }: ChatInterfaceProps) => {
   const { messages, addMessage } = useChatStore();
   const chatContainerRef = useRef<HTMLDivElement>(null);
   const { isOpen: showProperties, open: openProperties } = usePropertiesPanel();
-  const { isCollapsed: isSidebarCollapsed, expand: expandSidebar } = useSidebarCollapse();
   
   // Auto-scroll to bottom when new messages arrive
   useEffect(() => {
@@ -58,16 +54,6 @@ const ChatInterface = ({ chatId }: ChatInterfaceProps) => {
     )}>
       <div className="h-14 border-b border-border/50 flex items-center px-4 justify-between">
         <div className="flex items-center gap-3">
-          {isSidebarCollapsed && (
-            <Button 
-              variant="ghost" 
-              size="icon" 
-              className="h-8 w-8 mr-2"
-              onClick={expandSidebar}
-            >
-              <ChevronRight className="h-4 w-4" />
-            </Button>
-          )}
           <span className="font-medium">Gemini</span>
           <Badge variant="secondary" className="bg-secondary/30 text-xs font-normal rounded-full">
             gemini-2.0-flash

@@ -1,7 +1,7 @@
 
 import React from "react";
 import { Button } from "@/components/ui/button";
-import { Plus, Bookmark, User, ChevronLeft } from "lucide-react";
+import { Plus, Bookmark, User } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import {
   Sidebar,
@@ -15,11 +15,9 @@ import {
   SidebarMenuItem,
   SidebarMenuButton
 } from "@/components/ui/sidebar";
-import { useSidebarCollapse } from "@/hooks/useSidebarCollapse";
 
 const AppSidebar = () => {
   const navigate = useNavigate();
-  const { toggle, isCollapsed } = useSidebarCollapse();
   
   // Group chats by date
   const chatsByDate = {
@@ -38,7 +36,7 @@ const AppSidebar = () => {
   };
   
   return (
-    <Sidebar collapsible={isCollapsed ? "offcanvas" : "none"}>
+    <Sidebar>
       <SidebarHeader>
         <div className="flex gap-2 px-2">
           <Button variant="outline" className="justify-start gap-2 bg-sidebar w-full" onClick={handleNewChat}>
@@ -47,14 +45,6 @@ const AppSidebar = () => {
           </Button>
           <Button variant="outline" className="w-10 p-0 bg-sidebar rounded-md">
             <Bookmark className="h-4 w-4" />
-          </Button>
-          <Button 
-            variant="ghost" 
-            size="icon" 
-            className="w-8 h-8"
-            onClick={toggle}
-          >
-            <ChevronLeft className="h-4 w-4" />
           </Button>
         </div>
       </SidebarHeader>
