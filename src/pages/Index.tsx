@@ -1,12 +1,8 @@
 
-import ChatInterface from "@/components/ChatInterface";
+import { Navigate } from "react-router-dom";
 
 const Index = () => {
-  return (
-    <div className="h-screen w-screen overflow-hidden">
-      <ChatInterface />
-    </div>
-  );
+  return <Navigate to="/c/new" replace />;
 };
 
 export default Index;

@@ -8,8 +8,13 @@ import ChatInput from "./ChatInput";
 import Sidebar from "./Sidebar";
 import PropertiesPanel from "./PropertiesPanel";
 import { Badge } from "@/components/ui/badge";
+import { cn } from "@/lib/utils";
 
-const ChatInterface = () => {
+interface ChatInterfaceProps {
+  chatId?: string;
+}
+
+const ChatInterface = ({ chatId }: ChatInterfaceProps) => {
   const { messages, addMessage } = useChatStore();
   const chatContainerRef = useRef<HTMLDivElement>(null);
   const [showProperties, setShowProperties] = useState(false);
@@ -21,6 +26,12 @@ const ChatInterface = () => {
       chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
     }
   }, [messages]);
+  
+  // In a real app, we would fetch chat history based on chatId
+  useEffect(() => {
+    console.log(`Loading chat with ID: ${chatId}`);
+    // Here you would fetch messages for this specific chat ID
+  }, [chatId]);
   
   const { mutate: sendMessage, isPending: isLoading } = useMutation({
     mutationFn: aiService.sendMessage,
@@ -96,7 +107,7 @@ const ChatInterface = () => {
         <ChatInput onSendMessage={handleSendMessage} isLoading={isLoading} />
         
         <div className="text-xs text-center text-muted-foreground py-2 border-t border-border/50">
-          LibreChat v0.7.8-rc1 - Every AI for Everyone.
+          Realyze v0.7.8-rc1 - Every AI for Everyone.
         </div>
       </div>
 
@@ -108,8 +119,5 @@ const ChatInterface = () => {
     </div>
   );
 };
-
-// Helper function from utils
-const cn = (...classes: any[]) => classes.filter(Boolean).join(" ");
 
 export default ChatInterface;
