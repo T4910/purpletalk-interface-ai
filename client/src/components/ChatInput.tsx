@@ -8,9 +8,10 @@ import { SendIcon, Paperclip } from "lucide-react";
 interface ChatInputProps {
   onSendMessage: (message: string) => void;
   isLoading: boolean;
+  inNewChatPage?: boolean;
 }
 
-const ChatInput = ({ onSendMessage, isLoading }: ChatInputProps) => {
+const ChatInput = ({ inNewChatPage, onSendMessage, isLoading }: ChatInputProps) => {
   const { inputValue, setInputValue } = useChatStore();
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -33,7 +34,7 @@ const ChatInput = ({ onSendMessage, isLoading }: ChatInputProps) => {
   };
 
   return (
-    <div className="border-t border-border/50 bg-chat-bg p-4">
+    <div className={`"${inNewChatPage ? 'p-0 mt-8' : 'border-t bg-chat-bg p-4 border-border/50'}`}>
       <form onSubmit={handleSubmit} className="flex gap-2 items-end max-w-3xl mx-auto">
         <div className="relative flex-1 rounded-2xl bg-chat-input-bg">
           <div className="absolute bottom-2 left-3 text-muted-foreground">

@@ -47,7 +47,7 @@ const NewChat = () => {
                 <h1 className="text-2xl font-bold mb-2">Good afternoon</h1>
                 <p className="text-muted-foreground mb-8">How can I help you today?</p>
                 
-                <div className="space-y-3 mb-4 max-md:px-4">
+                <div className="space-y-3 max-md:px-4">
                   <Button 
                     onClick={handleStartChat}
                     className="w-full py-6 bg-chat-input-bg hover:bg-chat-input-bg/80 text-left justify-start rounded-xl border border-border/50"
@@ -65,7 +65,7 @@ const NewChat = () => {
                   </Button>
                 </div>
 
-                <ChatInput onSendMessage={() => {}} isLoading={false} />
+                <ChatInput onSendMessage={() => {}} isLoading={false} inNewChatPage />
               </div>
             </div>
             

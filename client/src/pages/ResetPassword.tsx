@@ -18,6 +18,7 @@ const ResetPassword = () => {
     from: '/reset-password' // Specify the route ID if needed, though often not strictly necessary for search params
   });
   const token = search.token || "demo-token";
+  const uid = search.uid || "";
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

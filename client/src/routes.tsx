@@ -72,10 +72,10 @@ const resetPasswordRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/reset-password',
   validateSearch: (search: Record<string, unknown>) => {
-    return { token: search.token }
+    return { token: search.token, uid: search.uid }
   },
   beforeLoad: ({ search }) => {
-    if(!search.token) throw redirect({ to: '/login' });
+    if(!search.token || !search.uid) throw redirect({ to: '/login' });
   },
   component: ResetPassword,
 })
