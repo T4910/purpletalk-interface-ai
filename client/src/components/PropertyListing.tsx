@@ -81,7 +81,85 @@ const mockProperties: Property[] = [
       "Water Treatment",
       "C of O"
     ]
-  }
+  },
+  {
+    id: "3",
+    title: "5 Bedroom House",
+    location: "Off Admiralty Way Lekki Phase 1 Lekki Lagos",
+    price: "₦ 1,300,000,000",
+    beds: 5,
+    baths: 5,
+    features: ["SUPERMARKET NEARBY", "ALL ROOM ENSUIT", "24 HOURS SECURITY"],
+    isPremium: true,
+    updatedDate: "Updated 10 May 2025, Added 13 Jan 2025",
+    imageUrl: "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1770&q=80",
+    description: "A beautiful 5 bedroom house in the heart of Lekki Phase 1. Perfect for a family looking for comfort and luxury.",
+    toilets: 5,
+    address: "Off Admiralty Way Lekki Phase 1 Lagos",
+    pid: "1MJKH",
+    detailedFeatures: [
+      "24 Hours Security",
+      "24 hours Electricity",
+      "All Room Ensuit",
+      "Swimming Pool",
+      "CCTV Cameras",
+      "Parking Space",
+      "Water Treatment",
+      "C of O"
+    ]
+  },
+  {
+    id: "5",
+    title: "5 Bedroom House",
+    location: "Off Admiralty Way Lekki Phase 1 Lekki Lagos",
+    price: "₦ 1,300,000,000",
+    beds: 5,
+    baths: 5,
+    features: ["SUPERMARKET NEARBY", "ALL ROOM ENSUIT", "24 HOURS SECURITY"],
+    isPremium: true,
+    updatedDate: "Updated 10 May 2025, Added 13 Jan 2025",
+    imageUrl: "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1770&q=80",
+    description: "A beautiful 5 bedroom house in the heart of Lekki Phase 1. Perfect for a family looking for comfort and luxury.",
+    toilets: 5,
+    address: "Off Admiralty Way Lekki Phase 1 Lagos",
+    pid: "1MJKH",
+    detailedFeatures: [
+      "24 Hours Security",
+      "24 hours Electricity",
+      "All Room Ensuit",
+      "Swimming Pool",
+      "CCTV Cameras",
+      "Parking Space",
+      "Water Treatment",
+      "C of O"
+    ]
+  },
+  {
+    id: "4",
+    title: "5 Bedroom House",
+    location: "Off Admiralty Way Lekki Phase 1 Lekki Lagos",
+    price: "₦ 1,300,000,000",
+    beds: 5,
+    baths: 5,
+    features: ["SUPERMARKET NEARBY", "ALL ROOM ENSUIT", "24 HOURS SECURITY"],
+    isPremium: true,
+    updatedDate: "Updated 10 May 2025, Added 13 Jan 2025",
+    imageUrl: "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1770&q=80",
+    description: "A beautiful 5 bedroom house in the heart of Lekki Phase 1. Perfect for a family looking for comfort and luxury.",
+    toilets: 5,
+    address: "Off Admiralty Way Lekki Phase 1 Lagos",
+    pid: "1MJKH",
+    detailedFeatures: [
+      "24 Hours Security",
+      "24 hours Electricity",
+      "All Room Ensuit",
+      "Swimming Pool",
+      "CCTV Cameras",
+      "Parking Space",
+      "Water Treatment",
+      "C of O"
+    ]
+  },
 ];
 
 const PropertyCard = ({ property, onSelect }: { property: Property, onSelect: (property: Property) => void }) => {

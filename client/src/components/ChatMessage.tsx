@@ -2,6 +2,7 @@
 import { Message } from "@/store/useChatStore";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { usePropertiesPanel } from "@/hooks/usePropertiesPanel";
 
 interface ChatMessageProps {
   message: Message;
@@ -10,7 +11,8 @@ interface ChatMessageProps {
 
 const ChatMessage = ({ message, onViewProperties }: ChatMessageProps) => {
   const isUser = message.role === "user";
-  
+  const propertyPanelIsOpen  = usePropertiesPanel(store => store.isOpen)
+
   // Check if this is the last AI message where we should show the button
   const showPropertiesButton = message.id === "2" && !isUser;
   
@@ -51,6 +53,7 @@ const ChatMessage = ({ message, onViewProperties }: ChatMessageProps) => {
                 <Button 
                   onClick={onViewProperties}
                   className="bg-gradient-to-r from-purple-600 to-indigo-600 hover:opacity-90 rounded-md"
+                  disabled={propertyPanelIsOpen}
                 >
                   View properties
                 </Button>

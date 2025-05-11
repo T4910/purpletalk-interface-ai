@@ -7,9 +7,9 @@ import ChatMessage from "./ChatMessage";
 import ChatInput from "./ChatInput";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
-import { usePropertiesPanel } from "@/hooks/usePropertiesPanel";
 import { SidebarTrigger, useSidebar } from "@/components/ui/sidebar";
 import { ChevronRight } from "lucide-react";
+import { usePropertyPanelSidebar } from "./ui/PropertyPanelSidebar";
 
 interface ChatInterfaceProps {
   chatId?: string;
@@ -18,7 +18,8 @@ interface ChatInterfaceProps {
 const ChatInterface = ({ chatId }: ChatInterfaceProps) => {
   const { messages, addMessage } = useChatStore();
   const chatContainerRef = useRef<HTMLDivElement>(null);
-  const { isOpen: showProperties, open: openProperties } = usePropertiesPanel();
+  const { open, setOpen } = useSidebar()
+  const { togglePropertyPanelSidebar: openPropertiesPanel } = usePropertyPanelSidebar()
   const { state: sidebarState } = useSidebar();
   const isSidebarCollapsed = sidebarState === "collapsed";
   
@@ -48,21 +49,20 @@ const ChatInterface = ({ chatId }: ChatInterfaceProps) => {
   };
 
   const handleViewProperties = () => {
-    openProperties();
+    if(open) setOpen(false);
+    openPropertiesPanel();
   };
   
   return (
     <div className={cn(
       "flex-1 flex flex-col h-full overflow-hidden transition-all duration-300",
-      showProperties ? "w-1/2" : "w-full"
+      // showProperties ? "w-1/2" : "w-full"
     )}>
       <div className="h-14 border-b border-border/50 flex items-center px-4 justify-between">
         <div className="flex items-center gap-3">
-          {isSidebarCollapsed && (
             <SidebarTrigger className="mr-2">
               <ChevronRight className="h-4 w-4" />
             </SidebarTrigger>
-          )}
           <span className="font-medium">Gemini</span>
           <Badge variant="secondary" className="bg-secondary/30 text-xs font-normal rounded-full">
             gemini-2.0-flash

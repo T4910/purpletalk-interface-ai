@@ -2,11 +2,14 @@
 import { X, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import PropertyListing from "./PropertyListing";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { usePropertiesPanel } from "@/hooks/usePropertiesPanel";
+import { useSidebar } from "./ui/sidebar";
+import { usePropertyPanelSidebar } from "./ui/PropertyPanelSidebar";
 
 const PropertiesPanel = () => {
   const { close } = usePropertiesPanel();
+  const { togglePropertyPanelSidebar } = usePropertyPanelSidebar()
+  
   
   return (
     <div className="flex flex-col h-full">
@@ -15,7 +18,7 @@ const PropertiesPanel = () => {
           variant="ghost" 
           size="icon" 
           className="h-8 w-8 rounded-full"
-          onClick={close}
+          onClick={togglePropertyPanelSidebar}
         >
           <X className="h-4 w-4" />
         </Button>
@@ -27,7 +30,7 @@ const PropertiesPanel = () => {
         </div>
       </div>
       
-      <div className="flex-1 overflow-hidden p-4">
+      <div className="flex-1 overflow-hidden p-4 mx-auto">
         <PropertyListing />
       </div>
     </div>
