@@ -101,14 +101,32 @@ export default {
           '50%': {
             opacity: '0.7',
           }
+        },
+        'blob': {
+          '0%': {
+            transform: 'translate(0px, 0px) scale(1)',
+          },
+          '33%': {
+            transform: 'translate(30px, -50px) scale(1.1)',
+          },
+          '66%': {
+            transform: 'translate(-20px, 20px) scale(0.9)',
+          },
+          '100%': {
+            transform: 'translate(0px, 0px) scale(1)',
+          },
         }
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
 				'accordion-up': 'accordion-up 0.2s ease-out',
         'fade-in': 'fade-in 0.3s ease-out',
-        'pulse-gentle': 'pulse-gentle 2s ease-in-out infinite'
-			}
+        'pulse-gentle': 'pulse-gentle 2s ease-in-out infinite',
+        'blob': 'blob 7s infinite',
+			},
+      transitionDelay: {
+        '2000': '2000ms',
+      }
 		}
 	},
 	plugins: [require("tailwindcss-animate")],
