@@ -49,7 +49,7 @@ const Landing = () => {
 
       {/* Hero Section */}
       <section 
-        className="relative pt-32 pb-20 md:pt-40 md:pb-32 "
+        className="relative pt-32 pb-20 md:pt-40 md:pb-32 overflow-hidden"
       >
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto text-center">
