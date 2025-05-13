@@ -53,7 +53,6 @@ const ResetPassword = () => {
       <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-chat-bg to-gray-950 p-4">
         <div className="w-full max-w-md">
           <div className="text-center mb-8">
-            {/* Changed Link component and props */}
             <Link to="/" className="text-3xl font-bold text-primary underline">Realyze</Link>
             <p className="text-muted-foreground mt-2">Find your dream property with AI</p>
           </div>
@@ -71,7 +70,6 @@ const ResetPassword = () => {
               </CardDescription>
             </CardHeader>
             <CardContent className="text-center">
-              {/* Changed Button as={Link} to Button asChild */}
               <Button asChild className="mt-4">
                 <Link to="/login">
                   Sign in with new password
@@ -88,7 +86,6 @@ const ResetPassword = () => {
     <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-chat-bg to-gray-950 p-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          {/* Changed Link component and props */}
           <Link to="/" className="text-3xl font-bold text-primary underline">Realyze</Link>
           <p className="text-muted-foreground mt-2">Create a new password</p>
         </div>
@@ -138,7 +135,6 @@ const ResetPassword = () => {
           </CardContent>
           <CardFooter>
             <div className="text-center w-full">
-              {/* Changed Link component and props */}
               <Link to="/login" className="text-primary underline hover:underline text-sm">
                 Back to login
               </Link>

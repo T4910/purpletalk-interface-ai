@@ -19,26 +19,20 @@ const Landing = () => {
       {/* Navbar */}
       <header className="fixed top-0 left-0 right-0 z-50 border-b border-white/10 backdrop-blur-lg bg-black/20">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          {/* Changed Link component and props */}
           <Link to="/" className="text-2xl font-bold text-primary flex items-center gap-2">
             <Home className="h-6 w-6" />
             Realyze
           </Link>
           <nav className="hidden md:flex items-center space-x-8">
-            {/* Changed Link component and props */}
             <Link to="/" hash="features" className="text-sm text-gray-300 hover:text-white transition-colors">Features</Link>
-            {/* Changed Link component and props */}
             <Link to="/" hash="how-it-works" className="text-sm text-gray-300 hover:text-white transition-colors">How It Works</Link>
-            {/* Changed Link component and props */}
             <Link to="/login" className="text-sm text-gray-300 hover:text-white transition-colors">Sign In</Link>
           </nav>
-          {/* Changed Link component and props */}
           <Button asChild>
-            <Link to="/signup" className="hidden md:flex bg-primary hover:bg-primary/90">
+            <Link to="/signup" className="hidden md:flex">
               Get Started
             </Link>
           </Button>
-          {/* Changed Link component and props */}
           <Button asChild size="sm" className="md:hidden">
             <Link to="/signup">
               Sign Up
@@ -71,13 +65,11 @@ const Landing = () => {
             <div 
               className={`flex flex-col sm:flex-row items-center justify-center gap-4 transition-all duration-700 delay-500`}
             >
-              {/* Changed Link component and props */}
               <Button asChild className="bg-primary hover:bg-primary/90 px-8 py-6 text-lg">
                 <Link to="/signup">
                   Get Started
                 </Link>
               </Button>
-              {/* Changed Link component and props */}
               <Button asChild variant="outline" className="border-white/20 hover:bg-white/10 px-8 py-6 text-lg">
                 <Link to="/login">
                   Sign In
@@ -198,7 +190,6 @@ const Landing = () => {
                 <p className="text-lg text-gray-300 mb-8">
                   Watch how easy it is to find your perfect property using our AI-powered chat interface. No more endless browsing through listings.
                 </p>
-                {/* Changed Link component and props */}
                 <Button asChild className="bg-primary hover:bg-primary/90">
                   <Link to="/signup">
                     Try it yourself
@@ -231,7 +222,6 @@ const Landing = () => {
             <p className="text-lg md:text-xl text-gray-300 mb-8 max-w-2xl mx-auto">
               Join thousands of users who've already found their perfect property with Realyze's AI-powered search.
             </p>
-            {/* Changed Link component and props */}
             <Button asChild className="bg-primary hover:bg-primary/90 px-8 py-6 text-lg">
               <Link to="/signup">
                 Get Started for Free
@@ -246,7 +236,6 @@ const Landing = () => {
         <div className="container mx-auto px-4">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <div className="mb-8 md:mb-0">
-              {/* Changed Link component and props */}
               <Link to="/" className="text-xl font-bold text-primary flex items-center gap-2">
                 <Home className="h-5 w-5" />
                 Realyze
@@ -260,12 +249,9 @@ const Landing = () => {
               <div>
                 <h3 className="text-white font-medium mb-4">Product</h3>
                 <ul className="space-y-2">
-                  {/* Changed Link component and props */}
-                  <li><Link to="/" hash="features" className="text-gray-400 hover:text-white text-sm">Features</Link></li>
-                  {/* Changed Link component and props */}
-                  <li><Link to="/" hash="how-it-works" className="text-gray-400 hover:text-white text-sm">How it Works</Link></li>
-                  {/* Changed Link component and props */}
-                  <li><Link to="/signup" className="text-gray-400 hover:text-white text-sm">Sign Up</Link></li>
+                  <Link to="/" hash="features" className="text-gray-400 hover:text-white text-sm">Features</Link>
+                  <Link to="/" hash="how-it-works" className="text-gray-400 hover:text-white text-sm">How it Works</Link>
+                  <Link to="/signup" className="text-gray-400 hover:text-white text-sm">Sign Up</Link>
                 </ul>
               </div>
               <div>

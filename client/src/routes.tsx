@@ -1,3 +1,4 @@
+
 import { createRootRoute, createRoute, Router, redirect, Outlet } from '@tanstack/react-router'
 import Landing from './pages/Landing'
 import NewChat from './pages/NewChat'
@@ -7,6 +8,7 @@ import Signup from './pages/Signup'
 import TwoFactorAuth from './pages/TwoFactorAuth'
 import RequestPasswordReset from './pages/RequestPasswordReset'
 import ResetPassword from './pages/ResetPassword'
+import EmailConfirmation from './pages/EmailConfirmation'
 import NotFound from './pages/NotFound'
 
 const rootRoute = createRootRoute({
@@ -80,6 +82,15 @@ const resetPasswordRoute = createRoute({
   component: ResetPassword,
 })
 
+const emailConfirmationRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/verify-email',
+  validateSearch: (search: Record<string, unknown>) => {
+    return { token: search.token, email: search.email }
+  },
+  component: EmailConfirmation,
+})
+
 const notFoundRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '*',
@@ -96,6 +107,7 @@ const routeTree = rootRoute.addChildren([
   twoFactorAuthRoute,
   requestPasswordResetRoute,
   resetPasswordRoute,
+  emailConfirmationRoute,
   notFoundRoute
 ])
 
