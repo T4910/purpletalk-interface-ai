@@ -1,5 +1,5 @@
 
-import { createRootRoute, createRoute, Router, redirect, Outlet } from '@tanstack/react-router'
+import { createRootRoute, createRoute, Router, redirect, Outlet, createRootRouteWithContext, createRouter } from '@tanstack/react-router'
 import Landing from './pages/Landing'
 import NewChat from './pages/NewChat'
 import ChatView from './pages/ChatView'
@@ -10,64 +10,98 @@ import RequestPasswordReset from './pages/RequestPasswordReset'
 import ResetPassword from './pages/ResetPassword'
 import EmailConfirmation from './pages/EmailConfirmation'
 import NotFound from './pages/NotFound'
+import { QueryClient } from '@tanstack/react-query'
+import { useAuthContext } from './hooks/use-auth'
+import { toast } from 'sonner'
 
-const rootRoute = createRootRoute({
+interface MyRouterContext {
+  authContext: ReturnType<typeof useAuthContext>,
+  queryClient: QueryClient
+}
+
+const rootRoute = createRootRouteWithContext<MyRouterContext>()({
   component: () => (
     <>
       {/* This is the root layout. You can add a navigation bar or footer here */}
       <Outlet />
     </>
   ),
+  beforeLoad: ({ context: { authContext }, location }) => {
+    console.log(authContext.memoedValue.isAuthenticated, "is authenticated?....")
+  }
 })
 
+const appRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: 'c/',
+  component: () => (<>
+    <Outlet />
+  </>),
+  beforeLoad: ({ context: { authContext }, location, ...rest }) => {
+    if(!authContext.memoedValue.isAuthenticated) {
+      toast.error("Please sign in to continue");
+      throw redirect({ 
+        to: '/login', 
+        search: {
+          redirect: location.href
+        } 
+      })
+    }
+  }
+})
+
+const newChatRoute = createRoute({
+  getParentRoute: () => appRoute,
+  path: 'new',
+  component: NewChat,
+})
+
+export const chatViewRoute = createRoute({
+  getParentRoute: () => appRoute,
+  path: '$chatId',
+  component: ChatView,
+})
+
+
+// Non protected app route
 const indexRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/',
   component: Landing,
 })
 
-const appRoute = createRoute({
-  getParentRoute: () => rootRoute,
-  path: '/app',
-  beforeLoad: () => {
-    throw redirect({ to: '/c/new' });
-  },
-})
-
-const newChatRoute = createRoute({
-  getParentRoute: () => rootRoute,
-  path: '/c/new',
-  component: NewChat,
-})
-
-export const chatViewRoute = createRoute({
-  getParentRoute: () => rootRoute,
-  path: '/c/$id',
-  component: ChatView,
-})
+const preventAuthUser = {
+  beforeLoad: ({ context: { authContext }, location }) => {
+    if(authContext.memoedValue.isAuthenticated) throw redirect({ to: '/' });
+  }
+}
 
 const loginRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/login',
   component: Login,
+  ...preventAuthUser
 })
 
 const signupRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/signup',
   component: Signup,
+  ...preventAuthUser
 })
 
 const twoFactorAuthRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/2fa',
   component: TwoFactorAuth,
+  ...preventAuthUser
 })
 
 const requestPasswordResetRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/request-password-reset',
   component: RequestPasswordReset,
+  ...preventAuthUser
 })
 
 const resetPasswordRoute = createRoute({
@@ -85,8 +119,11 @@ const resetPasswordRoute = createRoute({
 const emailConfirmationRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/verify-email',
-  validateSearch: (search: Record<string, unknown>) => {
-    return { token: search.token, email: search.email }
+  validateSearch: (search: Record<string, unknown>) => {          
+    return { token: search.token || '', uid: search.uid || '' }
+  },
+  beforeLoad: ({ search }) => {
+    if(!search.token || !search.uid) throw redirect({ to: '/login' })
   },
   component: EmailConfirmation,
 })
@@ -99,9 +136,10 @@ const notFoundRoute = createRoute({
 
 const routeTree = rootRoute.addChildren([
   indexRoute,
-  appRoute,
-  newChatRoute,
-  chatViewRoute,
+  // appRoute,
+  // newChatRoute,
+  // chatViewRoute,
+  appRoute.addChildren([newChatRoute, chatViewRoute]),
   loginRoute,
   signupRoute,
   twoFactorAuthRoute,
@@ -111,10 +149,12 @@ const routeTree = rootRoute.addChildren([
   notFoundRoute
 ])
 
-export const router = new Router({
+export const router = createRouter({
   routeTree,
-  // defaultPreload
-  // notFoundRoute: notFoundRoute
+  context: {
+    authContext: undefined!,
+    queryClient: undefined!
+  },
 })
 
 declare module '@tanstack/react-router' {

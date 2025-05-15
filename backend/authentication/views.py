@@ -1,3 +1,5 @@
+# Suggested code may be subject to a license. Learn more: ~LicenseLog:2101765244.
+# Suggested code may be subject to a license. Learn more: ~LicenseLog:967205475.
 from rest_framework import generics, status
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -7,7 +9,11 @@ from rest_framework_simplejwt.tokens import RefreshToken
 
 from django.contrib.auth import authenticate
 from django.conf import settings
-from django.middleware import common
+from django.core.mail import send_mail
+from django.template.loader import render_to_string
+from django.utils.encoding import force_bytes, force_str
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode, urlencode
+from django.contrib.auth.tokens import PasswordResetTokenGenerator
 
 from .serializers import (
     SignupSerializer,
@@ -17,6 +23,9 @@ from .serializers import (
     TwoFactorSetupSerializer,
     TwoFactorVerifySerializer,
     TwoFactorToggleSerializer,
+    EmailConfirmationSerializer,
+    ResendEmailConfirmationSerializer, # Import the new serializer
+    UserDetailsSerializer
 )
 from .models import CustomUser
 import pyotp
@@ -43,14 +52,39 @@ def set_jwt_cookies(response, access_token, refresh_token):
     )
     return response
 
+# Helper function to unset JWT cookies
+def unset_jwt_cookies(response):
+    response.delete_cookie(settings.SIMPLE_JWT['JWT_AUTH_COOKIE'])
+    response.delete_cookie(settings.SIMPLE_JWT['JWT_AUTH_REFRESH_COOKIE'])
+    return response
+
 class SignupView(generics.CreateAPIView):
     queryset = CustomUser.objects.all()
     permission_classes = (AllowAny,)
     serializer_class = SignupSerializer
 
+    def perform_create(self, serializer):
+        user = serializer.save()
+        # Send confirmation email after user creation
+        token_generator = PasswordResetTokenGenerator()
+        token = token_generator.make_token(user)
+        uid = urlsafe_base64_encode(force_bytes(user.pk))
+
+        # Construct the confirmation URL
+        # This should point to your frontend page that hits the confirmation endpoint
+        query_params = urlencode({'uid': uid, 'token': token})
+        confirmation_url = f"{settings.FRONTEND_URL}/verify-email?{query_params}"
+
+        subject = "Confirm Your Email Address"
+        message = render_to_string('authentication/email_confirmation_email.txt', {
+            'user': user,
+            'confirmation_url': confirmation_url,
+        })
+        print(message.replace('&amp;','&'), 564454556)
+        send_mail(subject, message.replace('&amp;','&'), settings.DEFAULT_FROM_EMAIL, [user.email])
+
+
 class LoginView(TokenObtainPairView):
-    # Use the default TokenObtainPairView for generating tokens
-    # We will override post to set cookies
     serializer_class = LoginSerializer
 
     def post(self, request, *args, **kwargs):
@@ -64,13 +98,9 @@ class LoginView(TokenObtainPairView):
         user = serializer.validated_data['user']
 
         if user.is_2fa_enabled:
-             # If 2FA is enabled, return a response indicating that 2FA is required
             response = Response({'detail': '2FA required.', 'user_id': user.id}, status=status.HTTP_200_OK)
-            # You might want to set a temporary cookie or session variable here
-            # to indicate that the user has passed the first stage of login
             return response
         
-        # If 2FA is not enabled or not required, proceed with token generation and cookie setting
         refresh = RefreshToken.for_user(user)
         response = Response({
             'access': str(refresh.access_token),
@@ -81,17 +111,24 @@ class LoginView(TokenObtainPairView):
 
         return response
 
-class TwoFactorVerifyView(APIView):
-    permission_classes = (AllowAny,) # Allow verification without full authentication initially
+class LogoutView(APIView):
+    permission_classes = (AllowAny,) # Allow logging out even if token is expired
 
     def post(self, request, *args, **kwargs):
-        # In a real application, you would retrieve the user based on a temporary cookie or session
-        # set during the first stage of login (in LoginView). For this example, we'll assume user_id is sent in the request.
-        user_id = request.data.get('user_id') # Assuming user_id is sent after initial login
+        response = Response({'detail': 'Successfully logged out.'}, status=status.HTTP_200_OK)
+        unset_jwt_cookies(response)
+        return response
+
+
+class TwoFactorVerifyView(APIView):
+    permission_classes = (AllowAny,)
+
+    def post(self, request, *args, **kwargs):
+        user_id = request.data.get('user_id')
         code = request.data.get('code')
 
         if not user_id or not code:
-             return Response({"detail": "User ID and code are required."}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"detail": "User ID and code are required."}, status=status.HTTP_400_BAD_REQUEST)
 
         try:
             user = CustomUser.objects.get(id=user_id)
@@ -105,7 +142,6 @@ class TwoFactorVerifyView(APIView):
         if not totp.verify(code):
             return Response({"detail": "Invalid 2FA code."}, status=status.HTTP_400_BAD_REQUEST)
 
-        # If verification is successful, issue JWT tokens and set cookies
         refresh = RefreshToken.for_user(user)
         response = Response({
             'access': str(refresh.access_token),
@@ -113,8 +149,6 @@ class TwoFactorVerifyView(APIView):
         }, status=status.HTTP_200_OK)
 
         set_jwt_cookies(response, refresh.access_token, refresh)
-
-        # Clear any temporary login state if used
 
         return response
 
@@ -133,7 +167,6 @@ class ResetPasswordView(generics.UpdateAPIView):
     serializer_class = ResetPasswordSerializer
 
     def post(self, request, uidb64, token, *args, **kwargs):
-        # Pass uidb64 and token from URL to serializer context
         serializer = self.serializer_class(data=request.data, context={'request': request, 'kwargs': {'uidb64': uidb64, 'token': token}})
         serializer.is_valid(raise_exception=True)
         serializer.save()
@@ -143,7 +176,6 @@ class TwoFactorSetupView(APIView):
     permission_classes = (IsAuthenticated,)
 
     def get(self, request, *args, **kwargs):
-        # Generate and return 2FA secret and QR code for the authenticated user
         serializer = TwoFactorSetupSerializer(instance=request.user)
         setup_data = serializer.update(request.user, {})
         return Response(setup_data, status=status.HTTP_200_OK)
@@ -159,10 +191,30 @@ class TwoFactorToggleView(APIView):
         status_message = "enabled" if user.is_2fa_enabled else "disabled"
         return Response({'detail': f'Two-factor authentication {status_message}.', 'is_2fa_enabled': user.is_2fa_enabled}, status=status.HTTP_200_OK)
 
-# You might need a view to get user details, potentially including 2FA status
+class EmailConfirmationView(APIView):
+    permission_classes = (AllowAny,)
+    serializer_class = EmailConfirmationSerializer
+
+    def post(self, request, *args, **kwargs):
+        # Use POST to receive uidb64 and token from the frontend after the user clicks the link
+        serializer = self.serializer_class(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response({'detail': 'Email confirmed successfully.'}, status=status.HTTP_200_OK)
+
+class ResendEmailConfirmationView(APIView):
+    permission_classes = (AllowAny,)
+    serializer_class = ResendEmailConfirmationSerializer
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.serializer_class(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response({'detail': 'Confirmation email sent.'}, status=status.HTTP_200_OK)
+
 class UserDetailsView(generics.RetrieveAPIView):
     permission_classes = (IsAuthenticated,)
-    serializer_class = SignupSerializer # You might want a different serializer for user details
+    serializer_class = UserDetailsSerializer
 
     def get_object(self):
         return self.request.user

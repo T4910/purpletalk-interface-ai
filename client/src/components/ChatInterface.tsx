@@ -2,7 +2,7 @@
 import { useRef, useEffect } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { useChatStore } from "@/store/useChatStore";
-import { aiService } from "@/services/aiService";
+import * as aiService from "@/services/aiService";
 import ChatMessage from "./ChatMessage";
 import ChatInput from "./ChatInput";
 import { Badge } from "@/components/ui/badge";

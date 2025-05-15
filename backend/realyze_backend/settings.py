@@ -18,7 +18,10 @@ SECRET_KEY = os.environ.get('SECRET_KEY', 'a-fallback-secret-key-during-developm
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True # Change to False in production
 
-ALLOWED_HOSTS = [] # Add your production domain here
+ALLOWED_HOSTS = [
+    '127.0.0.1',
+    'https://8000-firebase-realyze-1746969465034.cluster-oayqgyglpfgseqclbygurw4xd4.cloudworkstations.dev',
+] # Add your production domain here
 
 
 # Application definition
@@ -36,6 +39,7 @@ INSTALLED_APPS = [
     'corsheaders', # CORS headers
     
     'authentication', # Your authentication app
+    'ai_agent', # AI agent app
 ]
 
 MIDDLEWARE = [
@@ -142,7 +146,7 @@ REST_FRAMEWORK = {
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5), # Adjust as needed
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1), # Adjust as needed
-    'ROTATE_REFRESH_TOKENS': False,
+    'ROTATE_REFRESH_TOKENS': False, # Turn to true when you've set it up. Let's see what happens
     'BLACKLIST_AFTER_ROTATION': False,
     'UPDATE_LAST_LOGIN': False,
 
@@ -173,18 +177,20 @@ SIMPLE_JWT = {
     'JWT_AUTH_COOKIE': 'access_token', # Name of the cookie for access token
     'JWT_AUTH_REFRESH_COOKIE': 'refresh_token', # Name of the cookie for refresh token
     'JWT_AUTH_SAMESITE': 'Lax', # Or 'Strict' or 'None'
-    'JWT_AUTH_SECURE': not DEBUG, # Set to True in production (requires HTTPS)
+    # Change this back when you're done to not DEBUG
+    'JWT_AUTH_SECURE': False, #not DEBUG, # Set to True in production (requires HTTPS)
     'JWT_AUTH_HTTPONLY': True, # Recommended for security
 }
 
 # CORS Headers Settings
 CORS_ALLOWED_ORIGINS = [
-    os.environ.get('FRONTEND_URL', 'http://localhost:5173'), # Get frontend URL from env or use fallback
+    os.environ.get('FRONTEND_URL', 'http://localhost:8080'), # Get frontend URL from env or use fallback
+    'https://8080-firebase-realyze-1746969465034.cluster-oayqgyglpfgseqclbygurw4xd4.cloudworkstations.dev'
     # Add other allowed origins in production
 ]
 
 # Or allow all origins for development (not recommended for production)
-# CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_ALL_ORIGINS = True
 
 # Email Settings (for Gmail)
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
