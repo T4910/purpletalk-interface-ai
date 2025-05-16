@@ -6,11 +6,14 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Mail, KeyRound } from "lucide-react";
 import { toast } from "sonner";
+import { useUserRequestPasswordReset, useUserResetPassword } from "@/services/provider/auth";
 
 const RequestPasswordReset = () => {
   const [email, setEmail] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-  const [submitted, setSubmitted] = useState(false);
+  // const [isLoading, setIsLoading] = useState(false);
+  // const [submitted, setSubmitted] = useState(false);
+
+  const { mutate: resetPassword, isPending: isLoading, isSuccess: submitted, reset } = useUserRequestPasswordReset()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -20,14 +23,16 @@ const RequestPasswordReset = () => {
       return;
     }
 
-    setIsLoading(true);
+    // setIsLoading(true);
     
-    // This is a mock password reset request - in a real app, this would call an API
-    setTimeout(() => {
-      setIsLoading(false);
-      setSubmitted(true);
-      toast.success("Password reset link sent to your email!");
-    }, 1500);
+    resetPassword({ email }, {
+      onSuccess: () => {
+        toast.success("Password reset link sent to your email!");
+      },
+      onError: () => {
+        toast.error("Something went wrong");
+      }
+    })
   };
 
   if (submitted) {
@@ -56,7 +61,7 @@ const RequestPasswordReset = () => {
               <p className="text-sm text-muted-foreground mb-4">
                 If you don't see the email, please check your spam folder.
               </p>
-              <Button variant="outline" className="mt-2" onClick={() => setSubmitted(false)}>
+              <Button variant="outline" className="mt-2" onClick={reset}>
                 Try with a different email
               </Button>
             </CardContent>
