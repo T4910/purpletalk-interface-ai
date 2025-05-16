@@ -23,7 +23,6 @@ ALLOWED_HOSTS = [
     'https://8000-firebase-realyze-1746969465034.cluster-oayqgyglpfgseqclbygurw4xd4.cloudworkstations.dev',
 ] # Add your production domain here
 
-
 # Application definition
 
 INSTALLED_APPS = [
@@ -197,7 +196,7 @@ CORS_ALLOWED_ORIGINS = [
 ]
 
 # Or allow all origins for development (not recommended for production)
-# CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_ALL_ORIGINS = True
 
 # Email Settings (for Gmail)
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'

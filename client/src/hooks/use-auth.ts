@@ -4,7 +4,7 @@ import { MutationFunction, MutationOptions, UseMutationResult } from "@tanstack/
 
 type TMemoedValue = {
     user: t.TUser,
-    useLogin: (params: t.TLoginParams) => Omit<UseMutationResult<t.TLoginResponse, t.TLoginResponse, t.TLoginParams, unknown>, 'mutate'>,
+    useLogin: (params: t.TLoginParams) => Omit<UseMutationResult<t.TLoginResponse, t.TLoginParams, t.TLoginParams, unknown>, 'mutate'>,
     redirect: string,
     isAuthenticated: boolean
 }

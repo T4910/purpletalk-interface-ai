@@ -19,7 +19,7 @@ from .serializers import (
     RequestPasswordResetSerializer,
     ResetPasswordSerializer,
     TwoFactorSetupSerializer,
-    TwoFactorVerifySerializer,
+    # TwoFactorVerifySerializer,
     TwoFactorToggleSerializer,
     EmailConfirmationSerializer,
     ResendEmailConfirmationSerializer, # Import the new serializer
@@ -116,15 +116,17 @@ class LogoutView(APIView):
         unset_jwt_cookies(response)
         return response
 
-
 class TwoFactorVerifyView(APIView):
+    permission_classes = (AllowAny,)
     permission_classes = (AllowAny,)
 
     def post(self, request, *args, **kwargs):
         user_id = request.data.get('user_id')
+        user_id = request.data.get('user_id')
         code = request.data.get('code')
 
         if not user_id or not code:
+            return Response({"detail": "User ID and code are required."}, status=status.HTTP_400_BAD_REQUEST)
             return Response({"detail": "User ID and code are required."}, status=status.HTTP_400_BAD_REQUEST)
 
         try:

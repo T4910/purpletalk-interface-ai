@@ -94,7 +94,6 @@ const twoFactorAuthRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/2fa',
   component: TwoFactorAuth,
-  ...preventAuthUser
 })
 
 const requestPasswordResetRoute = createRoute({
