@@ -4,19 +4,29 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { RouterProvider } from "@tanstack/react-router";
 import { router } from "./routes";
+import { AuthContextProvider } from "./components/AuthContext";
+import { useAuthContext } from "./hooks/use-auth";
 
 const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      {/* The routing is now handled by Tanstack Router in main.tsx */}
-      {/* The Outlet component in src/routes.tsx will render the matched route component */}
-      <RouterProvider router={router} />
-    </TooltipProvider>
+    <AuthContextProvider>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <AuthRouterProvider />
+      </TooltipProvider>
+    </AuthContextProvider>
   </QueryClientProvider>
 );
+
+const AuthRouterProvider = () => {
+  const authContext = useAuthContext();
+
+  return (
+    <RouterProvider router={router} context={{ queryClient, authContext }} />
+  )
+} 
 
 export default App;
