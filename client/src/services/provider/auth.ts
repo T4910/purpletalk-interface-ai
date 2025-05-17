@@ -1,32 +1,6 @@
 import * as t from "@/services/types"
 import * as dataService from "@/services"
-// Provider contains the use query stuff. 
-// Can be used directly in a component or in a hook
-
-// Here's an example of its use and why this structure is good:
-/**
-    const { mutate: verify2FAMutate, isLoading: isVerifying } = useVerifyTwoFactorMutation();
-        verify2FAMutate(
-      { token: verificationToken },
-      {
-        onSuccess: () => {
-          showToast({ message: localize('com_ui_2fa_verified') });
-          confirm2FAMutate(
-            { token: verificationToken },
-            {
-              onSuccess: () => setPhase('backup'),
-              onError: () =>
-                showToast({ message: localize('com_ui_2fa_invalid'), status: 'error' }),
-            },
-          );
-        },
-        onError: () => showToast({ message: localize('com_ui_2fa_invalid'), status: 'error' }),
-      },
-    );
-
-*/ 
-
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { queryOptions, useMutation, useQuery } from '@tanstack/react-query';
 import type { UseMutationOptions, UseQueryOptions } from '@tanstack/react-query';
 import { QueryKeys, MutationKeys } from "../keys";
 
@@ -34,19 +8,18 @@ import { QueryKeys, MutationKeys } from "../keys";
 export const useGetUserQuery = (
   config?: Partial<UseQueryOptions<t.TUser>>,
 ) => {
-  return useQuery<t.TUser>({
-    queryKey: [QueryKeys.user], 
-    queryFn: () => dataService.getCurrentUser(), 
-    refetchOnMount: false,
-    gcTime: 5 * 60 * 1000,
-    retry: 2,
-    // enabled: false,
-    ...config,
-  }
-);
+  return useQuery<t.TUser>({...useGetUserQueryOptions, ...config});
 };
 
-// export const useUserRequestPasswordReset = ''
+export const useGetUserQueryOptions = queryOptions({
+  queryKey: [QueryKeys.user], 
+  queryFn: () => dataService.getCurrentUser(), 
+  refetchOnMount: false,
+  // gcTime: 5 * 60 * 1000,
+  staleTime: 5 * 60 * 1000,
+  retry: false,
+  // enabled: false,
+})
 
 
 // MUTATIONS

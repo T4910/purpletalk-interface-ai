@@ -1,8 +1,8 @@
 import { useNavigate } from "@tanstack/react-router"; // Changed import
 import { Button } from "@/components/ui/button";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, ChevronRightIcon } from "lucide-react";
 import AppSidebar from "@/components/AppSidebar";
-import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
+import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/ui/sidebar";
 import ChatInput from "@/components/ChatInput";
 
 const NewChat = () => {
@@ -24,6 +24,9 @@ const NewChat = () => {
         <SidebarInset>
           <div className="flex flex-col h-full w-full">
             <div className="h-14 border-b border-border/50 flex items-center px-4 justify-between">
+                <SidebarTrigger className="mr-2">
+                  <ChevronRightIcon className="h-4 w-4" />
+                </SidebarTrigger>
               <div className="flex items-center gap-3">
                 <span className="font-medium">Gemini</span>
               </div>

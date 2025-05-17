@@ -1,5 +1,5 @@
 
-import { createRootRoute, createRoute, Router, redirect, Outlet, createRootRouteWithContext, createRouter } from '@tanstack/react-router'
+import { createRoute, redirect, Outlet, createRootRouteWithContext, createRouter } from '@tanstack/react-router'
 import Landing from './pages/Landing'
 import NewChat from './pages/NewChat'
 import ChatView from './pages/ChatView'
@@ -10,9 +10,10 @@ import RequestPasswordReset from './pages/RequestPasswordReset'
 import ResetPassword from './pages/ResetPassword'
 import EmailConfirmation from './pages/EmailConfirmation'
 import NotFound from './pages/NotFound'
-import { QueryClient } from '@tanstack/react-query'
+import { QueryClient, QueryObserver } from '@tanstack/react-query'
 import { useAuthContext } from './hooks/use-auth' 
 import { toast } from 'sonner'
+import { useGetUserQueryOptions } from './services/provider/auth'
 
 interface MyRouterContext {
   authContext: ReturnType<typeof useAuthContext>,
@@ -26,19 +27,24 @@ const rootRoute = createRootRouteWithContext<MyRouterContext>()({
       <Outlet />
     </>
   ),
-  beforeLoad: ({ context }) => {
-    console.log(context.authContext.isAuthenticated, context.authContext.user, "is authenticated?....")
+  beforeLoad: async ({ context: { queryClient } }) => {
+    try {
+      const user = await queryClient.fetchQuery(useGetUserQueryOptions);
+      return { isAuthenticated: !!user.id };
+    } catch {
+      return { isAuthenticated: null };
+    }
   }
 })
 
 const appRoute = createRoute({
   getParentRoute: () => rootRoute,
-  path: 'c/',
-  component: () => (<>
-    <Outlet />
-  </>),
-  beforeLoad: ({ context: { authContext }, location, ...rest }) => {
-    if(!authContext.isAuthenticated) {
+  path: '/c',
+  component: () => <Outlet />,
+  beforeLoad: async ({ context: { isAuthenticated } }) => {
+    console.log("before load fired approute", isAuthenticated)
+
+    if(!isAuthenticated) {
       toast.error("Please sign in to continue");
       throw redirect({ 
         to: '/login', 
@@ -50,15 +56,21 @@ const appRoute = createRoute({
   }
 })
 
+const chatIndex = createRoute({
+  getParentRoute: () => appRoute,
+  path: '/',
+  beforeLoad: () => redirect({ to: "/c/new" })
+})
+
 const newChatRoute = createRoute({
   getParentRoute: () => appRoute,
   path: 'new',
   component: NewChat,
 })
 
-export const chatViewRoute = createRoute({
+const chatViewRoute = createRoute({
   getParentRoute: () => appRoute,
-  path: '$chatId',
+  path: '$id',
   component: ChatView,
 })
 
@@ -71,8 +83,10 @@ const indexRoute = createRoute({
 })
 
 const preventAuthUser = {
-  beforeLoad: ({ context: { authContext }, location }) => {
-    if(authContext.isAuthenticated) throw redirect({ to: '/' });
+  beforeLoad: async ({ context: { isAuthenticated } }) => {
+    console.log("before load preventroute", isAuthenticated)
+
+    if(isAuthenticated) throw redirect({ to: '/' });
   }
 }
 
@@ -138,7 +152,7 @@ const routeTree = rootRoute.addChildren([
   // appRoute,
   // newChatRoute,
   // chatViewRoute,
-  appRoute.addChildren([newChatRoute, chatViewRoute]),
+  appRoute.addChildren([chatIndex, newChatRoute, chatViewRoute]),
   loginRoute,
   signupRoute,
   twoFactorAuthRoute,
@@ -152,7 +166,7 @@ export const router = createRouter({
   routeTree,
   context: {
     authContext: undefined!,
-    queryClient: undefined!
+    queryClient: QueryClient
   },
 })
 

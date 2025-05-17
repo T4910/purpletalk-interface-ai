@@ -8,9 +8,10 @@ import { AuthContext } from '@/hooks/use-auth';
 
 const AuthContextProvider = ({ children }) => {
   // const [isAuthenticated, setisAuthenticated] = useState(false);
-  const [redirect, setRedirect] = useState<string | null>(null);
-
-  const { data: loggedInUser, isSuccess: isAuthenticated } = useGetUserQuery()
+  // const [redirect, setRedirect] = useState<string | null>(null);
+  
+  const { data: loggedInUser, isSuccess: isAuthenticated, refetch } = useGetUserQuery()
+  console.log('AuthContextProvider rendereed', isAuthenticated)
 
   // const setAuthContext = useCallback((userContext: t.TUserContext) => {
   //   console.log(userContext)
@@ -21,8 +22,10 @@ const AuthContextProvider = ({ children }) => {
   const { mutate, ...options } = useUserLoginMutation({
       onSuccess: (e) => {
         toast.success("Login successful! Redirecting...")
-        // router.navigate({ to: '/c/new' })
+        // queryClien
         console.log(e)
+        refetch()
+        router.navigate({ to: '/c/new' })
       },
       onError: (e) => {
         toast.error("Login failed! Please try again later")
@@ -39,22 +42,24 @@ const useLogin = useCallback((params: t.TLoginParams) => {
   }
 }, [mutate, options])
 
-// const useLogout = () => {
-//   return logout
-// }
+  // const memoedValue = useMemo(() => ({
+  //     user: loggedInUser,
+  //     useLogin,
+  //     // logout,
+  //     // redirect,
+  //     isAuthenticated,
+  //   }),
+  //   [loggedInUser, useLogin, isAuthenticated]
+  // )
 
-  const memoedValue = useMemo(() => ({
+  return (
+    <AuthContext.Provider value={{
       user: loggedInUser,
       useLogin,
       // logout,
-      redirect,
-      isAuthenticated,
-    }),
-    [loggedInUser, useLogin, isAuthenticated, redirect]
-  )
-
-  return (
-    <AuthContext.Provider value={memoedValue}>
+      // redirect,
+      isAuthenticated: !!loggedInUser?.id,
+    }}>
       {children}
     </AuthContext.Provider>
   );
