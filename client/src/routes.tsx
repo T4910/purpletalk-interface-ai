@@ -14,6 +14,8 @@ import { QueryClient, QueryObserver } from '@tanstack/react-query'
 import { useAuthContext } from './hooks/use-auth' 
 import { toast } from 'sonner'
 import { useGetUserQueryOptions } from './services/provider/auth'
+import { QueryKeys } from './services/keys'
+import { resendConfirmEmail } from './services'
 
 interface MyRouterContext {
   authContext: ReturnType<typeof useAuthContext>,
@@ -30,9 +32,9 @@ const rootRoute = createRootRouteWithContext<MyRouterContext>()({
   beforeLoad: async ({ context: { queryClient } }) => {
     try {
       const user = await queryClient.fetchQuery(useGetUserQueryOptions);
-      return { isAuthenticated: !!user.id };
+      return { isAuthenticated: !!user.id, isActive: user.is_active, user };
     } catch {
-      return { isAuthenticated: null };
+      return { isAuthenticated: null, isActive: null, user: null };
     }
   }
 })
@@ -41,11 +43,24 @@ const appRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/c',
   component: () => <Outlet />,
-  beforeLoad: async ({ context: { isAuthenticated } }) => {
+  beforeLoad: async ({ context: { isAuthenticated, isActive, user, queryClient }, location, ...a }) => {
     console.log("before load fired approute", isAuthenticated)
 
     if(!isAuthenticated) {
       toast.error("Please sign in to continue");
+      throw redirect({ 
+        to: '/login', 
+        search: {
+          redirect: location.href
+        } 
+      })
+    }
+
+    // Email confirmed
+    if(!isActive){
+      // resendEmailVerification
+      await resendConfirmEmail({ email: user.email })
+      toast.error("Looks like you haven't verified your email. We've sent a new link to your email");
       throw redirect({ 
         to: '/login', 
         search: {

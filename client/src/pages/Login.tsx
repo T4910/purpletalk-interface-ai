@@ -1,17 +1,20 @@
 import { useState } from "react";
-import { Link, useNavigate } from "@tanstack/react-router"; // Changed import and added useNavigate
+import { Link, useNavigate, useSearch } from "@tanstack/react-router"; // Changed import and added useNavigate
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { LogIn, Mail, Key } from "lucide-react";
 import { toast } from "sonner";
-import { useLogin } from "@/hooks/use-login";
+import { useGetUserQuery, useUserLoginMutation } from "@/services/provider/auth";
 
 const Login = () => {
   const [username, setusername] = useState("AnotherAccountbyT");
   const [password, setPassword] = useState("abcde1,,ddfgh1");
-  const { isLoading, login } = useLogin({ username, password })
+  const search = useSearch({ from: '/login' })
+  const { refetch } = useGetUserQuery()
+  const navigate = useNavigate()
+  const { mutate: login, isPending: isLoading } = useUserLoginMutation()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -21,7 +24,19 @@ const Login = () => {
       return;
     }
 
-    login()
+    login({ username, password }, {
+      onSuccess: (e) => {
+        toast.success("Login successful! Redirecting...")
+        console.log(e)
+        refetch()
+        console.log(search.redirect)
+        
+        navigate({ to: search.redirect || '/c/new', replace: true })
+      },
+      onError: (e) => {
+        toast.error("Login failed! Please try again later")
+      }
+    })
   };
 
   return (

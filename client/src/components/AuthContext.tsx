@@ -4,20 +4,17 @@ import { useGetUserQuery, useUserLoginMutation } from '@/services/provider/auth'
 import { toast } from 'sonner';
 import { router } from '@/routes'
 import { AuthContext } from '@/hooks/use-auth';
+import { useSearch } from '@tanstack/react-router';
+import { getRouteApi } from '@tanstack/react-router';
 
 
 const AuthContextProvider = ({ children }) => {
-  // const [isAuthenticated, setisAuthenticated] = useState(false);
-  // const [redirect, setRedirect] = useState<string | null>(null);
-  
   const { data: loggedInUser, isSuccess: isAuthenticated, refetch } = useGetUserQuery()
   console.log('AuthContextProvider rendereed', isAuthenticated)
+  // const redirect = useSearch({ from: '/login' })
+  // const redirect = getRouteApi('/login').useSearch()
+  // console.log(redirect)
 
-  // const setAuthContext = useCallback((userContext: t.TUserContext) => {
-  //   console.log(userContext)
-  //   setisAuthenticated(userContext.isAuthenticated);
-  //   setRedirect(userContext.redirect);
-  // }, [])
 
   const { mutate, ...options } = useUserLoginMutation({
       onSuccess: (e) => {
@@ -25,6 +22,7 @@ const AuthContextProvider = ({ children }) => {
         // queryClien
         console.log(e)
         refetch()
+        
         router.navigate({ to: '/c/new' })
       },
       onError: (e) => {

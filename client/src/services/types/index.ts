@@ -7,7 +7,9 @@ export type TUserContext = {
 export type TUser = {
     id: string
     username: string
-    email: string 
+    email: string ,
+    is_active: string,
+    is_2fa_enabled: string
 }
 
 export type TBackendError = {

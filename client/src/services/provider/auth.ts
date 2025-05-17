@@ -16,7 +16,8 @@ export const useGetUserQueryOptions = queryOptions({
   queryFn: () => dataService.getCurrentUser(), 
   refetchOnMount: false,
   // gcTime: 5 * 60 * 1000,
-  staleTime: 5 * 60 * 1000,
+  staleTime: 4 * 60 * 1000,
+  // staleTime: Infinity,
   retry: false,
   // enabled: false,
 })
