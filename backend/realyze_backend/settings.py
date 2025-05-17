@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'corsheaders', # CORS headers
     
     'authentication', # Your authentication app
+    'chat', # Chat app
     'ai_agent', # AI agent app
 ]
 
@@ -183,7 +184,6 @@ SIMPLE_JWT = {
     'JWT_AUTH_SAMESITE': 'Lax', # Or 'Strict' or 'None' or 'Lax'
     # 'JWT_COOKIE_DOMAIN': domain,
 
-    # Change this back when you're done to not DEBUG
     'JWT_AUTH_SECURE': not DEBUG, # Set to True in production (requires HTTPS)
     'JWT_AUTH_HTTPONLY': True, # Recommended for security
 }

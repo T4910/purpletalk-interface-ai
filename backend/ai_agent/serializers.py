@@ -8,7 +8,7 @@ def validate_session_id_no_symbols(value):
 
 class AgentAPISerializer(serializers.Serializer):
     session_id = serializers.CharField(
-        required=True,
+        required=False,
         validators=[validate_session_id_no_symbols]
     )
     user_input = serializers.CharField(required=True)
