@@ -5,7 +5,7 @@ import * as t from "@/services/types"
 import { router } from '../routes'; // Assuming you have access to your Tanstack Router instance
 
 const api = axios.create({
-  baseURL: import.meta.env.VITE_BACKEND_API_URL || 'https://8000-firebase-realyze-1746969465034.cluster-oayqgyglpfgseqclbygurw4xd4.cloudworkstations.dev', // Replace with your backend API base URL
+  baseURL: import.meta.env.VITE_BACKEND_API_URL || 'http:localhost:8000', // Replace with your backend API base URL
   withCredentials: true, // This is IMPORTANT for sending and receiving cookies
 });
 

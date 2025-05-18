@@ -19,20 +19,28 @@ SECRET_KEY = os.environ.get('SECRET_KEY', 'a-fallback-secret-key-during-developm
 DEBUG = True # Change to False in production
 
 # Frontend URL (used in password reset email)
-FRONTEND_URL = os.environ.get('FRONTEND_URL', 'http://localhost:5173') # Get from env or use fallback for developmenth
+FRONTEND_URL = os.environ.get('FRONTEND_URL', 'http://localhost:8080') # Get from env or use fallback for developmenth
 
 # Backend URL
 HOST_URL = os.environ.get('HOST_URL', 'http://localhost:8000') # Get from env or use fallback for developmenth
 
-ALLOWED_HOSTS = [
-    '127.0.0.1',
-    'https://8000-firebase-realyze-1746969465034.cluster-oayqgyglpfgseqclbygurw4xd4.cloudworkstations.dev',
-    FRONTEND_URL,
-    HOST_URL,
-    'purpletalk-interface-ai.onrender.com'
-] # Add your production domain here
 
-# Application definition
+ALLOWED_HOSTS = [] if DEBUG else [HOST_URL] # Add your production domain here
+
+# CORS Headers Settings
+# CORS_ALLOWED_ORIGINS = [
+#     'https://shiny-space-barnacle-44p6xxqr4vhq6xj-8080.app.github.dev',
+#     os.environ.get('FRONTEND_URL', 'http://localhost:8080'), # Get frontend URL from env or use fallback
+#     *ALLOWED_HOSTS
+# ]
+CORS_ORIGIN_ALLOW_ALL = False
+CORS_ORIGIN_WHITELIST = (
+    'https://shiny-space-barnacle-44p6xxqr4vhq6xj-8080.app.github.dev',
+    os.environ.get('FRONTEND_URL', 'http://localhost:8080'), # Get frontend URL from env or use fallback
+    *ALLOWED_HOSTS,
+)
+
+CORS_ALLOW_CREDENTIALS = True
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -42,9 +50,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     
+    'corsheaders', # CORS headers
     'rest_framework', # Django REST framework
     'rest_framework_simplejwt', # Simple JWT
-    'corsheaders', # CORS headers
     
     'authentication', # Your authentication app
     'chat', # Chat app
@@ -54,12 +62,12 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware', # CORS middleware
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'corsheaders.middleware.CorsMiddleware', # CORS middleware
 ]
 
 ROOT_URLCONF = 'realyze_backend.urls'
@@ -82,10 +90,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'realyze_backend.wsgi.application'
 
-
-# Database
-# https://docs.djangoproject.com/en/4.2/ref/settings/#databases
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
@@ -96,9 +100,6 @@ DATABASES = {
         'PORT': os.environ.get('DATABASE_PORT', ''), # Use empty string as default for port if not set
     }
 }
-
-# Password validation
-# https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -115,10 +116,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
-# Internationalization
-# https://docs.djangoproject.com/en/4.2/topics/i18n/
-
 LANGUAGE_CODE = 'en-us'
 
 TIME_ZONE = 'UTC'
@@ -127,14 +124,7 @@ USE_I18N = True
 
 USE_TZ = True
 
-
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/4.2/howto/static-files/
-
 STATIC_URL = 'static/'
-
-# Default primary key field type
-# https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
@@ -151,10 +141,6 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.IsAuthenticated', # Default to authenticated users
     ) # You can override this per view
 }
-
-# domain = '.cluster-l6vkdperq5ebaqo3qy4ksvoqom.cloudworkstations.dev'
-# SESSION_COOKIE_DOMAIN = domain # Replace with your actual base domain
-# CSRF_COOKIE_DOMAIN = domain
 
 # Simple JWT Settings
 SIMPLE_JWT = {
@@ -193,19 +179,9 @@ SIMPLE_JWT = {
     'JWT_AUTH_SAMESITE': 'Lax', # Or 'Strict' or 'None' or 'Lax'
     # 'JWT_COOKIE_DOMAIN': domain,
 
-    'JWT_AUTH_SECURE': not DEBUG, # Set to True in production (requires HTTPS)
+    'JWT_AUTH_SECURE': True, #not DEBUG, # Set to True in production (requires HTTPS)
     'JWT_AUTH_HTTPONLY': True, # Recommended for security
 }
-
-# CORS Headers Settings
-CORS_ALLOWED_ORIGINS = [
-    os.environ.get('FRONTEND_URL', 'http://localhost:8080'), # Get frontend URL from env or use fallback
-    'https://8080-firebase-realyze-1746969465034.cluster-oayqgyglpfgseqclbygurw4xd4.cloudworkstations.dev'
-    # Add other allowed origins in production
-]
-
-# Or allow all origins for development (not recommended for production)
-CORS_ALLOW_ALL_ORIGINS = True
 
 # Email Settings (for Gmail)
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
