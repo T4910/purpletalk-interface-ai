@@ -18,8 +18,18 @@ SECRET_KEY = os.environ.get('SECRET_KEY', 'a-fallback-secret-key-during-developm
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True # Change to False in production
 
-ALLOWED_HOSTS = [] # Add your production domain here
+# Frontend URL (used in password reset email)
+FRONTEND_URL = os.environ.get('FRONTEND_URL', 'http://localhost:5173') # Get from env or use fallback for developmenth
 
+# Backend URL
+HOST_URL = os.environ.get('HOST_URL', 'http://localhost:8000') # Get from env or use fallback for developmenth
+
+ALLOWED_HOSTS = [
+    '127.0.0.1',
+    'https://8000-firebase-realyze-1746969465034.cluster-oayqgyglpfgseqclbygurw4xd4.cloudworkstations.dev',
+    FRONTEND_URL,
+    HOST_URL
+] # Add your production domain here
 
 # Application definition
 
@@ -194,6 +204,3 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')
 DEFAULT_FROM_EMAIL = os.environ.get('EMAIL_HOST_USER') # Often the same as EMAIL_HOST_USER
-
-# Frontend URL (used in password reset email)
-FRONTEND_URL = os.environ.get('FRONTEND_URL', 'http://localhost:5173') # Get from env or use fallback for development
