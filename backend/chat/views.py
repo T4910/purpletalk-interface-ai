@@ -1,6 +1,6 @@
 from rest_framework import generics, status
 from rest_framework.views import APIView
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from .models import Conversation, Message
 from .serializers import ConversationSerializer, MessageSerializer
@@ -27,8 +27,8 @@ class MessageListView(generics.ListAPIView):
 
     def get_queryset(self):
         # Return messages for a specific conversation belonging to the authenticated user
-        conversation_id = self.kwargs['conversation_id']
-        return Message.objects.filter(conversation__user=self.request.user, conversation_id=conversation_id).order_by('timestamp')
+        session_id = self.kwargs['session_id']
+        return Message.objects.filter(conversation__user=self.request.user, conversation__session_id=session_id).order_by('timestamp')
 
 class AIChatView(APIView):
     """
@@ -85,12 +85,12 @@ class AIChatView(APIView):
             return Response({'error': 'An error occurred with the AI agent.'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
         # 4. Save the AI's response to the database
-        Message.objects.create(
+        message = Message.objects.create(
             conversation=conversation,
             sender='assistant',
             content=agent_reply_content
         )
 
         # 5. Return the AI's response (non-streamed)
-        return Response({'session_id': session_id, 'agent_reply': agent_reply_content}, status=status.HTTP_200_OK)
+        return Response({'session_id': session_id, 'agent_reply': agent_reply_content, 'message_id': message.id, 'message_timestamp': message.timestamp.isoformat(), 'sender': 'assistant'}, status=status.HTTP_200_OK)
 

@@ -1,4 +1,3 @@
-
 import { useRef, useEffect } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { useChatStore } from "@/store/useChatStore";
@@ -8,87 +7,111 @@ import ChatInput from "./ChatInput";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { SidebarTrigger, useSidebar } from "@/components/ui/sidebar";
-import { ChevronRight } from "lucide-react";
-import { usePropertyPanelSidebar } from "./ui/PropertyPanelSidebar";
+import { usePropertyPanelSidebar } from "./ui/usePropertyPanelContext";
+import { useParams } from "@tanstack/react-router";
+import { useConversationQuery } from "@/services/provider/ai";
+import SidebarButton from "./SidebarButton";
 
 interface ChatInterfaceProps {
   chatId?: string;
 }
 
 const ChatInterface = ({ chatId }: ChatInterfaceProps) => {
-  const { messages, addMessage } = useChatStore();
+  const { messages, addMessage, loadPrevMessages } = useChatStore();
   const chatContainerRef = useRef<HTMLDivElement>(null);
-  const { open, setOpen } = useSidebar()
-  const { togglePropertyPanelSidebar: openPropertiesPanel } = usePropertyPanelSidebar()
+  const { open, setOpen } = useSidebar();
+  const { togglePropertyPanelSidebar: openPropertiesPanel } =
+    usePropertyPanelSidebar();
   const { state: sidebarState } = useSidebar();
   const isSidebarCollapsed = sidebarState === "collapsed";
-  
+
+  const { data: prevMessages, isSuccess } = useConversationQuery(chatId);
+  console.log(prevMessages)
+
   // Auto-scroll to bottom when new messages arrive
   useEffect(() => {
     if (chatContainerRef.current) {
-      chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
+      chatContainerRef.current.scrollTop =
+        chatContainerRef.current.scrollHeight;
     }
   }, [messages]);
-  
-  // In a real app, we would fetch chat history based on chatId
+
+  // // In a real app, we would fetch chat history based on chatId
   useEffect(() => {
-    console.log(`Loading chat with ID: ${chatId}`);
     // Here you would fetch messages for this specific chat ID
-  }, [chatId]);
-  
+    if(isSuccess) loadPrevMessages(prevMessages);
+  }, [prevMessages, loadPrevMessages, isSuccess]);
+
   const { mutate: sendMessage, isPending: isLoading } = useMutation({
     mutationFn: aiService.sendMessage,
     onSuccess: (response) => {
       addMessage(response.content, "assistant");
-    }
+    },
   });
-  
+
   const handleSendMessage = (content: string) => {
     addMessage(content, "user");
-    sendMessage(content);
+    sendMessage({ session_id: chatId, user_input: content });
   };
 
   const handleViewProperties = () => {
-    if(open) setOpen(false);
+    if (open) setOpen(false);
     openPropertiesPanel();
   };
-  
+
   return (
-    <div className={cn(
-      "flex-1 flex flex-col h-full overflow-hidden transition-all duration-300",
-      // showProperties ? "w-1/2" : "w-full"
-    )}>
-      <div className="h-14 border-b border-border/50 flex items-center px-4 justify-between">
+    <div
+      className={cn(
+        "flex-1 overflow-auto flex flex-col relative transition-all duration-300"
+        // showProperties ? "w-1/2" : "w-full"
+      )}
+    >
+      <div className="min-h-16  sticky top-0 border-b border-border/50 flex items-center px-4 justify-start gap-4">
+        <SidebarButton offset={true} />
         <div className="flex items-center gap-3">
-            <SidebarTrigger className="mr-2">
-              <ChevronRight className="h-4 w-4" />
-            </SidebarTrigger>
-          <span className="font-medium">Gemini</span>
-          <Badge variant="secondary" className="bg-secondary/30 text-xs font-normal rounded-full">
-            gemini-2.0-flash
+          <span className="font-medium">Realyze</span>
+          <Badge
+            variant="secondary"
+            className="bg-secondary/30 text-xs font-normal rounded-full"
+          >
+            <a
+              href="https://floo.com.ng"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="underline"
+            >
+              By Floo
+            </a>
           </Badge>
         </div>
       </div>
-      
-      <div 
+      <div
         ref={chatContainerRef}
         className="flex-1 overflow-y-auto scrollbar-thin"
       >
         {messages.map((message) => (
-          <ChatMessage 
-            key={message.id} 
-            message={message} 
+          <ChatMessage
+            key={message.id}
+            message={message}
             onViewProperties={handleViewProperties}
           />
         ))}
-        
+
         {isLoading && (
-          <div className="py-4 px-4 md:px-6">
-            <div className="max-w-4xl mx-auto w-full flex gap-4 md:gap-6">
+          <div className="py-4 px-4 md:px-6 mx-auto">
+            <div className="max-w-3xl mx-auto w-full flex gap-4 md:gap-6">
               <div className="flex-shrink-0 mt-1">
                 <div className="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-400 to-purple-600 flex items-center justify-center animate-pulse-gentle">
                   <div className="w-5 h-5 text-white">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
                       <path d="M12 8V4H8" />
                       <rect width="16" height="12" x="4" y="8" rx="2" />
                       <path d="m6 20 4-4" />
@@ -104,10 +127,9 @@ const ChatInterface = ({ chatId }: ChatInterfaceProps) => {
           </div>
         )}
       </div>
-      
+
       <ChatInput onSendMessage={handleSendMessage} isLoading={isLoading} />
-      
-      <div className="text-xs text-center text-muted-foreground py-2 border-t border-border/50">
+      <div className="text-xs bg-chat-bg text-center text-muted-foreground py-2">
         Realyze v0.7.8-rc1 - Every AI for Everyone.
       </div>
     </div>

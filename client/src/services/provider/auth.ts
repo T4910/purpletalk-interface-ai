@@ -6,7 +6,7 @@ import { QueryKeys, MutationKeys } from "../keys";
 
 // QUERY
 export const useGetUserQuery = (
-  config?: Partial<UseQueryOptions<t.TUser>>,
+config?: Partial<UseQueryOptions<t.TUser>>,
 ) => {
   return useQuery<t.TUser>({...useGetUserQueryOptions, ...config});
 };
@@ -22,6 +22,11 @@ export const useGetUserQueryOptions = queryOptions({
   // enabled: false,
 })
 
+// export const useConversationMessages = queryOptions({
+//   queryKey: [QueryKeys.conversationMessages], 
+//   queryFn: () => dataService.getConversationMessages(), 
+//   refetchOnMount: false,
+// })
 
 // MUTATIONS
 export const useUserLoginMutation = (options?: UseMutationOptions<t.TLoginResponse, t.TLoginParams, t.TLoginParams>) => {

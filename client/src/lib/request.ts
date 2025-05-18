@@ -17,6 +17,7 @@ api.interceptors.request.use((req) => {
 api.interceptors.response.use(
     (response) => response,
     async (error: AxiosError) => {
+        console.log(error, "From axios middleware")
         const originalRequest = error.config as AxiosRequestConfig & { _retry?: boolean }; // Cast for retry flag
         
         if (originalRequest.url?.includes('/api/auth/2fa') === true) {

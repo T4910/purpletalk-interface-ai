@@ -72,19 +72,22 @@ export const revokeAllUserKeys = () => `${keysEndpoint}?all=true`;
 
 export const abortRequest = (endpoint: string) => `/api/ask/${endpoint}/abort`;
 
-export const conversationsRoot = '/api/convos/';
+export const conversationsRoot = "/api/chat/conversations";
 
 // export const conversations = (params: q.ConversationListParams) => {
 //   return `${conversationsRoot}${buildQuery(params)}`;
 // };
 
-export const conversationById = (id: string) => `${conversationsRoot}/${id}`;
+export const sendAiMessage = () => `${conversationsRoot}/message/`;
 
-export const genTitle = () => `${conversationsRoot}/gen_title`;
+export const getAllConversations = () => `${conversationsRoot}/`;
+export const conversationById = (id: string) => `${conversationsRoot}/${id}/messages/`;
 
-export const updateConversation = () => `${conversationsRoot}/update`;
+export const genTitle = () => `${conversationsRoot}/gen_title/`;
 
-export const deleteConversation = () => `${conversationsRoot}`;
+export const updateConversation = () => `${conversationsRoot}/update/`;
+
+export const deleteConversation = () => `${conversationsRoot}/`;
 
 export const deleteAllConversation = () => `${conversationsRoot}/all/`;
 

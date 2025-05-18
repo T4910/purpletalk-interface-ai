@@ -5,5 +5,5 @@ urlpatterns = [
     # 
     path('conversations/message/', AIChatView.as_view(), name='chat-ai'),
     path('conversations/', ConversationListView.as_view(), name='conversation-list'),
-    path('conversations/<int:conversation_id>/messages/', MessageListView.as_view(), name='message-list'),
+    path('conversations/<str:session_id>/messages/', MessageListView.as_view(), name='message-list'),
 ]
