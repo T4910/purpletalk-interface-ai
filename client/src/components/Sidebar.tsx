@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { Plus, X, Bookmark, ChevronLeft } from "lucide-react";
@@ -12,18 +11,18 @@ interface SidebarProps {
 const Sidebar = ({ isOpen, setIsOpen }: SidebarProps) => {
   // Group chats by date
   const chatsByDate = {
-    "Today": [
+    Today: [
       { id: 1, title: "What Are You In Pdf" },
-      { id: 2, title: "Image Generation Help" }
+      { id: 2, title: "Image Generation Help" },
     ],
-    "Yesterday": [
+    Yesterday: [
       { id: 3, title: "React Query Tutorial" },
-      { id: 4, title: "Tailwind CSS Tricks" }
-    ]
+      { id: 4, title: "Tailwind CSS Tricks" },
+    ],
   };
-  
+
   return (
-    <div 
+    <div
       className={cn(
         "fixed left-0 top-0 h-full bg-chat-sidebar border-r border-border transition-all duration-300 z-10",
         isOpen ? "w-64" : "w-0 border-r-0"
@@ -36,44 +35,54 @@ const Sidebar = ({ isOpen, setIsOpen }: SidebarProps) => {
             {/* Top section with buttons and close button */}
             <div className="flex items-center justify-between p-4 border-b border-border">
               <div className="flex gap-2">
-                <Button variant="outline" className="justify-start gap-2 bg-chat-sidebar rounded-md">
-                  <Plus className="h-4 w-4" />
+                <Button
+                  variant="outline"
+                  className="justify-start gap-2 bg-chat-sidebar rounded-md"
+                >
+                  <Plus className="size-6" />
                   <span className="text-sm">New chat</span>
                 </Button>
-                <Button variant="outline" className="w-10 p-0 bg-chat-sidebar rounded-md">
-                  <Bookmark className="h-4 w-4" />
+                <Button
+                  variant="outline"
+                  className="w-10 p-0 bg-chat-sidebar rounded-md"
+                >
+                  <Bookmark className="size-6" />
                 </Button>
               </div>
-              <Button 
-                variant="ghost" 
-                size="icon" 
+              <Button
+                variant="ghost"
+                size="icon"
                 className="h-8 w-8"
                 onClick={() => setIsOpen(false)}
               >
-                <X className="h-4 w-4" />
+                <X className="size-6" />
               </Button>
             </div>
-            
+
             {/* Chat list */}
             <div className="flex-1 overflow-auto scrollbar-thin p-2">
               {Object.entries(chatsByDate).map(([date, chats]) => (
                 <div key={date} className="mb-4">
-                  <div className="text-xs text-muted-foreground font-medium mb-2 px-3">{date}</div>
+                  <div className="text-xs text-muted-foreground font-medium mb-2 px-3">
+                    {date}
+                  </div>
                   <div className="space-y-1">
-                    {chats.map(chat => (
-                      <Button 
+                    {chats.map((chat) => (
+                      <Button
                         key={chat.id}
-                        variant="ghost" 
+                        variant="ghost"
                         className="w-full justify-start text-sm font-normal hover:bg-secondary/40 px-3 rounded-lg"
                       >
-                        <div className="flex-1 text-left truncate">{chat.title}</div>
+                        <div className="flex-1 text-left truncate">
+                          {chat.title}
+                        </div>
                       </Button>
                     ))}
                   </div>
                 </div>
               ))}
             </div>
-            
+
             {/* User section */}
             <div className="p-4 border-t border-border">
               <div className="flex items-center gap-3">
@@ -86,16 +95,16 @@ const Sidebar = ({ isOpen, setIsOpen }: SidebarProps) => {
           </div>
         </>
       )}
-      
+
       {/* Sidebar Trigger (only visible when sidebar is closed) */}
       {!isOpen && (
-        <Button 
-          variant="ghost" 
-          size="icon" 
+        <Button
+          variant="ghost"
+          size="icon"
           className="absolute top-4 left-4 bg-secondary/50 h-8 w-8 rounded-full"
           onClick={() => setIsOpen(true)}
         >
-          <ChevronLeft className="h-4 w-4" />
+          <ChevronLeft className="size-6" />
         </Button>
       )}
     </div>

@@ -1,36 +1,42 @@
 import { useState } from "react";
-import { Link, useNavigate } from "@tanstack/react-router"; // Changed import and added useNavigate
+import { Link, useNavigate, useSearch } from "@tanstack/react-router"; // Changed import and added useNavigate
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { LogIn, Mail, Key } from "lucide-react";
 import { toast } from "sonner";
+import { useGetUserQuery, useUserLoginMutation } from "@/services/provider/auth";
 
 const Login = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-  const navigate = useNavigate(); // Get the navigate function
+  const [username, setusername] = useState("AnotherAccountbyT");
+  const [password, setPassword] = useState("abcde1,,ddfgh1");
+  const search = useSearch({ from: '/login' })
+  const { refetch } = useGetUserQuery()
+  const navigate = useNavigate()
+  const { mutate: login, isPending: isLoading } = useUserLoginMutation()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!email || !password) {
+    if (!username || !password) {
       toast.error("Please fill in all fields");
       return;
     }
 
-    setIsLoading(true);
-    
-    // This is a mock login - in a real app, this would call an API
-    setTimeout(() => {
-      setIsLoading(false);
-      // Simulate successful login
-      toast.success("Login successful! Redirecting...");
-      // Use navigate from Tanstack Router
-      navigate({ to: "/2fa" }); // Changed navigation method
-    }, 1500);
+    login({ username, password }, {
+      onSuccess: (e) => {
+        toast.success("Login successful! Redirecting...")
+        console.log(e)
+        refetch()
+        console.log(search.redirect)
+        
+        navigate({ to: search.redirect || '/c/new', replace: true })
+      },
+      onError: (e) => {
+        toast.error("Login failed! Please try again later")
+      }
+    })
   };
 
   return (
@@ -48,22 +54,22 @@ const Login = () => {
               Sign in to your account
             </CardTitle>
             <CardDescription>
-              Enter your email and password to sign in
+              Enter your username and password to sign in
             </CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
+                <Label htmlFor="username">username</Label>
                 <div className="relative">
                   <Mail className="absolute left-3 top-2.5 h-5 w-5 text-muted-foreground" />
                   <Input
-                    id="email"
-                    placeholder="you@example.com"
-                    type="email"
-                    autoComplete="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                    id="username"
+                    placeholder="yourusername"
+                    type="text"
+                    autoComplete="username"
+                    value={username}
+                    onChange={(e) => setusername(e.target.value)}
                     className="pl-10"
                     required
                   />

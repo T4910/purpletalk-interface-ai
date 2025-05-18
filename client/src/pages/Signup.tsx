@@ -1,19 +1,22 @@
 import { useState } from "react";
-import { Link, useNavigate } from "@tanstack/react-router"; // Changed import and added useNavigate
+import { Link,   } from "@tanstack/react-router"; // Changed import and added useNavigate
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { UserPlus, Mail, User, Key } from "lucide-react";
 import { toast } from "sonner";
+import { useUserRegisterMutation } from "@/services/provider/auth";
+import { useNavigate } from "@tanstack/react-router";
 
 const Signup = () => {
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [passwordConfirm, setPasswordConfirm] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-  const navigate = useNavigate(); // Get the navigate function
+  const [name, setName] = useState("AnotherAccountbyT");
+  const [email, setEmail] = useState("taiwo.emmanuel@lmu.edu.ng");
+  const [password, setPassword] = useState("abcde1,,ddfgh1");
+  const [passwordConfirm, setPasswordConfirm] = useState("abcde1,,ddfgh1");
+  const navigate = useNavigate()
+
+  const { mutate: register, isPending: isLoading } = useUserRegisterMutation()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -33,17 +36,22 @@ const Signup = () => {
       return;
     }
 
-    setIsLoading(true);
-    
-    // This is a mock signup - in a real app, this would call an API
-    setTimeout(() => {
-      setIsLoading(false);
-      toast.success("Account created! Redirecting to login...");
-      setTimeout(() => {
-        // Use navigate from Tanstack Router
-        navigate({ to: "/login" }); // Changed navigation method
-      }, 1500);
-    }, 1500);
+    register({ 
+      username: name, 
+      password2: passwordConfirm, 
+      password, 
+      email 
+    }, {
+      onSuccess: (res) => {
+        toast.success(`Account created! We've sent a confirmation link to your email: ${res.email}`);
+        navigate({ to: "/login" })
+        console.log(res)
+      },
+      onError: (e) => {
+        toast.error("Registration failesd!")
+        // console.log(e.response.data, 23982)
+      }
+    })
   };
 
   return (
