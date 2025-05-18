@@ -28,7 +28,8 @@ ALLOWED_HOSTS = [
     '127.0.0.1',
     'https://8000-firebase-realyze-1746969465034.cluster-oayqgyglpfgseqclbygurw4xd4.cloudworkstations.dev',
     FRONTEND_URL,
-    HOST_URL
+    HOST_URL,
+    'purpletalk-interface-ai.onrender.com'
 ] # Add your production domain here
 
 # Application definition
