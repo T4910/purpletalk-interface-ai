@@ -1,9 +1,16 @@
 import { useState } from "react";
-import { Link,   } from "@tanstack/react-router"; // Changed import and added useNavigate
+import { Link } from "@tanstack/react-router"; // Changed import and added useNavigate
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { UserPlus, Mail, User, Key } from "lucide-react";
 import { toast } from "sonner";
 import { useUserRegisterMutation } from "@/services/provider/auth";
@@ -14,13 +21,13 @@ const Signup = () => {
   const [email, setEmail] = useState("taiwo.emmanuel@lmu.edu.ng");
   const [password, setPassword] = useState("abcde1,,ddfgh1");
   const [passwordConfirm, setPasswordConfirm] = useState("abcde1,,ddfgh1");
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
-  const { mutate: register, isPending: isLoading } = useUserRegisterMutation()
+  const { mutate: register, isPending: isLoading } = useUserRegisterMutation();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!name || !email || !password) {
       toast.error("Please fill in all fields");
       return;
@@ -36,22 +43,27 @@ const Signup = () => {
       return;
     }
 
-    register({ 
-      username: name, 
-      password2: passwordConfirm, 
-      password, 
-      email 
-    }, {
-      onSuccess: (res) => {
-        toast.success(`Account created! We've sent a confirmation link to your email: ${res.email}`);
-        navigate({ to: "/login" })
-        console.log(res)
+    register(
+      {
+        username: name,
+        password2: passwordConfirm,
+        password,
+        email,
       },
-      onError: (e) => {
-        toast.error("Registration failesd!")
-        // console.log(e.response.data, 23982)
+      {
+        onSuccess: (res) => {
+          toast.success(
+            `Account created! We've sent a confirmation link to your email: ${res.email}`
+          );
+          navigate({ to: "/login", from: "/signup" });
+          console.log(res);
+        },
+        onError: (e) => {
+          toast.error("Registration failesd!");
+          // console.log(e.response.data, 23982)
+        },
       }
-    })
+    );
   };
 
   return (
@@ -59,10 +71,14 @@ const Signup = () => {
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
           {/* Changed Link component and props */}
-          <Link to="/" className="text-3xl font-bold text-primary underline">Realyze</Link>
-          <p className="text-muted-foreground mt-2">Find your dream property with AI</p>
+          <Link to="/" className="text-3xl font-bold text-primary underline">
+            Realyze
+          </Link>
+          <p className="text-muted-foreground mt-2">
+            Find your dream property with AI
+          </p>
         </div>
-        
+
         <Card className="border-muted glass-morphism bg-secondary/20">
           <CardHeader>
             <CardTitle className="text-xl flex items-center justify-center gap-2">
@@ -91,7 +107,7 @@ const Signup = () => {
                   />
                 </div>
               </div>
-              
+
               <div className="space-y-2">
                 <Label htmlFor="email">Email</Label>
                 <div className="relative">
@@ -108,7 +124,7 @@ const Signup = () => {
                   />
                 </div>
               </div>
-              
+
               <div className="space-y-2">
                 <Label htmlFor="password">Password</Label>
                 <div className="relative">
@@ -125,7 +141,7 @@ const Signup = () => {
                   />
                 </div>
               </div>
-              
+
               <div className="space-y-2">
                 <Label htmlFor="passwordConfirm">Confirm Password</Label>
                 <div className="relative">
@@ -142,7 +158,7 @@ const Signup = () => {
                   />
                 </div>
               </div>
-              
+
               <Button type="submit" className="w-full" disabled={isLoading}>
                 {isLoading ? "Creating account..." : "Sign up"}
               </Button>
@@ -153,7 +169,10 @@ const Signup = () => {
               <p className="text-sm text-muted-foreground">
                 Already have an account?{" "}
                 {/* Changed Link component and props */}
-                <Link to="/login" className="text-primary underline hover:underline">
+                <Link
+                  to="/login"
+                  className="text-primary underline hover:underline"
+                >
                   Sign in
                 </Link>
               </p>

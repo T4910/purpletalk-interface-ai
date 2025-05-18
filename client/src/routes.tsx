@@ -24,8 +24,10 @@ import { resendConfirmEmail } from "./services";
 import ChatLayout from "./components/ChatLayout";
 import {
   useConversationsOptions,
-  useConversationOptions,
+  getConversationOptions,
 } from "./services/provider/ai";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 
 interface MyRouterContext {
   authContext: ReturnType<typeof useAuthContext>;
@@ -37,9 +39,15 @@ const rootRoute = createRootRouteWithContext<MyRouterContext>()({
     <>
       {/* This is the root layout. You can add a navigation bar or footer here */}
       <Outlet />
+      <TanStackRouterDevtools />
+      <ReactQueryDevtools />
     </>
   ),
-  beforeLoad: async ({ context: { queryClient } }) => {
+  beforeLoad: async ({ context: { queryClient }, ...params }) => {
+    console.log(params, 777);
+    // if (!location.pathname.startsWith("/c"))
+    //   return { isAuthenticated: null, isActive: null, user: null };
+
     try {
       const user = await queryClient.fetchQuery(useGetUserQueryOptions);
       return { isAuthenticated: !!user.id, isActive: user.is_active, user };
@@ -53,7 +61,7 @@ const appRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/c",
   component: ChatLayout,
-  loader: ({ context }) =>
+  loader: async ({ context }) =>
     context.queryClient.ensureQueryData(useConversationsOptions),
   beforeLoad: async ({
     context: { isAuthenticated, isActive, user, queryClient },
@@ -105,9 +113,22 @@ const chatViewRoute = createRoute({
   getParentRoute: () => appRoute,
   path: "$id",
   component: ChatView,
-  loader: ({ context, params }) => {
-    console.log(params.id, 323223);
-    context.queryClient.ensureQueryData(useConversationOptions(params.id));
+  // loader: async ({ context, params }) => {
+  //   console.log(params.id, 323223);
+  //   try {
+  //     return await context.queryClient.fetchQuery(
+  //       getConversationOptions(params.id)
+  //     );
+  //   } catch {
+  //     return [];
+  //   }
+  // },
+  loader: async ({ context, params }) => {
+    context.queryClient.prefetchQuery(getConversationOptions(params.id));
+  },
+  onError: () => {
+    redirect({ to: "/c/new" });
+    toast.error("Invalid chat ID");
   },
 });
 

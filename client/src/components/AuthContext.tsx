@@ -9,7 +9,9 @@ import { getRouteApi } from '@tanstack/react-router';
 
 
 const AuthContextProvider = ({ children }) => {
-  const { data: loggedInUser, isSuccess: isAuthenticated, refetch } = useGetUserQuery()
+  const { data: loggedInUser, isSuccess: isAuthenticated, refetch } = useGetUserQuery({
+    enabled: false
+  })
   console.log('AuthContextProvider rendereed', isAuthenticated)
   // const redirect = useSearch({ from: '/login' })
   // const redirect = getRouteApi('/login').useSearch()

@@ -22,10 +22,13 @@ export const useConversationQuery = (
   session_id: string,
   config?: Partial<UseQueryOptions<t.TMessage[]>>
 ) => {
-  return useQuery<t.TMessage[]>({ ...useConversationOptions(session_id), ...config });
+  return useQuery<t.TMessage[]>({
+    ...getConversationOptions(session_id),
+    ...config,
+  });
 };
 
-export const useConversationOptions = (session_id: string) =>
+export const getConversationOptions = (session_id: string) =>
   queryOptions({
     queryKey: [QueryKeys.conversation, session_id],
     queryFn: () => dataService.getMessagesFromConversations(session_id),
