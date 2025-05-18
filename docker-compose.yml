@@ -1,0 +1,71 @@
+# docker-compose.yml
+
+# version: '3.8'
+
+services:
+  db:
+    image: postgres:13-alpine
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    environment:
+      POSTGRES_DB: ${DATABASE_NAME}
+      POSTGRES_USER: ${DATABASE_USER}
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
+    ports:
+      - "5432:5432" # Optional: Map host port for direct access
+
+  redis:
+    image: redis:6.2-alpine
+    ports:
+      - "6379:6379" # Optional: Map host port for direct access
+
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - ./backend:/app # Mount backend code for easier development (hot-reloading)
+    ports:
+      - "8000:8000"
+    environment:
+      # Pass environment variables from the host's .env file
+      SECRET_KEY: ${SECRET_KEY}
+      DATABASE_NAME: ${DATABASE_NAME}
+      DATABASE_USER: ${DATABASE_USER}
+      DATABASE_PASSWORD: ${DATABASE_PASSWORD}
+      DATABASE_HOST: db # Use the service name as the hostname
+      DATABASE_PORT: 5432
+      EMAIL_HOST_USER: ${EMAIL_HOST_USER}
+      EMAIL_HOST_PASSWORD: ${EMAIL_HOST_PASSWORD}
+      FRONTEND_URL: https://frontend:8080 # Or your frontend service name/port
+      # Add other backend environment variables here
+      REDIS_HOST: redis # Use the service name as the hostname
+      REDIS_PORT: 6379
+    depends_on:
+      - db
+      - redis
+    # volumes: # Use this for production to not mount code
+    #   - static_volume:/app/static
+    #   - media_volume:/app/media
+
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:80" # Map host port 5173 to container port 80 (nginx default)
+    volumes:
+      - .:/app # Mount frontend code for easier development (if not using build stage only)
+      - /app/node_modules # Avoid overwriting node_modules with host volume
+    depends_on:
+      - backend # Frontend depends on backend being available
+
+volumes:
+  postgres_data: # Named volume for PostgreSQL data persistence
+  # static_volume: # Optional: For serving Django static files in production
+  # media_volume:  # Optional: For serving Django media files in production
+
+# networks:
+#   default: # Optional: Define a custom bridge network if needed
+#     driver: bridge
