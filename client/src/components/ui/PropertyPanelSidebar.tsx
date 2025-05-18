@@ -11,33 +11,11 @@ import { usePropertiesPanel } from "@/hooks/usePropertiesPanel";
 import { Button } from "@/components/ui/button"
 // import { Drawer } from "vaul"
 import { Drawer, DrawerTrigger, DrawerContent, DrawerHeader, DrawerTitle, DrawerDescription, DrawerFooter, DrawerClose } from "./drawer"
+import { PropertyPanelSidebarContext, TPropertyPanelSidebarContext, usePropertyPanelSidebar } from "./usePropertyPanelContext"
 
-const PropertyPanelSIDEBAR_WIDTH = "40rem"
 const PropertyPanelSIDEBAR_WIDTH_MOBILE = "0rem"
-const PropertyPanelSIDEBAR_WIDTH_ICON = "3rem"
 const PropertyPanelSIDEBAR_KEYBOARD_SHORTCUT = "p"
 
-type PropertyPanelSidebarContext = {
-  state: "expanded" | "collapsed"
-  propertyPanelopen: boolean
-  propertyPanelsetOpen: (open: boolean) => void
-  propertyPanelopenMobile: boolean
-  propertyPanelsetOpenMobile: (open: boolean) => void
-  propertyPanelisMobile: boolean
-  togglePropertyPanelSidebar: () => void
-  id: string
-}
-
-const PropertyPanelSidebarContext = React.createContext<PropertyPanelSidebarContext | null>(null)
-
-export function usePropertyPanelSidebar() {
-  const context = React.useContext(PropertyPanelSidebarContext)
-  if (!context) {
-    throw new Error("usePropertyPanelSidebar must be used within a PropertyPanelSidebarProvider.")
-  }
-
-  return context
-}
 
 const PropertyPanelSidebarProvider = React.forwardRef<
   HTMLDivElement,
@@ -50,7 +28,7 @@ const PropertyPanelSidebarProvider = React.forwardRef<
 >(
   (
     {
-      propertyPaneldefaultOpen = true,
+      propertyPaneldefaultOpen = false,
       propertyPanelopen: openProp,
       propertyPanelonOpenChange: setOpenProp,
       className,
@@ -109,7 +87,7 @@ const PropertyPanelSidebarProvider = React.forwardRef<
     // This makes it easier to style the PropertyPanelsidebar with Tailwind classes.
     const state = open ? "expanded" : "collapsed"
 
-    const contextValue = React.useMemo<PropertyPanelSidebarContext>(
+    const contextValue = React.useMemo<TPropertyPanelSidebarContext>(
       () => ({
         state,
         propertyPanelopen: open,
@@ -129,8 +107,6 @@ const PropertyPanelSidebarProvider = React.forwardRef<
           <div
             style={
               {
-                "--PropertyPanelsidebar-width": PropertyPanelSIDEBAR_WIDTH,
-                "--PropertyPanelsidebar-width-icon": PropertyPanelSIDEBAR_WIDTH_ICON,
                 ...style,
               } as React.CSSProperties
             }
@@ -171,24 +147,12 @@ const PropertyPanelSidebar = React.forwardRef<
   ) => {
     const { propertyPanelisMobile, state, propertyPanelopenMobile, propertyPanelsetOpenMobile } = usePropertyPanelSidebar()
 
-    if (collapsible === "none") {
-      return (
-        <div
-          className={cn(
-            "flex h-full w-[--PropertyPanelsidebar-width] flex-col bg-PropertyPanelsidebar text-PropertyPanelsidebar-foreground",
-            className
-          )}
-          ref={ref}
-          {...props}
-        >
-          {children}
-        </div>
-      )
-    }
-
     if (propertyPanelisMobile) {
       return (
-        <Drawer open={propertyPanelopenMobile} onOpenChange={propertyPanelsetOpenMobile}>
+        <Drawer
+          open={propertyPanelopenMobile}
+          onOpenChange={propertyPanelsetOpenMobile}
+        >
           {/* <DrawerTrigger>Open</DrawerTrigger> */}
           <DrawerContent>
             {/* <DrawerHeader>
@@ -201,27 +165,10 @@ const PropertyPanelSidebar = React.forwardRef<
                 <Button variant="outline">Cancel</Button>
               </DrawerClose>
             </DrawerFooter> */}
-            <div className="flex h-[90dvh] w-full flex-col">{children}</div>
+            <div className="flex h-[90dvh] w-[100dvw] mx-auto flex-col">{children}</div>
           </DrawerContent>
         </Drawer>
-      )
-      return (
-        <Sheet open={propertyPanelopenMobile} onOpenChange={propertyPanelsetOpenMobile} {...props}>
-          <SheetContent
-            data-PropertyPanelsidebar="PropertyPanelsidebar"
-            data-mobile="true"
-            className="w-[--PropertyPanelsidebar-width] bg-PropertyPanelsidebar p-0 text-PropertyPanelsidebar-foreground [&>button]:hidden"
-            style={
-              {
-                "--PropertyPanelsidebar-width": PropertyPanelSIDEBAR_WIDTH_MOBILE,
-              } as React.CSSProperties
-            }
-            side={side}
-          >
-            <div className="flex h-full w-full flex-col">{children}</div>
-          </SheetContent>
-        </Sheet>
-      )
+      );
     }
 
     return (
@@ -236,24 +183,14 @@ const PropertyPanelSidebar = React.forwardRef<
         {/* This is what handles the PropertyPanelsidebar gap on desktop */}
         <div
           className={cn(
-            "duration-200 relative h-svh w-[--PropertyPanelsidebar-width] bg-transparent transition-[width] ease-linear",
+            "duration-200 relative h-svh w-[70vw] bg-transparent transition-[width] ease-linear",
             "group-data-[collapsible=offcanvas]:w-0",
             "group-data-[side=right]:rotate-180",
-            variant === "floating" || variant === "inset"
-              ? "group-data-[collapsible=icon]:w-[calc(var(--PropertyPanelsidebar-width-icon)_+_theme(spacing.4))]"
-              : "group-data-[collapsible=icon]:w-[--PropertyPanelsidebar-width-icon]"
           )}
         />
         <div
           className={cn(
-            "duration-200 fixed inset-y-0 z-10 hidden h-svh w-[--PropertyPanelsidebar-width] transition-[left,right,width] ease-linear md:flex",
-            side === "left"
-              ? "left-0 group-data-[collapsible=offcanvas]:left-[calc(var(--PropertyPanelsidebar-width)*-1)]"
-              : "right-0 group-data-[collapsible=offcanvas]:right-[calc(var(--PropertyPanelsidebar-width)*-1)]",
-            // Adjust the padding for floating and inset variants.
-            variant === "floating" || variant === "inset"
-              ? "p-2 group-data-[collapsible=icon]:w-[calc(var(--PropertyPanelsidebar-width-icon)_+_theme(spacing.4)_+2px)]"
-              : "group-data-[collapsible=icon]:w-[--PropertyPanelsidebar-width-icon] group-data-[side=left]:border-r group-data-[side=right]:border-l",
+            "duration-200 fixed inset-y-0 z-10 hidden h-svh w-[70vw] transition-[left,right,width] ease-linear md:flex border-l",
             className
           )}
           {...props}

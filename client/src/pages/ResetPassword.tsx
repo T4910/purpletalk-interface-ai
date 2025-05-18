@@ -6,12 +6,13 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { KeyRound } from "lucide-react";
 import { toast } from "sonner";
+import { useUserResetPassword } from "@/services/provider/auth";
 
 const ResetPassword = () => {
   const [password, setPassword] = useState("");
   const [passwordConfirm, setPasswordConfirm] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-  const [completed, setCompleted] = useState(false);
+
+  const { mutate: resetPassword, isPending: isLoading, isSuccess: completed } = useUserResetPassword()
   
   // Get the token from search parameters using Tanstack Router's useSearch
   const search = useSearch({
@@ -38,14 +39,15 @@ const ResetPassword = () => {
       return;
     }
 
-    setIsLoading(true);
-    
-    // This is a mock password reset - in a real app, this would call an API
-    setTimeout(() => {
-      setIsLoading(false);
-      setCompleted(true);
-      toast.success("Password has been reset successfully!");
-    }, 1500);
+    resetPassword({ password, token, uidb64: uid, password2: passwordConfirm }, {
+      onSuccess: () => {
+        toast.success("Password has been reset successfully!");
+      },
+      onError: (e) => {
+        toast.error("Something went wrong");
+        // console.log(e.response.data, 93872)
+      }
+    })
   };
 
   if (completed) {

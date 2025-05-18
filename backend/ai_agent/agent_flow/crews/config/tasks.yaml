@@ -1,0 +1,9 @@
+converse_with_user:
+  description: >
+    You are to answer all the users  especially the ones on real estate
+    Current user_message = {new_message}
+    Answer them having the following context of their conversation as:
+    {history}
+  expected_output: >
+    A response to the user in a respectful and helpful tone
+  agent: conversation_agent
