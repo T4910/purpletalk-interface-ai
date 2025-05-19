@@ -3,34 +3,32 @@ services:
     build:
       context: .
       dockerfile: backend/Dockerfile
-    command: python manage.py runserver 0.0.0.0:8000
-    volumes:
-      - ./backend:/app
     ports:
       - "8000:8000"
     environment:
-      - SECRET_KEY=${SECRET_KEY}
-      - DATABASE_NAME=${DATABASE_NAME}
-      - DATABASE_USER=${DATABASE_USER}
-      - DATABASE_PASSWORD=${DATABASE_PASSWORD}
-      - DATABASE_HOST=postgres-service
-      - DATABASE_PORT=5432
-      - EMAIL_HOST_USER=${EMAIL_HOST_USER}
-      - EMAIL_HOST_PASSWORD=${EMAIL_HOST_PASSWORD}
-      - FRONTEND_URL=${FRONTEND_URL}
-      - HOST_URL=${HOST_URL}
-      - OPENAI_API_KEY=${OPENAI_API_KEY}
-      - ASTRA_DB_APPLICATION_TOKEN=${ASTRA_DB_APPLICATION_TOKEN}
-      - ASTRA_DB_API_ENDPOINT=${ASTRA_DB_API_ENDPOINT}
-      - REDIS_HOST=redis-service
-      - REDIS_PORT=6379
+      PRODUCTION: ${PRODUCTION:-0}
+      SECRET_KEY: ${SECRET_KEY}
+      DATABASE_NAME: ${DATABASE_NAME}
+      DATABASE_USER: ${DATABASE_USER}
+      DATABASE_PASSWORD: ${DATABASE_PASSWORD}
+      DATABASE_HOST: ${DATABASE_HOST}
+      DATABASE_PORT: 5432
+      EMAIL_HOST_USER: ${EMAIL_HOST_USER}
+      EMAIL_HOST_PASSWORD: ${EMAIL_HOST_PASSWORD}
+      FRONTEND_URL: ${FRONTEND_URL}
+      HOST_URL: ${HOST_URL}
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+      ASTRA_DB_APPLICATION_TOKEN: ${ASTRA_DB_APPLICATION_TOKEN}
+      ASTRA_DB_API_ENDPOINT: ${ASTRA_DB_API_ENDPOINT}
+      REDIS_HOST: redis-service
+      REDIS_PORT: 6379
     networks:
       - app-network
     depends_on:
       redis-service:
         condition: service_healthy
-      postgres-service:
-        condition: service_healthy
+    volumes:
+      - ./backend:/app
 
   frontend:
     build:
@@ -41,7 +39,7 @@ services:
     ports:
       - "8080:80"
     volumes:
-      - .:/app
+      - ./client:/app
       - /app/node_modules
     networks:
       - app-network
@@ -49,9 +47,7 @@ services:
       - backend
 
   redis-service:
-    image: redis:6.2
-    # ports:
-    #   - "6379:6379"
+    image: redis:6.2-alpine
     networks:
       - app-network
     healthcheck:
@@ -60,26 +56,8 @@ services:
       timeout: 5s
       retries: 5
 
-  postgres-service:
-    image: postgres:16.4
-    # ports:
-    #   - "5432:5432"
-    environment:
-      - POSTGRES_PASSWORD=${DATABASE_PASSWORD}
-      - POSTGRES_DB=${DATABASE_NAME}
-      - POSTGRES_USER=${DATABASE_USER}
-    volumes:
-      - postgres_data_store:/var/lib/postgresql/data
-    networks:
-      - app-network
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${DATABASE_USER} -d ${DATABASE_NAME}"]
-      interval: 5s
-      timeout: 5s
-      retries: 5
-
-volumes:
-  postgres_data_store:
+# volumes:
+#   postgres_data_store:
 
 networks:
   app-network:

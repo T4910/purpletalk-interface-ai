@@ -8,38 +8,21 @@ load_dotenv() # Load variables from .env file
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
-
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.environ.get('SECRET_KEY', 'a-fallback-secret-key-during-development-only') # Get from environment or use fallback
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True # Change to False in production
+DEBUG = not os.environ.get('PRODUCTION', True) # Change to False in production
 
-# Frontend URL (used in password reset email)
+# Frontend URL (used in password reset email) & Backend URL
 FRONTEND_URL = os.environ.get('FRONTEND_URL', 'http://localhost:8080') # Get from env or use fallback for developmenth
-
-# Backend URL
 HOST_URL = os.environ.get('HOST_URL', 'http://localhost:8000') # Get from env or use fallback for developmenth
 
+ALLOWED_HOSTS = [HOST_URL, 'http://localhost:8000'] # Add your production domain here
 
-ALLOWED_HOSTS = [] if DEBUG else [HOST_URL] # Add your production domain here
-
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 # CORS Headers Settings
-# CORS_ALLOWED_ORIGINS = [
-#     'https://shiny-space-barnacle-44p6xxqr4vhq6xj-8080.app.github.dev',
-#     os.environ.get('FRONTEND_URL', 'http://localhost:8080'), # Get frontend URL from env or use fallback
-#     *ALLOWED_HOSTS
-# ]
-CORS_ORIGIN_ALLOW_ALL = False
-CORS_ORIGIN_WHITELIST = (
-    'https://shiny-space-barnacle-44p6xxqr4vhq6xj-8080.app.github.dev',
-    os.environ.get('FRONTEND_URL', 'http://localhost:8080'), # Get frontend URL from env or use fallback
-    *ALLOWED_HOSTS,
-)
-
+CORS_ALLOWED_ORIGINS = [os.environ.get("FRONTEND_URL"), 'http://localhost:8080']
 CORS_ALLOW_CREDENTIALS = True
 
 INSTALLED_APPS = [
