@@ -6,4 +6,7 @@ converse_with_user:
     {history}
   expected_output: >
     A response to the user in a respectful and helpful tone
+    A concise response to the user's question containing only the final answer.
+    Do not show any internal thoughts or reasoning process.
+    Structure: Final Answer: [your response here]
   agent: conversation_agent
