@@ -28,7 +28,7 @@ ALLOWED_HOSTS = [HOST_DOMAIN, 'localhost', '0.0.0.0', '127.0.0.1'] # Add your pr
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 
 # CORS Headers Settings
-CORS_ALLOWED_ORIGINS = [FRONTEND_URL, 'http://0.0.0.0:8080', 'http://127.0.0.1:8080']
+CORS_ALLOWED_ORIGINS = ['http://0.0.0.0:8080', 'http://127.0.0.1:8080']
 CORS_ALLOW_CREDENTIALS = True
 
 INSTALLED_APPS = [
