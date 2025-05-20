@@ -54,9 +54,6 @@ services:
       timeout: 5s
       retries: 5
 
-# volumes:
-#   postgres_data_store:
-
 networks:
   app-network:
     driver: bridge

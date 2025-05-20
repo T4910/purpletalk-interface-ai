@@ -5,6 +5,11 @@ from datetime import timedelta
 
 load_dotenv() # Load variables from .env file
 
+# Library compatibility issues patch fix
+__import__('pysqlite3')
+import sys
+sys.modules['sqlite3'] = sys.modules.pop('pysqlite3')
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -16,13 +21,14 @@ DEBUG = not os.environ.get('PRODUCTION', True) # Change to False in production
 
 # Frontend URL (used in password reset email) & Backend URL
 FRONTEND_URL = os.environ.get('FRONTEND_URL', 'http://localhost:8080') # Get from env or use fallback for developmenth
-HOST_URL = os.environ.get('HOST_URL', 'http://localhost:8000') # Get from env or use fallback for developmenth
+HOST_DOMAIN = os.environ.get('HOST_DOMAIN', 'localhost')
 
-ALLOWED_HOSTS = [HOST_URL, 'http://localhost:8000'] # Add your production domain here
+ALLOWED_HOSTS = [HOST_DOMAIN, 'localhost', '0.0.0.0', '127.0.0.1'] # Add your production domain here
 
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+
 # CORS Headers Settings
-CORS_ALLOWED_ORIGINS = [os.environ.get("FRONTEND_URL"), 'http://localhost:8080']
+CORS_ALLOWED_ORIGINS = [FRONTEND_URL, 'http://0.0.0.0:8080', 'http://127.0.0.1:8080']
 CORS_ALLOW_CREDENTIALS = True
 
 INSTALLED_APPS = [
@@ -107,7 +113,10 @@ USE_I18N = True
 
 USE_TZ = True
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
+# STATICFILES_DIRS = [
+#     os.path.join(BASE_DIR, "static"),
+# ]
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
