@@ -27,6 +27,7 @@ ALLOWED_HOSTS = [host.strip() for host in HOST_DOMAIN] + \
                     [
                         'localhost',
                         '127.0.0.1',
+                        '0.0.0.0',
                         'backend',
                         'nginx',
                         FRONTEND_URL.replace('https://','').replace('http://','')
@@ -128,7 +129,8 @@ USE_I18N = True
 
 USE_TZ = True
 
-STATIC_URL = 'static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATIC_URL = '/static/'
 # STATICFILES_DIRS = [
 #     os.path.join(BASE_DIR, "static"),
 # ]
