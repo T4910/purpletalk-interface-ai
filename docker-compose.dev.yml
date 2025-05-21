@@ -38,9 +38,9 @@ services:
           cpus: '0.5'
           memory: 512MiB
     healthcheck:
-      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/')"]
-      interval: 5s
-      timeout: 5s
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://0.0.0.0:8000/')"]
+      interval: 20s
+      timeout: 10s
       retries: 3
     # Enable volumes for development only
     volumes:
