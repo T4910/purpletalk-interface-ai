@@ -21,14 +21,29 @@ DEBUG = not os.environ.get('PRODUCTION', True) # Change to False in production
 
 # Frontend URL (used in password reset email) & Backend URL
 FRONTEND_URL = os.environ.get('FRONTEND_URL', 'http://localhost:8080') # Get from env or use fallback for developmenth
-HOST_DOMAIN = os.environ.get('HOST_DOMAIN', 'localhost')
 
-ALLOWED_HOSTS = [HOST_DOMAIN, 'localhost', '0.0.0.0', '127.0.0.1'] # Add your production domain here
+HOST_DOMAIN = os.environ.get('HOST_DOMAIN', 'localhost,127.0.0.1,backend,nginx').split(',')
+ALLOWED_HOSTS = [host.strip() for host in HOST_DOMAIN] + \
+                    [
+                        'localhost',
+                        '127.0.0.1',
+                        'backend',
+                        'nginx',
+                        FRONTEND_URL.replace('https://','').replace('http://','')
+                    ] # Get from env or use fallback for development
+
+print(f"Allowed hosts: {ALLOWED_HOSTS}")
+# CSRF trusted origins
+CSRF_TRUSTED_ORIGINS = [f'http://{host}' for host in ALLOWED_HOSTS] + [f'https://{host}' for host in ALLOWED_HOSTS]
+# CSRF trusted origins for localhost
+CSRF_TRUSTED_ORIGINS += ['http://localhost:8080', 'https://localhost:8080']
 
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+USE_X_FORWARDED_HOST = True
+USE_X_FORWARDED_PORT = True
 
 # CORS Headers Settings
-CORS_ALLOWED_ORIGINS = ['http://0.0.0.0:8080', 'http://127.0.0.1:8080']
+CORS_ALLOWED_ORIGINS = ['http://0.0.0.0:8080', 'http://127.0.0.1:8080', FRONTEND_URL]
 CORS_ALLOW_CREDENTIALS = True
 
 INSTALLED_APPS = [
@@ -113,7 +128,7 @@ USE_I18N = True
 
 USE_TZ = True
 
-STATIC_URL = '/static/'
+STATIC_URL = 'static/'
 # STATICFILES_DIRS = [
 #     os.path.join(BASE_DIR, "static"),
 # ]

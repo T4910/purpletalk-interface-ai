@@ -6,7 +6,7 @@
 *ENV/
 
 # Byte-compiled / cache
-*__pycache__/
+*/__pycache__/
 *.py[cod]
 
 # Local dev artifacts
@@ -20,11 +20,11 @@ db.sqlite3*
 */node_modules/
 .pnpm/
 .vite/
-dist/
-build/
+*/dist/
+*/build/
 
 # Ignore Vite cache
-.cache/
+*/.cache/
 *.tsbuildinfo
 
 # Logs

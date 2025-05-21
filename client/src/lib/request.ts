@@ -32,26 +32,26 @@ api.interceptors.response.use(
             console.warn('401 error, refreshing token');
             originalRequest._retry = true; // Mark the request as retried
 
-        try {
-            // Attempt to refresh the token by calling the backend refresh endpoint
-            // The browser automatically sends the refresh_token cookie here because withCredentials is true
-            await api.post(endpoints.refreshToken());
+            try {
+                // Attempt to refresh the token by calling the backend refresh endpoint
+                // The browser automatically sends the refresh_token cookie here because withCredentials is true
+                await api.post(endpoints.refreshToken());
 
-            // If refresh is successful, retry the original request
-            // The browser will automatically send the new access_token cookie with this retry
-            return api(originalRequest);
+                // If refresh is successful, retry the original request
+                // The browser will automatically send the new access_token cookie with this retry
+                return api(originalRequest);
 
-        } catch (refreshError: unknown) {
-            // If refresh fails (e.g., refresh token expired or invalid)
-            console.error('Unable to refresh token. Redirecting to login.', refreshError);
+            } catch (refreshError: unknown) {
+                // If refresh fails (e.g., refresh token expired or invalid)
+                console.error('Unable to refresh token. Redirecting to login.', refreshError);
 
-            // Redirect to login page using Tanstack Router's navigate
-            // Ensure your login route ID is correct
-            // router.navigate({ to: '/login' });
+                // Redirect to login page using Tanstack Router's navigate
+                // Ensure your login route ID is correct
+                // router.navigate({ to: '/login' });
 
-            // Reject the promise so the original request handler knows authentication failed
-            return Promise.reject(refreshError);
-        }
+                // Reject the promise so the original request handler knows authentication failed
+                return Promise.reject(refreshError);
+            }
         }
 
         // For any other error (including 401 errors from the refresh request or already retried requests)

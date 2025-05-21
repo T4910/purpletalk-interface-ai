@@ -1,5 +1,3 @@
-# chat_controller.py
-
 import asyncio
 from .memory.session_manager import create_new_session, load_session, save_session
 from .memory.manager import MemoryManager
@@ -9,7 +7,6 @@ import sys
 
 # Override the stdlib module
 sys.modules['sqlite3'] = _sqlite3
-
 
 # Main async handler for a user turn
 async def handle_message(session_id: str | None, user_input: str):
@@ -27,11 +24,10 @@ async def handle_message(session_id: str | None, user_input: str):
         state = await load_session(session_id)
 
     if state is None:
-        # No valid session found → create a new session
-        session_id = await create_new_session(ConversationCrew().crew(),session_id)
+        # No valid session found → create a new one
+        conversation_crew = ConversationCrew()
+        session_id = await create_new_session(conversation_crew.crew(), session_id)
         state = await load_session(session_id)
-        # In the unlikely event create_new_session/load_session fails,
-        # you could raise an error here.
 
     # At this point, 'state' is guaranteed to be a dict
     crew = state["crew"]
@@ -41,7 +37,6 @@ async def handle_message(session_id: str | None, user_input: str):
     memory = MemoryManager(session_id, buffer)
     memory.add_message(f"User: {user_input}")
 
-
     # 3. Prepare inputs and kickoff the CrewAI flow
     inputs = {
         "new_message": user_input,
@@ -49,7 +44,7 @@ async def handle_message(session_id: str | None, user_input: str):
     }
     result = crew.kickoff(inputs=inputs)  # assuming an async kickoff
 
-    # 4. Record and save the agent’s reply
+    # 4. Record and save the agent's reply
     agent_reply = result
     memory.add_message(f"Agent: {agent_reply}")
 
@@ -57,4 +52,3 @@ async def handle_message(session_id: str | None, user_input: str):
     await save_session(session_id, crew, memory.buffer)
 
     return session_id, agent_reply.raw
-

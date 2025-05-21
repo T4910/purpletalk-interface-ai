@@ -7,19 +7,19 @@ services:
       - "8000:8000"
     environment:
       PRODUCTION: ${PRODUCTION:-0}
-      SECRET_KEY: ${SECRET_KEY}
-      DATABASE_NAME: ${DATABASE_NAME}
-      DATABASE_USER: ${DATABASE_USER}
-      DATABASE_PASSWORD: ${DATABASE_PASSWORD}
-      DATABASE_HOST: ${DATABASE_HOST}
+      SECRET_KEY:
+      DATABASE_NAME:
+      DATABASE_USER:
+      DATABASE_PASSWORD:
+      DATABASE_HOST:
       DATABASE_PORT: 5432
-      EMAIL_HOST_USER: ${EMAIL_HOST_USER}
-      EMAIL_HOST_PASSWORD: ${EMAIL_HOST_PASSWORD}
-      FRONTEND_URL: ${FRONTEND_URL}
-      HOST_DOMAIN: ${HOST_DOMAIN}
-      OPENAI_API_KEY: ${OPENAI_API_KEY}
-      ASTRA_DB_APPLICATION_TOKEN: ${ASTRA_DB_APPLICATION_TOKEN}
-      ASTRA_DB_API_ENDPOINT: ${ASTRA_DB_API_ENDPOINT}
+      EMAIL_HOST_USER:
+      EMAIL_HOST_PASSWORD:
+      FRONTEND_URL:
+      HOST_URL:
+      OPENAI_API_KEY:
+      ASTRA_DB_APPLICATION_TOKEN:
+      ASTRA_DB_API_ENDPOINT:
       REDIS_HOST: redis-service
       REDIS_PORT: 6379
     networks:
@@ -27,18 +27,15 @@ services:
     depends_on:
       redis-service:
         condition: service_healthy
-    volumes:
-      - ./backend:/app
 
   frontend:
     build:
       context: .
       dockerfile: client/Dockerfile
+      args:
+        VITE_BACKEND_API_URL: ${HOST_URL}
     ports:
       - "8080:80"
-    volumes:
-      - ./client:/app
-      - /app/node_modules
     networks:
       - app-network
     depends_on:
@@ -46,6 +43,7 @@ services:
 
   redis-service:
     image: redis:6.2-alpine
+    x-defang-redis: true
     networks:
       - app-network
     healthcheck:
@@ -54,8 +52,23 @@ services:
       timeout: 5s
       retries: 5
 
-# volumes:
-#   postgres_data_store:
+  database-service:
+    image: postgres:13-slim
+    x-defang-postgres: true
+    environment:
+      POSTGRES_PASSWORD:
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  db_data:
 
 networks:
   app-network:
