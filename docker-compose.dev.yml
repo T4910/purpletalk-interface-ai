@@ -3,6 +3,7 @@ services:
     build:
       context: .
       dockerfile: backend/Dockerfile
+    # container_name: backend
     expose:
       - "8000"
     environment:
@@ -24,7 +25,7 @@ services:
       REDIS_PORT: 6379
       REDIS_URL: redis://redis-service:6379
     networks:
-      - default
+      - app-net
     depends_on:
       redis-service:
         condition: service_healthy
@@ -42,22 +43,22 @@ services:
       interval: 20s
       timeout: 10s
       retries: 3
-    # Enable volumes for development only
     volumes:
      - "./backend:/app"
 
   frontend:
+    environment:
+      BACKEND_HOST: backend
     build:
       context: .
       dockerfile: client/Dockerfile
     ports:
       - "8080:80"
-    # Enable volumes for development only
     volumes:
       - ./client:/app
       - /app/node_modules
     networks:
-      - default
+      - app-net
     depends_on:
       backend:
         condition: service_healthy
@@ -65,7 +66,7 @@ services:
   redis-service:
     image: redis:6.2-alpine
     networks:
-      - default
+      - app-net
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 5s
@@ -73,5 +74,5 @@ services:
       retries: 5
 
 networks:
-  default:
-    # driver: bridge
+  app-net:
+    driver: bridge
