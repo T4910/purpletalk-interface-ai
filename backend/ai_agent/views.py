@@ -43,6 +43,15 @@ def agent_chat(request):
         sid, reply = loop.run_until_complete(handle_message(session_id, user_input))
     except Exception as e:
         traceback.print_exc()
+
+    return Response(
+        {"session_id": sid, "agent_reply": reply},
+        status=status.HTTP_200_OK
+    )
+
+
+@api_view(["POST"])
+@permission_classes([AllowAny])
 def health_check(request):
     try:
         return Response(
@@ -55,14 +64,13 @@ def health_check(request):
         )
     except Exception as e:
         return Response(
-            {"detail": str(e)},
-            status=status.HTTP_500_INTERNAL_SERVER_ERROR
-        )
-
-    return Response(
-        {"session_id": sid, "agent_reply": reply},
-        status=status.HTTP_200_OK
-    )
+            {
+                "status": "unhealthy",
+                "message": str(e)
+            },
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            content_type='application/json'
+        ) 
 
 
 @api_view(["POST"])
@@ -97,10 +105,4 @@ def agent_chat_stream(request):
         event_stream(),
         content_type="text/event-stream"
     )
-            {
-                "status": "unhealthy",
-                "message": str(e)
-            },
-            status=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            content_type='application/json'
-        )
+
