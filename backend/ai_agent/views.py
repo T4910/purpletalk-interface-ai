@@ -14,14 +14,35 @@ from .agent_flow.chat_controller import handle_message, handle_message_stream
 
 from rest_framework.permissions import AllowAny
 
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.response import Response
+from rest_framework import status
+from rest_framework.permissions import AllowAny
+
 @api_view(["GET"])
 @permission_classes([AllowAny])
-def hello_world(request):
-    return Response({"message": "Hello, World!"}, status=status.HTTP_200_OK)
+def health_check(request):
+    try:
+        return Response(
+            {
+                "status": "healthy",
+                "message": "Service is running"
+            },
+            status=status.HTTP_200_OK,
+            content_type='application/json'
+        )
+    except Exception as e:
+        return Response(
+            {
+                "status": "unhealthy",
+                "message": str(e)
+            },
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            content_type='application/json'
+        )
 
-
-@api_view(["POST"])
-@permission_classes([AllowAny])
+# @api_view(["POST"])
+# @permission_classes([AllowAny])
 def agent_chat(request):
     """
     Non-streaming chat: runs the full LLM call and returns the complete reply.
@@ -50,31 +71,10 @@ def agent_chat(request):
     )
 
 
-@api_view(["POST"])
-@permission_classes([AllowAny])
-def health_check(request):
-    try:
-        return Response(
-            {
-                "status": "healthy",
-                "message": "Service is running"
-            },
-            status=status.HTTP_200_OK,
-            content_type='application/json'
-        )
-    except Exception as e:
-        return Response(
-            {
-                "status": "unhealthy",
-                "message": str(e)
-            },
-            status=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            content_type='application/json'
-        ) 
 
 
-@api_view(["POST"])
-@permission_classes([AllowAny])
+# @api_view(["POST"])
+# @permission_classes([AllowAny])
 def agent_chat_stream(request):
     """
     Streaming chat via Server-Sent Events. Yields only text after the
