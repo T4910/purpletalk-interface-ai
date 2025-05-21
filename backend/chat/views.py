@@ -91,6 +91,25 @@ class AIChatView(APIView):
             content=agent_reply_content
         )
 
+        # Streaming response (optional)
+            # stream_gen = async_to_sync(handle_message_stream)(session_id, user_input)
+
+            # def event_stream():
+            #     try:
+            #         for chunk in stream_gen:
+            #             # SSE framing
+            #             yield f"data: {chunk}\n\n"
+                        
+            #     except Exception as e:
+            #         traceback.print_exc()
+            #         # send an error event
+            #         yield f"event: error\ndata: {str(e)}\n\n"
+
+            # return StreamingHttpResponse(
+            #     event_stream(),
+            #     content_type="text/event-stream"
+            # )
+
         # 5. Return the AI's response (non-streamed)
         return Response({'session_id': session_id, 'agent_reply': agent_reply_content, 'message_id': message.id, 'message_timestamp': message.timestamp.isoformat(), 'sender': 'assistant'}, status=status.HTTP_200_OK)
 
