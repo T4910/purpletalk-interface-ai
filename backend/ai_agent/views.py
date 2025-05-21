@@ -12,6 +12,7 @@ from rest_framework import status
 from .serializers import AgentAPISerializer
 from .agent_flow.chat_controller import handle_message, handle_message_stream
 
+from rest_framework.permissions import AllowAny
 
 @api_view(["GET"])
 @permission_classes([AllowAny])
@@ -42,6 +43,17 @@ def agent_chat(request):
         sid, reply = loop.run_until_complete(handle_message(session_id, user_input))
     except Exception as e:
         traceback.print_exc()
+def health_check(request):
+    try:
+        return Response(
+            {
+                "status": "healthy",
+                "message": "Service is running"
+            },
+            status=status.HTTP_200_OK,
+            content_type='application/json'
+        )
+    except Exception as e:
         return Response(
             {"detail": str(e)},
             status=status.HTTP_500_INTERNAL_SERVER_ERROR
@@ -85,3 +97,10 @@ def agent_chat_stream(request):
         event_stream(),
         content_type="text/event-stream"
     )
+            {
+                "status": "unhealthy",
+                "message": str(e)
+            },
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            content_type='application/json'
+        )

@@ -1,6 +1,7 @@
 from django.urls import path
-from .views import agent_chat
+from .views import health_check
 
 urlpatterns = [
-    path('chat/', agent_chat),
+    path('', health_check),
+    path('health/', health_check, name='health_check'),
 ]

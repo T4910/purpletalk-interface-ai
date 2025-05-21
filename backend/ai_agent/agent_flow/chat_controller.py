@@ -15,6 +15,8 @@ async def handle_message(session_id: str | None, user_input: str):
     if state is None:
         session_id = await create_new_session(ConversationCrew().crew(), session_id)
         state = await load_session(session_id)
+        # In the unlikely event create_new_session/load_session fails,
+        # you could raise an error here.
 
     crew = ConversationCrew().crew()
     buffer = state["buffer"]

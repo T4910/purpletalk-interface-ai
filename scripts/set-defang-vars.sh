@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Path to your .env file
-ENV_FILE="./backend/.env"
+ENV_FILE="./backend/.env.prod"
 
 # Check if file exists
 if [ ! -f "$ENV_FILE" ]; then
