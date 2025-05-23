@@ -40,3 +40,5 @@ pnpm-debug.log*
 # Editor / system
 .vscode/
 .DS_Store
+
+aws

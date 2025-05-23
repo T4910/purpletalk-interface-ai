@@ -44,7 +44,7 @@ USE_X_FORWARDED_HOST = True
 USE_X_FORWARDED_PORT = True
 
 # CORS Headers Settings
-CORS_ALLOWED_ORIGINS = ['http://0.0.0.0:8080', 'http://127.0.0.1:8080', FRONTEND_URL]
+CORS_ALLOWED_ORIGINS = ['http://0.0.0.0:8080', 'http://127.0.0.1:8080', 'https://purpletalk-interface-ai.vercel.app', FRONTEND_URL]
 CORS_ALLOW_CREDENTIALS = True
 
 INSTALLED_APPS = [

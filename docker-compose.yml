@@ -4,36 +4,49 @@ services:
       context: .
       dockerfile: backend/Dockerfile
     ports:
-      - "8000:8000"
+      - "8000"
     environment:
-      PRODUCTION: ${PRODUCTION:-0}
+      PRODUCTION: ${PRODUCTION:-1}
       SECRET_KEY:
-      DATABASE_NAME:
-      DATABASE_USER:
+      DATABASE_NAME: postgres
+      DATABASE_USER: postgres
       DATABASE_PASSWORD:
-      DATABASE_HOST:
+      DATABASE_HOST: database-service
       DATABASE_PORT: 5432
       EMAIL_HOST_USER:
       EMAIL_HOST_PASSWORD:
       FRONTEND_URL:
-      HOST_URL:
+      HOST_DOMAIN: backend
       OPENAI_API_KEY:
+      OPENAI_BASE_URL: "http://ai-service/api/v1"
+      MODEL: "anthropic.claude-sonnet-4-20250514-v1:0"
       ASTRA_DB_APPLICATION_TOKEN:
       ASTRA_DB_API_ENDPOINT:
       REDIS_HOST: redis-service
       REDIS_PORT: 6379
+      REDIS_URL: redis://redis-service:6379
+    restart: unless-stopped
     networks:
       - app-network
     depends_on:
       redis-service:
         condition: service_healthy
+      database-service:
+        condition: service_healthy
+      ai-service:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://0.0.0.0:8000/')"]
+      interval: 20s
+      timeout: 10s
+      retries: 3
 
   frontend:
+    environment:
+      BACKEND_HOST: backend
     build:
       context: .
       dockerfile: client/Dockerfile
-      args:
-        VITE_BACKEND_API_URL: ${HOST_URL}
     ports:
       - "8080:80"
     networks:
@@ -44,6 +57,7 @@ services:
   redis-service:
     image: redis:6.2-alpine
     x-defang-redis: true
+    restart: unless-stopped
     networks:
       - app-network
     healthcheck:
@@ -53,12 +67,12 @@ services:
       retries: 5
 
   database-service:
-    image: postgres:13-slim
+    image: postgres:14
     x-defang-postgres: true
+    ports:
+      - "5432"
     environment:
       POSTGRES_PASSWORD:
-    volumes:
-      - db-data:/var/lib/postgresql/data
     networks:
       - app-network
     healthcheck:
@@ -66,9 +80,16 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
-
-volumes:
-  db_data:
+  
+  ai-service:
+    image: defangio/openai-access-gateway
+    x-defang-llm: true
+    ports:
+      - target: 80
+        published: 80
+        mode: host
+    environment:
+      - REGION
 
 networks:
   app-network:
