@@ -28,6 +28,7 @@ import {
 } from "./services/provider/ai";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
+import Dashboard from "./pages/Dashboard";
 
 interface MyRouterContext {
   authContext: ReturnType<typeof useAuthContext>;
@@ -139,6 +140,44 @@ const indexRoute = createRoute({
   component: Landing,
 });
 
+// Dashboard route
+const dashboardRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/dashboard",
+  component: Dashboard,
+  beforeLoad: async ({
+    context: { isAuthenticated, isActive, user, queryClient },
+    location,
+    ...a
+  }) => {
+    console.log("before load fired dashboard route", isAuthenticated);
+
+    if (!isAuthenticated) {
+      toast.error("Please sign in to access the dashboard");
+      throw redirect({
+        to: "/login",
+        search: {
+          redirect: location.href,
+        },
+      });
+    }
+
+    // Email confirmed
+    if (!isActive) {
+      await resendConfirmEmail({ email: user.email });
+      toast.error(
+        "Looks like you haven't verified your email. We've sent a new link to your email"
+      );
+      throw redirect({
+        to: "/login",
+        search: {
+          redirect: location.href,
+        },
+      });
+    }
+  },
+});
+
 const preventAuthUser = {
   beforeLoad: async ({ context: { isAuthenticated } }) => {
     console.log("before load preventroute", isAuthenticated);
@@ -211,10 +250,8 @@ const notFoundRoute = createRoute({
 
 const routeTree = rootRoute.addChildren([
   indexRoute,
-  // appRoute,
-  // newChatRoute,
-  // chatViewRoute,
   appRoute.addChildren([chatIndex, newChatRoute, chatViewRoute]),
+  dashboardRoute,
   loginRoute,
   signupRoute,
   twoFactorAuthRoute,
