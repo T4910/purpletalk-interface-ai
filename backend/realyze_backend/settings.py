@@ -28,24 +28,34 @@ ALLOWED_HOSTS = [host.strip() for host in HOST_DOMAIN] + \
                         'localhost',
                         '127.0.0.1',
                         '0.0.0.0',
-                        'backend',
-                        'nginx',
-                        FRONTEND_URL.replace('https://','').replace('http://','')
+                        # FRONTEND_URL.replace('https://','').replace('http://','')
                     ] # Get from env or use fallback for development
 
-print(f"Allowed hosts: {ALLOWED_HOSTS}")
 # CSRF trusted origins
-CSRF_TRUSTED_ORIGINS = [f'http://{host}' for host in ALLOWED_HOSTS] + [f'https://{host}' for host in ALLOWED_HOSTS]
-# CSRF trusted origins for localhost
-CSRF_TRUSTED_ORIGINS += ['http://localhost:8080', 'https://localhost:8080']
+CSRF_TRUSTED_ORIGINS = [f'http://{host}' for host in ALLOWED_HOSTS] + \
+                        [f'https://{host}' for host in ALLOWED_HOSTS] + \
+                        ['http://localhost:8080', 'http://localhost:8000']
 
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 USE_X_FORWARDED_HOST = True
 USE_X_FORWARDED_PORT = True
 
 # CORS Headers Settings
-CORS_ALLOWED_ORIGINS = ['http://0.0.0.0:8080', 'http://127.0.0.1:8080', FRONTEND_URL]
+CORS_ALLOWED_ORIGINS = list(set([
+    'http://0.0.0.0:8080',
+    'http://127.0.0.1:8080',
+    'https://shiny-space-barnacle-44p6xxqr4vhq6xj-8080.app.github.dev', # Development URL
+    FRONTEND_URL.rstrip('/'),
+]))
 CORS_ALLOW_CREDENTIALS = True
+
+STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, "static"),
+]
+
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -66,8 +76,9 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     'corsheaders.middleware.CorsMiddleware', # CORS middleware
+    'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -80,7 +91,7 @@ ROOT_URLCONF = 'realyze_backend.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates'], # Add a project-level templates directory if needed
+        'DIRS': [BASE_DIR / 'static'], # Add a project-level templates directory if needed
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -128,12 +139,6 @@ TIME_ZONE = 'UTC'
 USE_I18N = True
 
 USE_TZ = True
-
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-STATIC_URL = '/static/'
-# STATICFILES_DIRS = [
-#     os.path.join(BASE_DIR, "static"),
-# ]
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 

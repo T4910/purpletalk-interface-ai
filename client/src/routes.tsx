@@ -51,8 +51,15 @@ const rootRoute = createRootRouteWithContext<MyRouterContext>()({
 
     try {
       const user = await queryClient.fetchQuery(useGetUserQueryOptions);
+      console.log("User data fetched successfully", user);
+      // If user is not authenticated, return null values
+      if (!user || !user.id) {
+        console.log("User is not authenticated");
+        return { isAuthenticated: null, isActive: null, user: null };
+      }
       return { isAuthenticated: !!user.id, isActive: user.is_active, user };
     } catch {
+      console.error("Error fetching user data");
       return { isAuthenticated: null, isActive: null, user: null };
     }
   },
@@ -190,7 +197,7 @@ const loginRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/login",
   component: Login,
-  ...preventAuthUser,
+  // ...preventAuthUser,
 });
 
 const signupRoute = createRoute({

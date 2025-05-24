@@ -5,6 +5,9 @@ import pickle
 import uuid
 import redis.asyncio as aioredis
 from crewai import Crew
+import json
+import sys
+
 
 from .config import REDIS_URL
 
@@ -20,7 +23,12 @@ async def create_new_session(crew,session_id) -> str:
     Generate a new session ID and instantiate a fresh Crew.
     Serializes and stores the Crew instance and an empty buffer in Redis.
     """
-    payload = pickle.dumps({"crew": crew, "buffer": []})
+    if crew: 
+        payload = json.dumps({
+            "buffer": [],
+            "has_crew": True  # Flag indicating a crew needs to be created
+        })
+    
     # Await the set operation with an expiration TTL
     await redis_client.set(session_id, payload, ex=SESSION_TTL)
     return session_id
@@ -33,7 +41,7 @@ async def load_session(session_id: str):
     raw = await redis_client.get(session_id)  # raw: bytes | None
     if raw is None:
         return None
-    state = pickle.loads(raw)
+    state = json.loads(raw)
     # Refresh TTL on each access (sliding expiration)
     await redis_client.expire(session_id, SESSION_TTL)
     return state  # dict with keys "crew" and "buffer"
@@ -42,7 +50,11 @@ async def save_session(session_id: str, crew, buffer):
     """
     Serialize and save updated session state back to Redis.
     """
-    payload = pickle.dumps({"crew": crew, "buffer": buffer})
+    payload = json.dumps({
+        "buffer": buffer,
+        "has_crew": True  # Flag indicating a crew needs to be created
+    })
+    
     await redis_client.set(session_id, payload, ex=SESSION_TTL)
 
 # === Example async usage ===

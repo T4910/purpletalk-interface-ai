@@ -61,3 +61,12 @@ db.sqlite3-journal
 media/
 *.pot
 *.psql
+
+# AWS
+aws
+awscliv2.zip
+
+# static files
+static
+staticfiles
+dist

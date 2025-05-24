@@ -16,10 +16,14 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include # Import include
+from django.views.generic import TemplateView
+from django.urls import re_path
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('ai_agent.urls')),
+    # path('', include('ai_agent.urls')),
     path('api/auth/', include('authentication.urls')),
     path('api/chat/', include('chat.urls')),
+    re_path(r"^(?!api).*", TemplateView.as_view(template_name="index.html")),
 ]
