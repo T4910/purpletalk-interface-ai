@@ -5,7 +5,7 @@ import * as t from "@/services/types"
 import { router } from '../routes'; // Assuming you have access to your Tanstack Router instance
 
 const api = axios.create({
-  baseURL: '', // Replace with your backend API base URL
+  baseURL: import.meta.env.VITE_API_BASE_URL || '', // Use env variable for backend URL in dev, empty string in prod
   withCredentials: true, // This is IMPORTANT for sending and receiving cookies
 });
 
@@ -13,11 +13,25 @@ api.interceptors.request.use((req) => {
     console.log('This is the request:', req.baseURL + req.url)
     return req;
 })
+
+let isRefreshing = false;
+let failedQueue: { resolve: (value?: unknown) => void; reject: (reason?: unknown) => void }[] = [];
+
+const processQueue = (error: AxiosError | null) => {
+    failedQueue.forEach(prom => {
+        if (error) {
+            prom.reject(error);
+        } else {
+            prom.resolve();
+        }
+    });
+    failedQueue = [];
+};
+
 // Response Interceptor
 api.interceptors.response.use(
     (response) => response,
     async (error: AxiosError) => {
-        console.log(error, "From axios middleware")
         const originalRequest = error.config as AxiosRequestConfig & { _retry?: boolean }; // Cast for retry flag
         
         if (originalRequest.url?.includes('/api/auth/2fa') === true) {
@@ -27,21 +41,41 @@ api.interceptors.response.use(
             return Promise.reject(error);
         }
 
+        
         // If the error is 401 Unauthorized AND it's not the refresh request itself AND it hasn't been retried
         if (error.response?.status === 401 && originalRequest && !originalRequest._retry) {
-            console.warn('401 error, refreshing token');
-            originalRequest._retry = true; // Mark the request as retried
-
+            if (isRefreshing) {
+                // Queue the request until refresh is done
+                return new Promise((resolve, reject) => {
+                    failedQueue.push({
+                        resolve: () => {
+                            originalRequest._retry = true;
+                            // console.error('This is the error:', error);
+                            resolve(api(originalRequest));
+                        },
+                        reject: (err) => {
+                            reject(err);
+                        }
+                    });
+                });
+            }
+            originalRequest._retry = true;
+            isRefreshing = true;
             try {
                 // Attempt to refresh the token by calling the backend refresh endpoint
                 // The browser automatically sends the refresh_token cookie here because withCredentials is true
                 await api.post(endpoints.refreshToken());
 
+                processQueue(null);
+                isRefreshing = false;
                 // If refresh is successful, retry the original request
                 // The browser will automatically send the new access_token cookie with this retry
+                console.log('Token refreshed successfully, retrying original request:', originalRequest.url);
                 return api(originalRequest);
 
             } catch (refreshError: unknown) {
+                processQueue(refreshError as AxiosError);
+                isRefreshing = false;
                 // If refresh fails (e.g., refresh token expired or invalid)
                 console.error('Unable to refresh token. Redirecting to login.', refreshError);
 
@@ -123,18 +157,6 @@ const refreshToken = (retry?: boolean): Promise<t.TRefreshTokenResponse | undefi
 const dispatchTokenUpdatedEvent = (token: string) => {
     setTokenHeader(token);
     window.dispatchEvent(new CustomEvent('tokenUpdated', { detail: token }));
-};
-
-let failedQueue: { resolve: (value?: unknown) => void; reject: (reason?: unknown) => void }[] = [];
-const processQueue = (error: AxiosError | null, token: string | null = null) => {
-    failedQueue.forEach((prom) => {
-        if (error) {
-        prom.reject(error);
-        } else {
-        prom.resolve(token);
-        }
-    });
-    failedQueue = [];
 };
 */
 

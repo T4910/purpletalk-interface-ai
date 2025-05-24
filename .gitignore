@@ -65,3 +65,8 @@ media/
 # AWS
 aws
 awscliv2.zip
+
+# static files
+static
+staticfiles
+dist
