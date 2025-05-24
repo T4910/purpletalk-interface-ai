@@ -44,14 +44,10 @@ USE_X_FORWARDED_PORT = True
 CORS_ALLOWED_ORIGINS = list(set([
     'http://0.0.0.0:8080',
     'http://127.0.0.1:8080',
-    # 'https://shiny-space-barnacle-44p6xxqr4vhq6xj-8080.app.github.dev',
-    # 'https://shiny-space-barnacle-44p6xxqr4vhq6xj-8080.app.github.dev',
+    'https://shiny-space-barnacle-44p6xxqr4vhq6xj-8080.app.github.dev', # Development URL
     FRONTEND_URL.rstrip('/'),
 ]))
 CORS_ALLOW_CREDENTIALS = True
-print(FRONTEND_URL)
-print(ALLOWED_HOSTS)
-print(CORS_ALLOWED_ORIGINS)
 
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
