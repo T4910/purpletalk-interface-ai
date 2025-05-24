@@ -1,7 +1,8 @@
 import asyncio
-from .memory.session_manager import create_new_session, load_session, save_session
+from memory.session_manager import create_new_session, load_session, save_session
 from .memory.manager import MemoryManager
 from .crews.conversation_agent import ConversationCrew
+from datetime import datetime
 
 from crewai.utilities.events import crewai_event_bus, LLMStreamChunkEvent
 from typing import AsyncGenerator
@@ -15,8 +16,6 @@ async def handle_message(session_id: str | None, user_input: str):
     if state is None:
         session_id = await create_new_session(ConversationCrew().crew(), session_id)
         state = await load_session(session_id)
-        # In the unlikely event create_new_session/load_session fails,
-        # you could raise an error here.
 
     crew = ConversationCrew().crew()
     buffer = state["buffer"]
@@ -26,8 +25,10 @@ async def handle_message(session_id: str | None, user_input: str):
     # Kickoff and wait for full reply
     result = await asyncio.get_event_loop().run_in_executor(
         None,
-        lambda: crew.kickoff_async(inputs={"new_message": user_input, "history": buffer})
-    )
+        lambda: crew.kickoff_async(inputs={"new_message": user_input, 
+                                            "history": buffer,
+                                            "date": datetime.now().strftime("%Y-%m-%d")})
+     )
     reply = result.raw if hasattr(result, "raw") else str(result)
     memory.add_message(f"Agent: {reply}")
     await save_session(session_id, crew, memory.buffer)
@@ -79,7 +80,7 @@ def handle_message_stream(session_id: str | None, user_input: str) -> AsyncGener
             loop = asyncio.get_running_loop()
             kickoff = loop.run_in_executor(
                 None,
-                lambda: crew.kickoff(inputs={"new_message": user_input, "history": buffer})
+                lambda: crew.kickoff(inputs={"new_message": user_input, "history": buffer,"date": datetime.now().strftime("%Y-%m-%d")})
             )
 
             # Stream until done

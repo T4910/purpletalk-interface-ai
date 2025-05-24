@@ -4,6 +4,8 @@ from crewai.project import CrewBase, agent, crew, task
 from crewai.agents.agent_builder.base_agent import BaseAgent
 from typing import List
 from crewai import LLM
+from crewai_tools import SerperDevTool
+from .tools.scraper_tool import ScraperTool
 
 
 @CrewBase
@@ -24,7 +26,8 @@ class ConversationCrew:
             llm=LLM(
                 model="openai/gpt-4o",
                 stream=True  # Enable streaming
-            )
+            ),
+            tools = [SerperDevTool(),ScraperTool()]
         )
 
     @task
@@ -40,5 +43,11 @@ class ConversationCrew:
             agents=self.agents,
             tasks=self.tasks,
             process=Process.sequential,
-            verbose=False
+            verbose=False,  # Set to True for debugging
         )
+
+
+# inputs = {"new_message":"Can you tell me about the current price range of 4 bedroom houses in OKlahoma, please search the internet before answering me",
+#             "history": " "}
+# result = ConversationCrew().crew().kickoff(inputs=inputs)
+# print(result.raw)
