@@ -13,7 +13,11 @@ export function useCreateConversationWithMessage() {
 }
 
 export function useSendAiMessage() {
+  const queryClient = useQueryClient();
   return useMutation({
     mutationFn: aiService.sendMessage,
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: [QueryKeys.allConversations] });
+    },
   });
 }

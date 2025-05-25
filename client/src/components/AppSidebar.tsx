@@ -1,5 +1,4 @@
-
-import React from "react";
+import React, { Suspense, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Plus,
@@ -13,7 +12,12 @@ import {
   SearchIcon,
   LayoutDashboard,
 } from "lucide-react";
-import { Link, useNavigate } from "@tanstack/react-router";
+import {
+  Link,
+  useMatches,
+  useNavigate,
+  useRouterState,
+} from "@tanstack/react-router";
 import {
   Sidebar,
   SidebarContent,
@@ -30,34 +34,33 @@ import {
 } from "@/components/ui/sidebar";
 import { Outlet } from "@tanstack/react-router";
 import SidebarButton from "./SidebarButton";
-import { useConversationsQuery } from "@/services/provider/ai";
+import {
+  getConversationOptions,
+  useConversationsOptions,
+  useConversationsQuery,
+} from "@/services/provider/ai";
 import { groupConversationsByDate } from "@/lib/utils";
 import { NavUser } from "./nav-user";
+import { useSuspenseQuery } from "@tanstack/react-query";
+import SpinLoader from "./SpinLoader";
+import { useChildMatches } from "@tanstack/react-router";
+import { useMatchRoute } from "@tanstack/react-router";
+import { useLocation } from "@tanstack/react-router";
 
 type TChatsByDate = Record<string, { id: string; title: string }[]>;
 
 const AppSidebar = () => {
+  const { setOpenMobile } = useSidebar();
   const navigate = useNavigate();
-  const { toggleSidebar } = useSidebar();
-  const { data: conversations, isPending } = useConversationsQuery();
-
-  console.log(conversations);
-  const groupedChatsByDate = groupConversationsByDate(conversations);
-  const chatsByDateArray = Object.entries(groupedChatsByDate);
 
   const handleNewChat = () => {
     navigate({ to: "/c/new" });
+    setOpenMobile(false);
   };
 
   const handleDashboard = () => {
-    navigate({ to: "/dashboard" });
-  };
-
-  // Mock user data - replace with actual user data from your auth context
-  const user = {
-    name: "John Doe",
-    email: "john@example.com",
-    avatar: "/placeholder.svg",
+    navigate({ to: "/c/dashboard" });
+    setOpenMobile(false);
   };
 
   return (
@@ -93,7 +96,7 @@ const AppSidebar = () => {
 
       <SidebarContent>
         {/* Dashboard Navigation Link */}
-        <div className="px-2 pb-2">
+        <div className="px-2">
           <Button
             variant="outline"
             className="w-full justify-start gap-2 h-9 text-sm font-medium"
@@ -104,35 +107,75 @@ const AppSidebar = () => {
           </Button>
         </div>
 
-        {/* Chat History */}
-        {isPending
-          ? "Loading..."
-          : chatsByDateArray.length === 0
-          ? "No chats"
-          : chatsByDateArray.map(([date, chats]) => (
-              <SidebarGroup key={date}>
-                <SidebarGroupLabel>{date}</SidebarGroupLabel>
-                <SidebarGroupContent>
-                  <SidebarMenu>
-                    {chats.map((chat) => (
-                      <SidebarMenuItem key={chat.id}>
-                        <SidebarMenuButton asChild>
-                          <Link to={"/c/$id"} params={{ id: chat.id }}>
-                            <span>{chat.title}</span>
-                          </Link>
-                        </SidebarMenuButton>
-                      </SidebarMenuItem>
-                    ))}
-                  </SidebarMenu>
-                </SidebarGroupContent>
-              </SidebarGroup>
-            ))}
+        <Suspense
+          fallback={
+            <div className="mx-auto py-8 grid place-content-center">
+              <SpinLoader />
+            </div>
+          }
+        >
+          <ChatHistory />
+        </Suspense>
       </SidebarContent>
 
       <SidebarFooter>
-        <NavUser user={user} />
+        <NavUser
+          user={{
+            name: "John Doe",
+            email: "john@example.com",
+            avatar: "/placeholder.svg",
+          }}
+        />
       </SidebarFooter>
     </Sidebar>
+  );
+};
+
+const ChatHistory = () => {
+  const { setOpenMobile } = useSidebar();
+  const { data: conversations, isPending } = useSuspenseQuery(
+    useConversationsOptions
+  );
+  const matches = useRouterState();
+  const groupedChatsByDate = groupConversationsByDate(conversations);
+  const chatsByDateArray = Object.entries(groupedChatsByDate);
+
+  return (
+    <>
+      {/* Chat History */}
+      {isPending
+        ? "Loading..."
+        : chatsByDateArray.length === 0
+        ? "No chats"
+        : chatsByDateArray.map(([date, chats]) => (
+            <SidebarGroup key={date}>
+              <SidebarGroupLabel>{date}</SidebarGroupLabel>
+              <SidebarGroupContent>
+                <SidebarMenu>
+                  {chats.map((chat) => (
+                    <SidebarMenuItem key={chat.id}>
+                      <SidebarMenuButton asChild>
+                        <Link
+                          to="/c/$id"
+                          onClick={() => setOpenMobile(false)}
+                          params={{ id: chat.id }}
+                          className="[&.active]:text-primary [&.active]:font-bold [&.active]:opacity-100 opacity-60"
+                        >
+                          <span>{chat.title}</span>
+                          {`/c/${chat.id}` === matches.location.pathname &&
+                            `/c/${chat.id}` !==
+                              matches.resolvedLocation.pathname && (
+                              <SpinLoader className="" />
+                            )}
+                        </Link>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  ))}
+                </SidebarMenu>
+              </SidebarGroupContent>
+            </SidebarGroup>
+          ))}
+    </>
   );
 };
 

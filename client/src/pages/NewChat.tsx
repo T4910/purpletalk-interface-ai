@@ -14,17 +14,23 @@ import * as aiService from "@/services/aiService";
 import { QueryKeys } from "@/services/keys";
 import { useQueryClient } from "@tanstack/react-query";
 import { useCreateConversationWithMessage } from "@/hooks/useChat";
+import { useChatStore } from "@/store/useChatStore";
+import Header from "@/components/Header";
 
 const NewChat = () => {
   const navigate = useNavigate();
+  const { setInputValue } = useChatStore();
   const queryClient = useQueryClient();
   const { mutateAsync: createConversationWithMessage, isPending } =
     useCreateConversationWithMessage();
 
   const handleStartChat = async (userMessage: string) => {
     const response: any = await createConversationWithMessage(userMessage);
+    setInputValue("");
     console.log("New chat response:", response);
-    const session_id = response && (response.session_id || response.id || response.data?.session_id);
+    const session_id =
+      response &&
+      (response.session_id || response.id || response.data?.session_id);
     if (session_id) {
       navigate({ to: "/c/$id", params: { id: String(session_id) } });
     }
@@ -32,25 +38,8 @@ const NewChat = () => {
 
   return (
     <>
-      <div className="min-h-16 border-b border-border/50 flex items-center px-4 justify-start gap-4">
-        <SidebarButton offset={true} />
-        <div className="flex items-center gap-3">
-          <span className="font-medium">Realyze</span>
-          <Badge
-            variant="secondary"
-            className="bg-secondary/30 text-xs font-normal rounded-full"
-          >
-            <a
-              href="https://floo.com.ng"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="underline"
-            >
-              By Floo
-            </a>
-          </Badge>
-        </div>
-      </div>
+      <Header />
+
       <div className="flex-1 flex flex-col items-center justify-center max-md:px-0 max-md:pb-0 p-4">
         <div className="w-full max-w-md md:mx-auto text-center">
           <div className="mb-6">

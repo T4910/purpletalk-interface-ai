@@ -25,6 +25,11 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { UserSettings } from "./UserSettings";
+import { QueryKeys } from "@/services/keys";
+import { useUserLogoutMutation } from "@/services/provider/auth";
+import { useQueryClient } from "@tanstack/react-query";
+import { useNavigate } from "@tanstack/react-router";
+import SpinLoader from "./SpinLoader";
 
 export function TopNavUser({
   user,
@@ -36,12 +41,20 @@ export function TopNavUser({
   };
 }) {
   const [settingsOpen, setSettingsOpen] = useState(false);
+    const navigate = useNavigate();
+    const { mutate: logout, isPending: isLoggingOut } = useUserLogoutMutation();
+    const queryClient = useQueryClient();
+
 
   const handleLogout = () => {
     // Implement logout functionality here
+    logout();
+    queryClient.invalidateQueries({
+      queryKey: [QueryKeys.user],
+    });
+    navigate({ to: "/", reloadDocument: true });
     console.log("Logging out...");
   };
-
   const handleSettings = () => {
     setSettingsOpen(true);
   };
@@ -54,7 +67,11 @@ export function TopNavUser({
             <Avatar className="h-8 w-8">
               <AvatarImage src={user.avatar} alt={user.name} />
               <AvatarFallback>
-                {user.name.split(' ').map(n => n[0]).join('').toUpperCase()}
+                {user.name
+                  .split(" ")
+                  .map((n) => n[0])
+                  .join("")
+                  .toUpperCase()}
               </AvatarFallback>
             </Avatar>
           </Button>
@@ -90,7 +107,8 @@ export function TopNavUser({
           <DropdownMenuSeparator />
           <DropdownMenuItem onClick={handleLogout}>
             <LogOutIcon className="mr-2 h-4 w-4" />
-            <span>Log out</span>
+            Log out
+            {isLoggingOut && <SpinLoader className="ml-4" />}
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>

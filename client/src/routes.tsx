@@ -44,22 +44,20 @@ const rootRoute = createRootRouteWithContext<MyRouterContext>()({
       <ReactQueryDevtools />
     </>
   ),
+  errorComponent: () => (
+    <div>Oops, looks like something went horribly wrong. Try refreshing</div>
+  ),
   beforeLoad: async ({ context: { queryClient }, ...params }) => {
-    console.log(params, 777);
-    // if (!location.pathname.startsWith("/c"))
-    //   return { isAuthenticated: null, isActive: null, user: null };
-
     try {
-      const user = await queryClient.fetchQuery(useGetUserQueryOptions);
-      console.log("User data fetched successfully", user);
-      // If user is not authenticated, return null values
+      const user = await queryClient.ensureQueryData(useGetUserQueryOptions);
       if (!user || !user.id) {
         console.log("User is not authenticated");
         return { isAuthenticated: null, isActive: null, user: null };
       }
+      console.log("User is auth");
       return { isAuthenticated: !!user.id, isActive: user.is_active, user };
     } catch {
-      console.error("Error fetching user data");
+      console.log("Error fetching user data");
       return { isAuthenticated: null, isActive: null, user: null };
     }
   },
@@ -69,14 +67,19 @@ const appRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/c",
   component: ChatLayout,
-  loader: async ({ context }) =>
-    context.queryClient.ensureQueryData(useConversationsOptions),
+  loader: async ({ context }) => {
+    console.log("Loading all conversations");
+    context.queryClient.prefetchQuery(useConversationsOptions);
+    console.log("Loading all conversations");
+  },
   beforeLoad: async ({
-    context: { isAuthenticated, isActive, user, queryClient },
+    context: { isAuthenticated, isActive, user },
     location,
-    ...a
   }) => {
-    console.log("before load fired approute", isAuthenticated);
+    console.log(
+      "Checking for authentication in beforeload on appRoute: ",
+      isAuthenticated
+    );
 
     if (!isAuthenticated) {
       toast.error("Please sign in to continue");
@@ -103,6 +106,7 @@ const appRoute = createRoute({
       });
     }
   },
+  errorComponent: () => <div>Something went wrong.</div>,
 });
 
 const chatIndex = createRoute({
@@ -121,23 +125,21 @@ const chatViewRoute = createRoute({
   getParentRoute: () => appRoute,
   path: "$id",
   component: ChatView,
-  // loader: async ({ context, params }) => {
-  //   console.log(params.id, 323223);
-  //   try {
-  //     return await context.queryClient.fetchQuery(
-  //       getConversationOptions(params.id)
-  //     );
-  //   } catch {
-  //     return [];
-  //   }
-  // },
   loader: async ({ context, params }) => {
     context.queryClient.prefetchQuery(getConversationOptions(params.id));
   },
+  // pendingComponent: () => <div>Loading...</div>,
   onError: () => {
     redirect({ to: "/c/new" });
     toast.error("Invalid chat ID");
   },
+});
+
+// Dashboard route
+const dashboardRoute = createRoute({
+  getParentRoute: () => appRoute,
+  path: "/dashboard",
+  component: Dashboard,
 });
 
 // Non protected app route
@@ -147,47 +149,9 @@ const indexRoute = createRoute({
   component: Landing,
 });
 
-// Dashboard route
-const dashboardRoute = createRoute({
-  getParentRoute: () => rootRoute,
-  path: "/dashboard",
-  component: Dashboard,
-  beforeLoad: async ({
-    context: { isAuthenticated, isActive, user, queryClient },
-    location,
-    ...a
-  }) => {
-    console.log("before load fired dashboard route", isAuthenticated);
-
-    if (!isAuthenticated) {
-      toast.error("Please sign in to access the dashboard");
-      throw redirect({
-        to: "/login",
-        search: {
-          redirect: location.href,
-        },
-      });
-    }
-
-    // Email confirmed
-    if (!isActive) {
-      await resendConfirmEmail({ email: user.email });
-      toast.error(
-        "Looks like you haven't verified your email. We've sent a new link to your email"
-      );
-      throw redirect({
-        to: "/login",
-        search: {
-          redirect: location.href,
-        },
-      });
-    }
-  },
-});
-
 const preventAuthUser = {
   beforeLoad: async ({ context: { isAuthenticated } }) => {
-    console.log("before load preventroute", isAuthenticated);
+    console.log("Checking unauth routes in before load:", isAuthenticated);
 
     if (isAuthenticated) throw redirect({ to: "/" });
   },
@@ -197,7 +161,7 @@ const loginRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/login",
   component: Login,
-  // ...preventAuthUser,
+  ...preventAuthUser,
 });
 
 const signupRoute = createRoute({

@@ -4,6 +4,8 @@ import PropertyListing from "./PropertyListing";
 import { usePropertiesPanel } from "@/hooks/usePropertiesPanel";
 import { useSidebar } from "./ui/sidebar";
 import { usePropertyPanelSidebar } from "./ui/usePropertyPanelContext";
+import { NavUser } from "./nav-user";
+import { TopNavUser } from "./TopNavUser";
 
 const PropertiesPanel = () => {
   const { close } = usePropertiesPanel();
@@ -22,10 +24,11 @@ const PropertiesPanel = () => {
         </Button>
 
         <h2 className="text-lg font-medium">Available Properties</h2>
-
-        <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center">
-          <User className="size-6" />
-        </div>
+        <TopNavUser user={{
+          name: "John Doe",
+          email: "john@example.com",
+          avatar: "/placeholder.svg",
+        }} />
       </div>
 
       <div className="flex-1 overflow-hidden p-4 mx-auto">

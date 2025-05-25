@@ -30,6 +30,11 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 import { UserSettings } from "./UserSettings";
+import { useUserLogoutMutation } from "@/services/provider/auth";
+import SpinLoader from "./SpinLoader";
+import { useQueryClient } from "@tanstack/react-query";
+import { QueryKeys } from "@/services/keys";
+import { useNavigate } from "@tanstack/react-router";
 
 export function NavUser({
   user,
@@ -42,9 +47,17 @@ export function NavUser({
 }) {
   const { isMobile } = useSidebar();
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const navigate = useNavigate()
+  const { mutate: logout, isPending: isLoggingOut } = useUserLogoutMutation();
+  const queryClient = useQueryClient()
 
   const handleLogout = () => {
     // Implement logout functionality here
+    logout();
+    queryClient.invalidateQueries({
+      queryKey: [QueryKeys.user],
+    });
+    navigate({to: "/", reloadDocument: true})
     console.log("Logging out...");
   };
 
@@ -56,7 +69,7 @@ export function NavUser({
     <>
       <SidebarMenu>
         <SidebarMenuItem>
-          <DropdownMenu>
+          <DropdownMenu >
             <DropdownMenuTrigger asChild>
               <SidebarMenuButton
                 size="lg"
@@ -65,7 +78,11 @@ export function NavUser({
                 <Avatar className="h-8 w-8 rounded-lg grayscale">
                   <AvatarImage src={user.avatar} alt={user.name} />
                   <AvatarFallback className="rounded-lg">
-                    {user.name.split(' ').map(n => n[0]).join('').toUpperCase()}
+                    {user.name
+                      .split(" ")
+                      .map((n) => n[0])
+                      .join("")
+                      .toUpperCase()}
                   </AvatarFallback>
                 </Avatar>
                 <div className="grid flex-1 text-left text-sm leading-tight">
@@ -88,7 +105,11 @@ export function NavUser({
                   <Avatar className="h-8 w-8 rounded-lg">
                     <AvatarImage src={user.avatar} alt={user.name} />
                     <AvatarFallback className="rounded-lg">
-                      {user.name.split(' ').map(n => n[0]).join('').toUpperCase()}
+                      {user.name
+                        .split(" ")
+                        .map((n) => n[0])
+                        .join("")
+                        .toUpperCase()}
                     </AvatarFallback>
                   </Avatar>
                   <div className="grid flex-1 text-left text-sm leading-tight">
@@ -122,6 +143,7 @@ export function NavUser({
               <DropdownMenuItem onClick={handleLogout}>
                 <LogOutIcon className="mr-2 h-4 w-4" />
                 Log out
+                {isLoggingOut && <SpinLoader className="ml-4" />}
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

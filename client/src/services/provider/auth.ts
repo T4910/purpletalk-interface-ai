@@ -1,6 +1,11 @@
 import * as t from "@/services/types";
 import * as dataService from "@/services";
-import { queryOptions, useMutation, useQuery } from "@tanstack/react-query";
+import {
+  queryOptions,
+  useMutation,
+  useQuery,
+  useSuspenseQuery,
+} from "@tanstack/react-query";
 import type {
   UseMutationOptions,
   UseQueryOptions,
@@ -12,17 +17,28 @@ export const useGetUserQuery = (config?: Partial<UseQueryOptions<t.TUser>>) => {
   return useQuery<t.TUser>({ ...useGetUserQueryOptions, ...config });
 };
 
-export const useGetUserQueryOptions = 
-  queryOptions({
-    queryKey: [QueryKeys.user],
-    queryFn: () => dataService.getCurrentUser(),
-    refetchOnMount: false,
-    // gcTime: 5 * 60 * 1000,
-    staleTime: 4 * 60 * 1000,
-    // staleTime: Infinity,
-    retry: false,
-    // enabled: checkAuth,
-  });
+export const useIsAuthenticated = () => {
+  const { data: user, isError } = useQuery({ ...useGetUserQueryOptions });
+  if (isError) return false;
+  return !!user?.id;
+};
+
+export const useIsActive = () => {
+  const user = useSuspenseQuery(useGetUserQueryOptions);
+  return !!user?.data.is_active;
+};
+
+export const useGetUserQueryOptions = queryOptions({
+  queryKey: [QueryKeys.user],
+  queryFn: () => dataService.getCurrentUser(),
+  refetchOnMount: false,
+  // gcTime: 5 * 60 * 1000,
+  staleTime: 4 * 60 * 1000,
+  // staleTime: Infinity,
+  retry: false,
+  throwOnError: false,
+  // enabled: checkAuth,
+});
 
 // export const useConversationMessages = queryOptions({
 //   queryKey: [QueryKeys.conversationMessages],
@@ -45,6 +61,11 @@ export const useUserLogoutMutation = () => {
   return useMutation({
     mutationKey: [MutationKeys.logoutUser],
     mutationFn: () => dataService.logout(),
+    onSuccess(data, variables, context) {
+      console.log("data", data);
+      console.log("variables", variables);
+      console.log("context", context);
+    },
   });
 };
 

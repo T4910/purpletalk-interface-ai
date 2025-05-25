@@ -1,5 +1,5 @@
 import { Message } from "@/store/useChatStore";
-import { cn } from "@/lib/utils";
+import { cn, extractHouseJson } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { usePropertiesPanel } from "@/hooks/usePropertiesPanel";
 
@@ -9,8 +9,10 @@ interface ChatMessageProps {
 }
 
 const ChatMessage = ({ message, onViewProperties }: ChatMessageProps) => {
-  const isUser = message.role === "user";
+  const isUser = message.sender === "user";
   const propertyPanelIsOpen = usePropertiesPanel((store) => store.isOpen);
+
+  console.log(extractHouseJson(message.content), 32322232);
 
   // Check if this is the last AI message where we should show the button
   const showPropertiesButton = message.id === "2" && !isUser;
@@ -66,8 +68,7 @@ const ChatMessage = ({ message, onViewProperties }: ChatMessageProps) => {
               </p>
             ))}
 
-            {showPropertiesButton ||
-              (true && (
+            {showPropertiesButton && (
                 <div className="mt-4">
                   <Button
                     onClick={onViewProperties}
@@ -77,7 +78,7 @@ const ChatMessage = ({ message, onViewProperties }: ChatMessageProps) => {
                     View properties
                   </Button>
                 </div>
-              ))}
+              )}
           </div>
         </div>
       </div>
