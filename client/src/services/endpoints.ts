@@ -82,16 +82,14 @@ export const sendAiMessage = () => `${conversationsRoot}/message/`;
 
 export const getAllConversations = () => `${conversationsRoot}/`;
 export const conversationById = (id: string) => `${conversationsRoot}/${id}/messages/`;
+export const createConversation = () => `${conversationsRoot}/`;
+export const createConversationWithMessage = () => `${conversationsRoot}/new_with_message/`;
+export const updateConversation = () => `${conversationsRoot}/update/`;
+export const deleteConversation = () => `${conversationsRoot}/`;
+export const deleteAllConversation = () => `${conversationsRoot}/all/`;
+export const importConversation = () => `${conversationsRoot}/import`;
 
 export const genTitle = () => `${conversationsRoot}/gen_title/`;
-
-export const updateConversation = () => `${conversationsRoot}/update/`;
-
-export const deleteConversation = () => `${conversationsRoot}/`;
-
-export const deleteAllConversation = () => `${conversationsRoot}/all/`;
-
-export const importConversation = () => `${conversationsRoot}/import`;
 
 export const forkConversation = () => `${conversationsRoot}/fork`;
 

@@ -13,22 +13,21 @@ import { Badge } from "@/components/ui/badge";
 import * as aiService from "@/services/aiService";
 import { QueryKeys } from "@/services/keys";
 import { useQueryClient } from "@tanstack/react-query";
-// import { useMutation } from "@tanstack/react-query";
-// import { useChatStore } from "@/store/useChatStore";
-// import ChatMessage from "@/components/ChatMessage";
-
-// const route = getRouteApi("/c/new");
+import { useCreateConversationWithMessage } from "@/hooks/useChat";
 
 const NewChat = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const { mutateAsync: createConversationWithMessage, isPending } =
+    useCreateConversationWithMessage();
 
   const handleStartChat = async (userMessage: string) => {
-    // const newChatId = Date.now().toString();
-    const res = await aiService.sendMessage({ user_input: userMessage });
-    queryClient.invalidateQueries([QueryKeys.allConversations]);
-    // Changed navigation method to use params
-    navigate({ to: "/c/$id", params: { id: res.session_id } });
+    const response: any = await createConversationWithMessage(userMessage);
+    console.log("New chat response:", response);
+    const session_id = response && (response.session_id || response.id || response.data?.session_id);
+    if (session_id) {
+      navigate({ to: "/c/$id", params: { id: String(session_id) } });
+    }
   };
 
   return (
@@ -103,7 +102,7 @@ const NewChat = () => {
 
           <ChatInput
             onSendMessage={handleStartChat}
-            isLoading={false}
+            isLoading={isPending}
             inNewChatPage
           />
         </div>

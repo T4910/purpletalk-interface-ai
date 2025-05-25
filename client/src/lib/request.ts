@@ -102,11 +102,17 @@ async function _getResponse<T>(url: string, options?: AxiosRequestConfig): Promi
     return await api.get(url, { ...options });
 }
 
-async function _post(url: string, data?: unknown) {
+async function _post<T>(url: string, data?: unknown): Promise<T> {
     const response = await api.post(url, JSON.stringify(data), {
         headers: { 'Content-Type': 'application/json' },
     });
     return response.data;
+}
+
+async function _postRaw<T>(url: string, data?: unknown){
+    return api.post(url, JSON.stringify(data), {
+        headers: { 'Content-Type': 'application/json' },
+    });
 }
 
 async function _postMultiPart(url: string, formData: FormData, options?: AxiosRequestConfig) {
@@ -164,6 +170,7 @@ export default {
     get: _get,
     getResponse: _getResponse,
     post: _post,
+    postRaw: _postRaw,
     postMultiPart: _postMultiPart,
     postTTS: _postTTS,
     put: _put,

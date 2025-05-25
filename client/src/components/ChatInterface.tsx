@@ -20,13 +20,11 @@ const ChatInterface = ({ chatId }: ChatInterfaceProps) => {
   const { messages, addMessage, loadPrevMessages } = useChatStore();
   const chatContainerRef = useRef<HTMLDivElement>(null);
   const { open, setOpen } = useSidebar();
+  const { state: sidebarState } = useSidebar();
   const { togglePropertyPanelSidebar: openPropertiesPanel } =
     usePropertyPanelSidebar();
-  const { state: sidebarState } = useSidebar();
-  const isSidebarCollapsed = sidebarState === "collapsed";
 
   const { data: prevMessages, isSuccess } = useConversationQuery(chatId);
-  console.log(prevMessages)
 
   // Auto-scroll to bottom when new messages arrive
   useEffect(() => {
@@ -39,7 +37,7 @@ const ChatInterface = ({ chatId }: ChatInterfaceProps) => {
   // // In a real app, we would fetch chat history based on chatId
   useEffect(() => {
     // Here you would fetch messages for this specific chat ID
-    if(isSuccess) loadPrevMessages(prevMessages);
+    if (isSuccess) loadPrevMessages(prevMessages);
   }, [prevMessages, loadPrevMessages, isSuccess]);
 
   const { mutate: sendMessage, isPending: isLoading } = useMutation({

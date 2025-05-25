@@ -22,11 +22,11 @@ export function getSharedLink(conversationId: string): Promise<t.TSharedLinkGetR
 
 import type { Message } from "../store/useChatStore";
 
-export const sendMessage = async (params: t.TAiChatParams) => {
-  const ai_response = (await request.post(
+export const sendMessage = async ({ session_id, user_input }: { session_id: string, user_input: string }) => {
+  const ai_response = await request.post<t.TAiChatResponse>(
     endpoints.sendAiMessage(),
-    params
-  )) as t.TAiChatResponse;
+    { session_id, user_input }
+  );
   return {
     id: ai_response.message_id,
     content: ai_response.agent_reply,
@@ -42,4 +42,12 @@ export const getConversations = () => {
 
 export const getMessagesFromConversations = (id: string) => {
   return request.get<t.TMessage[]>(endpoints.conversationById(id));
+};
+
+export const createConversation = () => {
+  return request.post<t.TConversation>(endpoints.createConversation());
+};
+
+export const createConversationWithMessage = (user_input: string) => {
+  return request.post(endpoints.createConversationWithMessage(), { user_input });
 };

@@ -7,6 +7,8 @@ from .serializers import ConversationSerializer, MessageSerializer
 from ai_agent.agent_flow.chat_controller import handle_message
 from ai_agent.serializers import AgentAPISerializer
 import asyncio
+import traceback
+from asgiref.sync import async_to_sync
 from django.http import StreamingHttpResponse
 
 class ConversationListView(generics.ListCreateAPIView):
@@ -27,7 +29,7 @@ class MessageListView(generics.ListAPIView):
         session_id = self.kwargs['session_id']
         return Message.objects.filter(conversation__user=self.request.user, conversation__session_id=session_id).order_by('timestamp')
 
-class AIChatStreamView(APIView):
+class AIChatMessageView(APIView):
     permission_classes = (IsAuthenticated,)
 
     def post(self, request, *args, **kwargs):
@@ -49,18 +51,38 @@ class AIChatStreamView(APIView):
             except Conversation.DoesNotExist:
                 return Response({'error': 'Conversation not found or does not belong to user.'}, status=status.HTTP_404_NOT_FOUND)
         else:
-            conversation = Conversation.objects.create(user=user)
-            session_id = conversation.session_id
+            return Response({'error': 'session_id is required.'}, status=status.HTTP_400_BAD_REQUEST)
 
         # 2. Save user message
         Message.objects.create(conversation=conversation, sender='user', content=user_input)
 
-        # 3. Streaming response from AI
-        async def event_stream():
-            try:
-                async for chunk in handle_message(session_id, user_input):
-                    yield f"data: {chunk}\n\n"
-            except Exception as e:
-                yield f"event: error\ndata: {str(e)}\n\n"
+        # 3. Get AI response (sync, not streaming)
+        session_id, ai_reply = handle_message(session_id, user_input)  # Unpack tuple, not coroutine
 
-        return StreamingHttpResponse(event_stream(), content_type='text/event-stream')
+        # 4. Save AI message
+        ai_message = Message.objects.create(conversation=conversation, sender='assistant', content=ai_reply)
+
+        return Response({
+            "message_id": ai_message.id,
+            "agent_reply": ai_reply,
+            "session_id": conversation.session_id,
+            "sender": ai_message.sender,
+            "message_timestamp": ai_message.timestamp,
+        }, status=status.HTTP_200_OK)
+
+class CreateConversationWithMessageView(generics.CreateAPIView):
+    permission_classes = (IsAuthenticated,)
+    serializer_class = ConversationSerializer
+
+    def create(self, request):
+        user_input = request.data.get('user_input')
+        if not user_input:
+            return Response({'error': 'user_input is required.'}, status=status.HTTP_400_BAD_REQUEST)
+        # Create conversation
+        conversation = Conversation.objects.create(user=request.user)
+        # Save first message
+        Message.objects.create(conversation=conversation, sender='user', content=user_input)
+        return Response({
+            "session_id": conversation.session_id,
+            "created_at": conversation.created_at,
+        }, status=status.HTTP_201_CREATED)
