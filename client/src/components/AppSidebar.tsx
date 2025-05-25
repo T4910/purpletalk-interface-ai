@@ -47,7 +47,7 @@ const AppSidebar = () => {
   };
 
   return (
-    <Sidebar>
+    <Sidebar className="bg-sidebar">
       <SidebarHeader className="h-16">
         <div className="flex gap-2 p-1 justify-between items-center">
           <div className="flex gap-2 justify-between items-center flex-1">

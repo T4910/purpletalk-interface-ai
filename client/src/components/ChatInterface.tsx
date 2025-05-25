@@ -35,17 +35,19 @@ const ChatInterface = ({ chatId }: ChatInterfaceProps) => {
   }, [messages]);
 
   // // In a real app, we would fetch chat history based on chatId
-  useEffect(() => {
-    // Here you would fetch messages for this specific chat ID
-    if (isSuccess) loadPrevMessages(prevMessages);
-  }, [prevMessages, loadPrevMessages, isSuccess]);
-
+  
   const { mutate: sendMessage, isPending: isLoading } = useMutation({
     mutationFn: aiService.sendMessage,
     onSuccess: (response) => {
       addMessage(response.content, "assistant");
     },
+    retry: 3
   });
+  
+  useEffect(() => {
+    // Here you would fetch messages for this specific chat ID
+    if (isSuccess) loadPrevMessages(prevMessages);
+  }, [prevMessages, loadPrevMessages, isSuccess]);
 
   const handleSendMessage = (content: string) => {
     addMessage(content, "user");
