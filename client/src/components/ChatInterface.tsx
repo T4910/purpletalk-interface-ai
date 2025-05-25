@@ -1,3 +1,4 @@
+
 import { useRef, useEffect } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { useChatStore } from "@/store/useChatStore";
@@ -11,6 +12,7 @@ import { usePropertyPanelSidebar } from "./ui/usePropertyPanelContext";
 import { useParams } from "@tanstack/react-router";
 import { useConversationQuery } from "@/services/provider/ai";
 import SidebarButton from "./SidebarButton";
+import { TopNavUser } from "./TopNavUser";
 
 interface ChatInterfaceProps {
   chatId?: string;
@@ -26,6 +28,13 @@ const ChatInterface = ({ chatId }: ChatInterfaceProps) => {
 
   const { data: prevMessages, isSuccess } = useConversationQuery(chatId);
 
+  // Mock user data - replace with actual user data from your auth context
+  const user = {
+    name: "John Doe",
+    email: "john@example.com",
+    avatar: "/placeholder.svg",
+  };
+
   // Auto-scroll to bottom when new messages arrive
   useEffect(() => {
     if (chatContainerRef.current) {
@@ -34,8 +43,6 @@ const ChatInterface = ({ chatId }: ChatInterfaceProps) => {
     }
   }, [messages]);
 
-  // // In a real app, we would fetch chat history based on chatId
-  
   const { mutate: sendMessage, isPending: isLoading } = useMutation({
     mutationFn: aiService.sendMessage,
     onSuccess: (response) => {
@@ -63,27 +70,29 @@ const ChatInterface = ({ chatId }: ChatInterfaceProps) => {
     <div
       className={cn(
         "flex-1 overflow-auto flex flex-col relative transition-all duration-300"
-        // showProperties ? "w-1/2" : "w-full"
       )}
     >
-      <div className="min-h-16  sticky top-0 border-b border-border/50 flex items-center px-4 justify-start gap-4">
-        <SidebarButton offset={true} />
-        <div className="flex items-center gap-3">
-          <span className="font-medium">Realyze</span>
-          <Badge
-            variant="secondary"
-            className="bg-secondary/30 text-xs font-normal rounded-full"
-          >
-            <a
-              href="https://floo.com.ng"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="underline"
+      <div className="min-h-16 sticky top-0 border-b border-border/50 flex items-center px-4 justify-between gap-4">
+        <div className="flex items-center gap-4">
+          <SidebarButton offset={true} />
+          <div className="flex items-center gap-3">
+            <span className="font-medium">Realyze</span>
+            <Badge
+              variant="secondary"
+              className="bg-secondary/30 text-xs font-normal rounded-full"
             >
-              By Floo
-            </a>
-          </Badge>
+              <a
+                href="https://floo.com.ng"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="underline"
+              >
+                By Floo
+              </a>
+            </Badge>
+          </div>
         </div>
+        <TopNavUser user={user} />
       </div>
       <div
         ref={chatContainerRef}

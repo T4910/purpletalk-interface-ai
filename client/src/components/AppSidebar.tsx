@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Button } from "@/components/ui/button";
 import {
@@ -11,7 +12,7 @@ import {
   EditIcon,
   SearchIcon,
 } from "lucide-react";
-import { Link, useNavigate } from "@tanstack/react-router"; // Changed import
+import { Link, useNavigate } from "@tanstack/react-router";
 import {
   Sidebar,
   SidebarContent,
@@ -30,6 +31,7 @@ import { Outlet } from "@tanstack/react-router";
 import SidebarButton from "./SidebarButton";
 import { useConversationsQuery } from "@/services/provider/ai";
 import { groupConversationsByDate } from "@/lib/utils";
+import { NavUser } from "./nav-user";
 
 type TChatsByDate = Record<string, { id: string; title: string }[]>;
 
@@ -43,7 +45,14 @@ const AppSidebar = () => {
   const chatsByDateArray = Object.entries(groupedChatsByDate);
 
   const handleNewChat = () => {
-    navigate({ to: "/c/new" }); // Changed navigation method
+    navigate({ to: "/c/new" });
+  };
+
+  // Mock user data - replace with actual user data from your auth context
+  const user = {
+    name: "John Doe",
+    email: "john@example.com",
+    avatar: "/placeholder.svg",
   };
 
   return (
@@ -71,7 +80,6 @@ const AppSidebar = () => {
                 onClick={handleNewChat}
               >
                 <EditIcon className="size-6" />
-                {/* <span className="text-sm">New chat</span> */}
               </Button>
             </span>
           </div>
@@ -91,7 +99,6 @@ const AppSidebar = () => {
                     {chats.map((chat) => (
                       <SidebarMenuItem key={chat.id}>
                         <SidebarMenuButton asChild>
-                          {/* Changed Link component and props */}
                           <Link to={"/c/$id"} params={{ id: chat.id }}>
                             <span>{chat.title}</span>
                           </Link>
@@ -105,14 +112,7 @@ const AppSidebar = () => {
       </SidebarContent>
 
       <SidebarFooter>
-        <div className="p-2">
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center">
-              <User className="size-6" />
-            </div>
-            <div className="text-sm truncate">User</div>
-          </div>
-        </div>
+        <NavUser user={user} />
       </SidebarFooter>
     </Sidebar>
   );
