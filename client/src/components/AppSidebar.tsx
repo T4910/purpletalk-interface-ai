@@ -11,6 +11,7 @@ import {
   PencilIcon,
   EditIcon,
   SearchIcon,
+  LayoutDashboard,
 } from "lucide-react";
 import { Link, useNavigate } from "@tanstack/react-router";
 import {
@@ -46,6 +47,10 @@ const AppSidebar = () => {
 
   const handleNewChat = () => {
     navigate({ to: "/c/new" });
+  };
+
+  const handleDashboard = () => {
+    navigate({ to: "/dashboard" });
   };
 
   // Mock user data - replace with actual user data from your auth context
@@ -87,6 +92,19 @@ const AppSidebar = () => {
       </SidebarHeader>
 
       <SidebarContent>
+        {/* Dashboard Navigation Link */}
+        <div className="px-2 pb-2">
+          <Button
+            variant="outline"
+            className="w-full justify-start gap-2 h-9 text-sm font-medium"
+            onClick={handleDashboard}
+          >
+            <LayoutDashboard className="size-4" />
+            Dashboard
+          </Button>
+        </div>
+
+        {/* Chat History */}
         {isPending
           ? "Loading..."
           : chatsByDateArray.length === 0
