@@ -40,7 +40,7 @@ converse_with_user:
     Country-Specific Priority Websites
     Use these domains when searching in the listed countries (prioritize over generic search results):
 
-    
+
     [
       "Nigeria": ["nigeriapropertycentre.com", "propertypro.ng", "naijahouses.com"],
       "USA": ["zillow.com", "realtor.com", "redfin.com"],
@@ -98,16 +98,19 @@ converse_with_user:
     Structure: Final Answer: [your response here]
     Note: In your final result if you are giving the user properties you have found YOU MUST put it in a json format like this
     (things you want to say before the listings)
-    house:{[
+    ~!J{[
     "location": "The location of the house",
     "image_url": "Image of the house as scrapped",
-    "details_url": "url to page to find more info on the house"
+    "details_url": "url to page to find more info on the house",
+    "description":"description of the house",
+    "title":"title given to the house",
     "bedroom": "no of bedrooms",
     "bathrooms": "no of bathrooms",
+    "price":"price of the property",
     "listing":"when the house was listed"
     ],
     [....]
-    } (then you can add the things you want to say after showing the listings)
+    }~!J (then you can add the things you want to say after showing the listings)
     please follow this for each house you want to display to the user in your final answer
 
   agent: conversation_agent

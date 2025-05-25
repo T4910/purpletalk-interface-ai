@@ -59,48 +59,6 @@ const ChatInterface = ({ chatId }: ChatInterfaceProps) => {
       )}
     >
       <Header />
-      {/* <div
-        ref={chatContainerRef}
-        className="flex-1 overflow-y-auto scrollbar-thin"
-      >
-        {messages.map((message) => (
-          <ChatMessage
-            key={message.id}
-            message={message}
-            onViewProperties={handleViewProperties}
-          />
-        ))}
-
-        {isLoading && (
-          <div className="py-4 px-4 md:px-6 mx-auto">
-            <div className="max-w-3xl mx-auto w-full flex gap-4 md:gap-6">
-              <div className="flex-shrink-0 mt-1">
-                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-400 to-purple-600 flex items-center justify-center animate-pulse-gentle">
-                  <div className="w-5 h-5 text-white">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    >
-                      <path d="M12 8V4H8" />
-                      <rect width="16" height="12" x="4" y="8" rx="2" />
-                      <path d="m6 20 4-4" />
-                      <path d="m18 20-4-4" />
-                    </svg>
-                  </div>
-                </div>
-              </div>
-              <div className="w-full">
-                <div className="h-4 w-16 bg-muted/30 rounded animate-pulse-gentle"></div>
-              </div>
-            </div>
-          </div>
-        )}
-      </div> */}
       <Suspense
         fallback={
           <div className="flex-1 mt-auto grid place-content-center">

@@ -6,10 +6,12 @@ import { useSidebar } from "./ui/sidebar";
 import { usePropertyPanelSidebar } from "./ui/usePropertyPanelContext";
 import { NavUser } from "./nav-user";
 import { TopNavUser } from "./TopNavUser";
+import { usePropertyStore } from "@/store/usePropertyStore";
 
 const PropertiesPanel = () => {
-  const { close } = usePropertiesPanel();
   const { togglePropertyPanelSidebar } = usePropertyPanelSidebar();
+  const clearProperties = usePropertyStore((store) => store.clearProperties);
+
 
   return (
     <div className="flex flex-col h-full w-full">
@@ -18,7 +20,11 @@ const PropertiesPanel = () => {
           variant="ghost"
           size="icon"
           className="h-8 w-8 rounded-full"
-          onClick={togglePropertyPanelSidebar}
+          onClick={() => {
+            // close property panel
+            togglePropertyPanelSidebar();
+            clearProperties();
+          }}
         >
           <X className="size-6" />
         </Button>

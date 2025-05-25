@@ -6,6 +6,7 @@ from .models import Conversation, Message
 from .serializers import ConversationSerializer, MessageSerializer
 from ai_agent.agent_flow.chat_controller import handle_message
 from ai_agent.serializers import AgentAPISerializer
+from django.db.models import OuterRef, Subquery
 import asyncio
 import traceback
 from asgiref.sync import async_to_sync
@@ -17,6 +18,15 @@ class ConversationListView(generics.ListCreateAPIView):
 
     def get_queryset(self):
         return Conversation.objects.filter(user=self.request.user).order_by('-updated_at')
+
+    # def get_queryset(self):
+    #     latest_message_subquery = Message.objects.filter(
+    #         conversation=OuterRef('pk')
+    #     ).order_by('-timestamp').values('timestamp')[:1]
+
+    #     return Conversation.objects.filter(user=self.request.user).annotate(
+    #         latest_message_time=Subquery(latest_message_subquery)
+    #     ).order_by('-latest_message_time')
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
@@ -53,15 +63,19 @@ class AIChatMessageView(APIView):
         else:
             return Response({'error': 'session_id is required.'}, status=status.HTTP_400_BAD_REQUEST)
 
-        # 2. Save user message
-        Message.objects.create(conversation=conversation, sender='user', content=user_input)
 
         # 3. Get AI response (sync, not streaming)
         session_id, ai_reply = handle_message(session_id, user_input)  # Unpack tuple, not coroutine
 
+        # 2. Save user message
+        Message.objects.create(conversation=conversation, sender='user', content=user_input)
+
         # 4. Save AI message
         ai_message = Message.objects.create(conversation=conversation, sender='assistant', content=ai_reply)
 
+        # Update conversation timestamp
+        conversation.save()
+        
         return Response({
             "message_id": ai_message.id,
             "agent_reply": ai_reply,

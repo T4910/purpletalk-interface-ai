@@ -1,82 +1,47 @@
 # session_manager.py
 
-import asyncio
-import pickle
-import uuid
-import redis.asyncio as aioredis
-from crewai import Crew
-import json
-import sys
+from .config import MONGO_USER, MONGO_PASSWORD
 
+from pymongo import MongoClient
 
-from .config import REDIS_URL
+# Connect to MongoDB (replace with your credentials)
+client = MongoClient(f"mongodb+srv://{MONGO_USER}:{MONGO_PASSWORD}@cluster0.uyixzji.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0")
+db = client["my_database"]
+collection = db["sessions"]
 
-# 1. Initialize the async Redis client
-#    .get() and .set() are coroutines returning bytes/raw data
-redis_client = aioredis.Redis.from_url(REDIS_URL, decode_responses=False)
 
 # 2. Session TTL (in seconds)
-SESSION_TTL = 60 * 60 * 24  # 24 hours
 
-async def create_new_session(crew,session_id) -> str:
+
+def create_new_session(crew,session_id) -> str:
     """
     Generate a new session ID and instantiate a fresh Crew.
     Serializes and stores the Crew instance and an empty buffer in Redis.
     """
     if crew: 
-        payload = json.dumps({
-            "buffer": [],
-            "has_crew": True  # Flag indicating a crew needs to be created
-        })
-    
-    # Await the set operation with an expiration TTL
-    await redis_client.set(session_id, payload, ex=SESSION_TTL)
+        collection.update_one(
+            {"session_id": session_id},
+            {"$setOnInsert": {"buffer": []}},
+            upsert=True
+        )
+
     return session_id
 
-async def load_session(session_id: str):
+def load_session(session_id: str):
     """
     Retrieve and deserialize session state from Redis.
     Returns None if session does not exist or has expired.
     """
-    raw = await redis_client.get(session_id)  # raw: bytes | None
-    if raw is None:
-        return None
-    state = json.loads(raw)
-    # Refresh TTL on each access (sliding expiration)
-    await redis_client.expire(session_id, SESSION_TTL)
-    return state  # dict with keys "crew" and "buffer"
+    doc = collection.find_one({"session_id": session_id})
+    return doc["buffer"] if doc else None
 
-async def save_session(session_id: str, crew, buffer):
+def save_session(session_id: str,new_texts: list[str]):
     """
     Serialize and save updated session state back to Redis.
     """
-    payload = json.dumps({
-        "buffer": buffer,
-        "has_crew": True  # Flag indicating a crew needs to be created
-    })
-    
-    await redis_client.set(session_id, payload, ex=SESSION_TTL)
+    collection.update_one(
+        {"session_id": session_id},
+        {"$push": {"buffer": {"$each": new_texts}}},
+        upsert=True
+    )
 
-# === Example async usage ===
-if __name__ == "__main__":
-    async def demo():
-        # Create a new session
-        sid = await create_new_session(crew=1)
-        print("New session ID:", sid)
-
-        # Load the session
-        state = await load_session(sid)
-        print("Loaded state keys:", list(state.keys()) if state else None)
-
-        # Modify buffer and save
-        crew = state["crew"]
-        buffer = state["buffer"]
-        buffer.append("User: Hello")
-        await save_session(sid, crew, buffer)
-        print("Updated buffer and saved.")
-
-        # Load again to verify
-        state2 = await load_session(sid)
-        print("Buffer after reload:", state2["buffer"])
-
-    asyncio.run(demo())

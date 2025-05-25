@@ -8,20 +8,21 @@ from crewai.utilities.events import crewai_event_bus, LLMStreamChunkEvent
 from typing import AsyncGenerator
 import time
 
-# Unified async handler
-async def _async_handle_message(session_id: str | None, user_input: str) -> Tuple[str, str]:
+
+# Synchronous wrapper
+def handle_message(session_id: str | None, user_input: str) -> Tuple[str, str]:
     state = None
     if session_id:
-        state = await load_session(session_id)
+        state = load_session(session_id)
         crew = ConversationCrew().crew()
     
     if not state:
         # Generate a new session ID internally (fixes parameter issue)
         crew = ConversationCrew().crew()
-        session_id = await create_new_session(crew, session_id)
-        state = await load_session(session_id)
+        session_id = create_new_session(crew, session_id)
+        state = load_session(session_id)
     
-    buffer = state["buffer"]
+    buffer = state
     memory = MemoryManager(session_id, buffer)
     memory.add_message(f"User: {user_input}")
     
@@ -33,17 +34,9 @@ async def _async_handle_message(session_id: str | None, user_input: str) -> Tupl
     
     reply = result.raw if hasattr(result, "raw") else str(result)
     memory.add_message(f"Agent: {reply}")
-    await save_session(session_id, crew, memory.buffer)
+    save_session(session_id, memory.buffer)
     return session_id, reply
 
-# Synchronous wrapper
-def handle_message(session_id: str | None, user_input: str) -> Tuple[str, str]:
-    loop = asyncio.new_event_loop()
-    asyncio.set_event_loop(loop)
-    try:
-        return loop.run_until_complete(_async_handle_message(session_id, user_input))
-    finally:
-        loop.close()
 
 # Streaming handler with scoped listeners and Final Answer filter
 def handle_message_stream(session_id: str | None, user_input: str) -> AsyncGenerator[str, None]:

@@ -1,10 +1,11 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { PhoneCall, MessageSquare, Heart, ExternalLink } from "lucide-react";
 import PropertyDetail from "./PropertyDetail";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { usePropertyStore } from "@/store/usePropertyStore";
 
 export interface Property {
   id: string;
@@ -73,7 +74,6 @@ const mockProperties: Property[] = [
     address: "Off Admiralty Way Lekki Phase 1 Lagos",
     pid: "1MJKH",
     detailedFeatures: [
-  
       "All Room Ensuit",
       "Swimming Pool",
       "CCTV Cameras",
@@ -100,7 +100,6 @@ const mockProperties: Property[] = [
     address: "Off Admiralty Way Lekki Phase 1 Lagos",
     pid: "1MJKH",
     detailedFeatures: [
-
       "All Room Ensuit",
       "Swimming Pool",
       "CCTV Cameras",
@@ -127,7 +126,6 @@ const mockProperties: Property[] = [
     address: "Off Admiralty Way Lekki Phase 1 Lagos",
     pid: "1MJKH",
     detailedFeatures: [
-
       "All Room Ensuit",
       "Swimming Pool",
       "CCTV Cameras",
@@ -154,7 +152,6 @@ const mockProperties: Property[] = [
     address: "Off Admiralty Way Lekki Phase 1 Lagos",
     pid: "1MJKH",
     detailedFeatures: [
-
       "All Room Ensuit",
       "Swimming Pool",
       "CCTV Cameras",
@@ -271,6 +268,9 @@ const PropertyListing = () => {
   const [selectedProperty, setSelectedProperty] = useState<Property | null>(
     null
   );
+
+  const properties = usePropertyStore((store) => store.properties);
+  useEffect(() => console.log(properties, 32233), [properties]);
 
   const handleSelectProperty = (property: Property) => {
     setSelectedProperty(property);

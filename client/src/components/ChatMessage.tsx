@@ -1,7 +1,8 @@
 import { Message } from "@/store/useChatStore";
-import { cn, extractHouseJson } from "@/lib/utils";
+import { cn, extractJsonAndTextParts, extractJsonBetweenMarkers } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { usePropertiesPanel } from "@/hooks/usePropertiesPanel";
+import { usePropertyStore } from "@/store/usePropertyStore";
 
 interface ChatMessageProps {
   message: Message;
@@ -11,11 +12,16 @@ interface ChatMessageProps {
 const ChatMessage = ({ message, onViewProperties }: ChatMessageProps) => {
   const isUser = message.sender === "user";
   const propertyPanelIsOpen = usePropertiesPanel((store) => store.isOpen);
+  const setProperties = usePropertyStore((store) => store.setProperties);
+  // const propertiesInJson = extractJsonBetweenMarkers(message.content);
+  const { jsonBlocks, textBlocks } = extractJsonAndTextParts(message.content);
 
-  console.log(extractHouseJson(message.content), 32322232);
+  console.log('Extract Json and text: ', extractJsonAndTextParts(message.content));
 
-  // Check if this is the last AI message where we should show the button
-  const showPropertiesButton = message.id === "2" && !isUser;
+  const handleViewProperties = () => {
+    setProperties(jsonBlocks[0]);
+    onViewProperties();
+  };
 
   return (
     <div
@@ -57,7 +63,7 @@ const ChatMessage = ({ message, onViewProperties }: ChatMessageProps) => {
         </div>
         <div className="w-full">
           <div className="prose prose-invert max-w-none">
-            {message.content.split("\n").map((paragraph, i) => (
+            {textBlocks[0].split("\n").map((paragraph, i) => (
               <p
                 key={i}
                 className={
@@ -68,17 +74,17 @@ const ChatMessage = ({ message, onViewProperties }: ChatMessageProps) => {
               </p>
             ))}
 
-            {showPropertiesButton && (
-                <div className="mt-4">
-                  <Button
-                    onClick={onViewProperties}
-                    className="bg-gradient-to-r from-purple-600 to-indigo-600 hover:opacity-90 rounded-md"
-                    disabled={propertyPanelIsOpen}
-                  >
-                    View properties
-                  </Button>
-                </div>
-              )}
+            {!!jsonBlocks[0] && (
+              <div className="mt-4">
+                <Button
+                  onClick={handleViewProperties}
+                  className="bg-gradient-to-r from-purple-600 to-indigo-600 hover:opacity-90 rounded-md"
+                  disabled={propertyPanelIsOpen}
+                >
+                  View properties
+                </Button>
+              </div>
+            )}
           </div>
         </div>
       </div>
