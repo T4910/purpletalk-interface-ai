@@ -45,6 +45,7 @@ CORS_ALLOWED_ORIGINS = list(set([
     'http://0.0.0.0:8080',
     'http://127.0.0.1:8080',
     'https://shiny-space-barnacle-44p6xxqr4vhq6xj-8080.app.github.dev', # Development URL
+    'https://8080-firebase-realyze-1746969465034.cluster-oayqgyglpfgseqclbygurw4xd4.cloudworkstations.dev',
     FRONTEND_URL.rstrip('/'),
 ]))
 CORS_ALLOW_CREDENTIALS = True

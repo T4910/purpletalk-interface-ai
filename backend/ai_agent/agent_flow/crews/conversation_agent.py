@@ -5,7 +5,7 @@ from crewai.agents.agent_builder.base_agent import BaseAgent
 from typing import List
 from crewai import LLM
 from crewai_tools import SerperDevTool
-from .tools.scraper_tool import ScraperTool
+from ..tools.scraper_tool import ScraperTool
 
 
 @CrewBase
@@ -25,7 +25,6 @@ class ConversationCrew:
             backstory="You are a seasoned real estate expert with years of experience in real estate and customer service",
             llm=LLM(
                 model="openai/gpt-4o",
-                stream=True  # Enable streaming
             ),
             tools = [SerperDevTool(),ScraperTool()]
         )
