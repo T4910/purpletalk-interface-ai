@@ -2,6 +2,7 @@ import { TConversation, TChatsByDate } from "@/services/types";
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { format, isToday, isYesterday } from "date-fns";
+import { start } from "repl";
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
@@ -12,11 +13,6 @@ export function groupConversationsByDate(
   const result: TChatsByDate = {};
 
   for (const convo of conversations) {
-    console.log(
-      convo?.messages[convo.messages.length - 1]?.timestamp,
-      convo.created_at,
-      89765
-    );
     if (convo?.messages[convo.messages.length - 1]?.timestamp === undefined)
       continue;
 
@@ -74,6 +70,8 @@ export function extractJsonAndTextParts(input: string): ExtractedParts {
 
   const jsonBlocks: any[] = [];
   const textBlocks: string[] = [];
+
+  console.log(input)
 
   let lastIndex = 0;
   let match: RegExpExecArray | null;

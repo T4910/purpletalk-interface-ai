@@ -37,7 +37,7 @@ const PropertiesPanel = () => {
         }} />
       </div>
 
-      <div className="flex-1 overflow-hidden p-4 mx-auto">
+      <div className="flex-1 overflow-hidden py-4 max-md:px-4 mx-auto">
         <PropertyListing />
       </div>
     </div>

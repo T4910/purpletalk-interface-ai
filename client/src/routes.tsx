@@ -40,8 +40,8 @@ const rootRoute = createRootRouteWithContext<MyRouterContext>()({
     <>
       {/* This is the root layout. You can add a navigation bar or footer here */}
       <Outlet />
-      <TanStackRouterDevtools />
-      <ReactQueryDevtools />
+      {/* <TanStackRouterDevtools />
+      <ReactQueryDevtools /> */}
     </>
   ),
   errorComponent: () => (

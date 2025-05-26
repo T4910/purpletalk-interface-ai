@@ -63,7 +63,7 @@ const ChatInput = ({
           <textarea
             ref={textareaRef}
             className="w-full bg-transparent border-0 resize-none pl-6 px-12 py-4 h-full max-h-32 focus:ring-0 focus:outline-none scrollbar-thin rounded-2xl overflow-y-auto"
-            placeholder="Message Realyze - Enoch, wait for at least 2 minutes before you conclude it's not working..."
+            placeholder="Message Realyze"
             value={inputValue.trimStart()} // Prevent leading spaces in the state
             onChange={(e) => setInputValue(e.target.value)}
             rows={1}

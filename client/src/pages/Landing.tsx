@@ -375,7 +375,7 @@ const CallToAction = () => {
       {isAuth ? (
         <Button
           asChild
-          className="bg-primary hover:bg-primary/90 px-8 py-6 text-lg"
+          className="bg-primary hover:bg-primary/90 px-8 py-6 text-lg z-20"
         >
           <Link to="/c/dashboard">Go to Dashboard</Link>
         </Button>
@@ -383,7 +383,7 @@ const CallToAction = () => {
         <>
           <Button
             asChild
-            className="bg-primary hover:bg-primary/90 px-8 py-6 text-lg"
+            className="bg-primary hover:bg-primary/90 px-8 py-6 text-lg z-20"
           >
             <Link to="/signup">Get Started</Link>
           </Button>

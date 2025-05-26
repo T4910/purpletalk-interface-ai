@@ -33,7 +33,7 @@ const ChatMessage = ({ message, onViewProperties }: ChatMessageProps) => {
       <div
         className={`${
           isUser ? "" : ""
-        } max-w-3xl mx-auto w-full flex gap-4 md:gap-6`}
+        } ${propertyPanelIsOpen ? 'max-w-sm' : 'max-w-3xl'} mx-auto w-full flex gap-4 md:gap-6`}
       >
         <div className="flex-shrink-0 mt-1">
           {isUser ? (

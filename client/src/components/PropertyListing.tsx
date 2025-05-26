@@ -1,19 +1,18 @@
 import { useEffect, useState } from "react";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { PhoneCall, MessageSquare, Heart, ExternalLink } from "lucide-react";
 import PropertyDetail from "./PropertyDetail";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { usePropertyStore } from "@/store/usePropertyStore";
+import { json } from "stream/consumers";
 
 export interface Property {
   id: string;
   title: string;
   location: string;
   price: string;
-  beds: number;
-  baths: number;
+  beds: number | string;
+  baths: number | string;
   features: string[];
   isPremium: boolean;
   updatedDate: string;
@@ -23,241 +22,261 @@ export interface Property {
   address?: string;
   detailedFeatures?: string[];
   pid?: string;
+  // New structure fields
+  bedroom?: string;
+  bathrooms?: string;
+  details_url?: string;
+  image_url?: string;
+  listing?: string;
 }
 
-const mockProperties: Property[] = [
-  {
-    id: "1",
-    title: "5bed Detached+bq!!!",
-    location: "Ikeja GRA Ikeja Lagos",
-    price: "₦ 1,200,000,000",
-    beds: 5,
-    baths: 6,
-    features: ["ALL ROOM ENSUIT", "24 HOURS SECURITY"],
-    isPremium: true,
-    // updatedDate: "Updated 10 May 2025, Added 28 Mar 2025",
-    imageUrl:
-      "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1770&q=80",
-    description:
-      "FOR SALE!!! 5BED DETACHED+BQ!!! LOCATION:IKEJA GRA LAGOS... TITLE:CERTIFICATE OF OCCUPANCY... PRICE:1.2BILLION..",
-    toilets: 6,
-    address: "Ikeja Gra Ikeja Lagos",
-    pid: "2MSPS",
-    detailedFeatures: [
-      "Big Compound",
-      "All Room Ensuit",
-      "Jacuzzi",
-      "CCTV Cameras",
-      "Parking Space",
-      "Water Treatment",
-      "Drainage System",
-      "POP Ceiling",
-      "C of O",
-      "Security",
-    ],
-  },
-  {
-    id: "2",
-    title: "5 Bedroom House",
-    location: "Off Admiralty Way Lekki Phase 1 Lekki Lagos",
-    price: "₦ 1,300,000,000",
-    beds: 5,
-    baths: 5,
-    features: ["SUPERMARKET NEARBY", "ALL ROOM ENSUIT", "24 HOURS SECURITY"],
-    isPremium: true,
-    // updatedDate: "Updated 10 May 2025, Added 13 Jan 2025",
-    imageUrl:
-      "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1770&q=80",
-    description:
-      "A beautiful 5 bedroom house in the heart of Lekki Phase 1. Perfect for a family looking for comfort and luxury.",
-    toilets: 5,
-    address: "Off Admiralty Way Lekki Phase 1 Lagos",
-    pid: "1MJKH",
-    detailedFeatures: [
-      "All Room Ensuit",
-      "Swimming Pool",
-      "CCTV Cameras",
-      "Parking Space",
-      "Water Treatment",
-      "C of O",
-    ],
-  },
-  {
-    id: "3",
-    title: "5 Bedroom House",
-    location: "Off Admiralty Way Lekki Phase 1 Lekki Lagos",
-    price: "₦ 1,300,000,000",
-    beds: 5,
-    baths: 5,
-    features: ["SUPERMARKET NEARBY", "ALL ROOM ENSUIT", "24 HOURS SECURITY"],
-    isPremium: true,
-    // updatedDate: "Updated 10 May 2025, Added 13 Jan 2025",
-    imageUrl:
-      "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1770&q=80",
-    description:
-      "A beautiful 5 bedroom house in the heart of Lekki Phase 1. Perfect for a family looking for comfort and luxury.",
-    toilets: 5,
-    address: "Off Admiralty Way Lekki Phase 1 Lagos",
-    pid: "1MJKH",
-    detailedFeatures: [
-      "All Room Ensuit",
-      "Swimming Pool",
-      "CCTV Cameras",
-      "Parking Space",
-      "Water Treatment",
-      "C of O",
-    ],
-  },
-  {
-    id: "5",
-    title: "5 Bedroom House",
-    location: "Off Admiralty Way Lekki Phase 1 Lekki Lagos",
-    price: "₦ 1,300,000,000",
-    beds: 5,
-    baths: 5,
-    features: ["SUPERMARKET NEARBY", "ALL ROOM ENSUIT", "24 HOURS SECURITY"],
-    isPremium: true,
-    // updatedDate: "Updated 10 May 2025, Added 13 Jan 2025",
-    imageUrl:
-      "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1770&q=80",
-    description:
-      "A beautiful 5 bedroom house in the heart of Lekki Phase 1. Perfect for a family looking for comfort and luxury.",
-    toilets: 5,
-    address: "Off Admiralty Way Lekki Phase 1 Lagos",
-    pid: "1MJKH",
-    detailedFeatures: [
-      "All Room Ensuit",
-      "Swimming Pool",
-      "CCTV Cameras",
-      "Parking Space",
-      "Water Treatment",
-      "C of O",
-    ],
-  },
-  {
-    id: "4",
-    title: "5 Bedroom House",
-    location: "Off Admiralty Way Lekki Phase 1 Lekki Lagos",
-    price: "₦ 1,300,000,000",
-    beds: 5,
-    baths: 5,
-    features: ["SUPERMARKET NEARBY", "ALL ROOM ENSUIT", "24 HOURS SECURITY"],
-    isPremium: true,
-    // updatedDate: "Updated 10 May 2025, Added 13 Jan 2025",
-    imageUrl:
-      "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1770&q=80",
-    description:
-      "A beautiful 5 bedroom house in the heart of Lekki Phase 1. Perfect for a family looking for comfort and luxury.",
-    toilets: 5,
-    address: "Off Admiralty Way Lekki Phase 1 Lagos",
-    pid: "1MJKH",
-    detailedFeatures: [
-      "All Room Ensuit",
-      "Swimming Pool",
-      "CCTV Cameras",
-      "Parking Space",
-      "Water Treatment",
-      "C of O",
-    ],
-  },
-];
+// const mockProperties: Property[] = [
+//   // New structure property
+//   {
+//     id: "new-1",
+//     title: "Houses for Sale in Lagos",
+//     location: "Lagos, Nigeria",
+//     price: "₦12,000,000 - ₦250,000,000",
+//     beds: "Multiple options",
+//     baths: "Multiple options",
+//     bedroom: "Multiple options",
+//     bathrooms: "Multiple options",
+//     features: ["PRIME LOCATION", "VARIOUS OPTIONS", "VERIFIED LISTINGS"],
+//     isPremium: true,
+//     updatedDate: "Updated 26 May 2025",
+//     imageUrl: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1770&q=80",
+//     description: "The average price of houses is ₦250,000,000, with prices varying by location and features.",
+//     details_url: "https://nigeriapropertycentre.com/for-sale/houses/lagos/showtype",
+//     image_url: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1770&q=80",
+//     listing: "Various listings available",
+//     detailedFeatures: [
+//       "Prime Locations",
+//       "Multiple Property Types",
+//       "Verified Listings",
+//       "Professional Support",
+//       "Legal Documentation",
+//       "Property Inspection"
+//     ],
+//   },
+//   {
+//     id: "1",
+//     title: "5bed Detached+bq!!!",
+//     location: "Ikeja GRA Ikeja Lagos",
+//     price: "₦ 1,200,000,000",
+//     beds: 5,
+//     baths: 6,
+//     features: ["ALL ROOM ENSUIT", "24 HOURS SECURITY"],
+//     isPremium: true,
+//     updatedDate: "Updated 10 May 2025, Added 28 Mar 2025",
+//     imageUrl:
+//       "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1770&q=80",
+//     description:
+//       "FOR SALE!!! 5BED DETACHED+BQ!!! LOCATION:IKEJA GRA LAGOS... TITLE:CERTIFICATE OF OCCUPANCY... PRICE:1.2BILLION..",
+//     toilets: 6,
+//     address: "Ikeja Gra Ikeja Lagos",
+//     pid: "2MSPS",
+//     detailedFeatures: [
+//       "Big Compound",
+//       "All Room Ensuit",
+//       "Jacuzzi",
+//       "CCTV Cameras",
+//       "Parking Space",
+//       "Water Treatment",
+//       "Drainage System",
+//       "POP Ceiling",
+//       "C of O",
+//       "Security",
+//     ],
+//   },
+//   {
+//     id: "2",
+//     title: "5 Bedroom House",
+//     location: "Off Admiralty Way Lekki Phase 1 Lekki Lagos",
+//     price: "₦ 1,300,000,000",
+//     beds: 5,
+//     baths: 5,
+//     features: ["SUPERMARKET NEARBY", "ALL ROOM ENSUIT", "24 HOURS SECURITY"],
+//     isPremium: true,
+//     // updatedDate: "Updated 10 May 2025, Added 13 Jan 2025",
+//     imageUrl:
+//       "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1770&q=80",
+//     description:
+//       "A beautiful 5 bedroom house in the heart of Lekki Phase 1. Perfect for a family looking for comfort and luxury.",
+//     toilets: 5,
+//     address: "Off Admiralty Way Lekki Phase 1 Lagos",
+//     pid: "1MJKH",
+//     detailedFeatures: [
+//       "All Room Ensuit",
+//       "Swimming Pool",
+//       "CCTV Cameras",
+//       "Parking Space",
+//       "Water Treatment",
+//       "C of O",
+//     ],
+//   },
+//   {
+//     id: "3",
+//     title: "5 Bedroom House",
+//     location: "Off Admiralty Way Lekki Phase 1 Lekki Lagos",
+//     price: "₦ 1,300,000,000",
+//     beds: 5,
+//     baths: 5,
+//     features: ["SUPERMARKET NEARBY", "ALL ROOM ENSUIT", "24 HOURS SECURITY"],
+//     isPremium: true,
+//     // updatedDate: "Updated 10 May 2025, Added 13 Jan 2025",
+//     imageUrl:
+//       "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1770&q=80",
+//     description:
+//       "A beautiful 5 bedroom house in the heart of Lekki Phase 1. Perfect for a family looking for comfort and luxury.",
+//     toilets: 5,
+//     address: "Off Admiralty Way Lekki Phase 1 Lagos",
+//     pid: "1MJKH",
+//     detailedFeatures: [
+//       "All Room Ensuit",
+//       "Swimming Pool",
+//       "CCTV Cameras",
+//       "Parking Space",
+//       "Water Treatment",
+//       "C of O",
+//     ],
+//   },
+//   {
+//     id: "5",
+//     title: "5 Bedroom House",
+//     location: "Off Admiralty Way Lekki Phase 1 Lekki Lagos",
+//     price: "₦ 1,300,000,000",
+//     beds: 5,
+//     baths: 5,
+//     features: ["SUPERMARKET NEARBY", "ALL ROOM ENSUIT", "24 HOURS SECURITY"],
+//     isPremium: true,
+//     // updatedDate: "Updated 10 May 2025, Added 13 Jan 2025",
+//     imageUrl:
+//       "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1770&q=80",
+//     description:
+//       "A beautiful 5 bedroom house in the heart of Lekki Phase 1. Perfect for a family looking for comfort and luxury.",
+//     toilets: 5,
+//     address: "Off Admiralty Way Lekki Phase 1 Lagos",
+//     pid: "1MJKH",
+//     detailedFeatures: [
+//       "All Room Ensuit",
+//       "Swimming Pool",
+//       "CCTV Cameras",
+//       "Parking Space",
+//       "Water Treatment",
+//       "C of O",
+//     ],
+//   },
+//   {
+//     id: "4",
+//     title: "5 Bedroom House",
+//     location: "Off Admiralty Way Lekki Phase 1 Lekki Lagos",
+//     price: "₦ 1,300,000,000",
+//     beds: 5,
+//     baths: 5,
+//     features: ["SUPERMARKET NEARBY", "ALL ROOM ENSUIT", "24 HOURS SECURITY"],
+//     isPremium: true,
+//     // updatedDate: "Updated 10 May 2025, Added 13 Jan 2025",
+//     imageUrl:
+//       "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1770&q=80",
+//     description:
+//       "A beautiful 5 bedroom house in the heart of Lekki Phase 1. Perfect for a family looking for comfort and luxury.",
+//     toilets: 5,
+//     address: "Off Admiralty Way Lekki Phase 1 Lagos",
+//     pid: "1MJKH",
+//     detailedFeatures: [
+//       "All Room Ensuit",
+//       "Swimming Pool",
+//       "CCTV Cameras",
+//       "Parking Space",
+//       "Water Treatment",
+//       "C of O",
+//     ],
+//   },
+// ];
 
-const PropertyCard = ({
-  property,
-  onSelect,
-}: {
+interface PropertyCardProps {
   property: Property;
   onSelect: (property: Property) => void;
-}) => {
+}
+
+const PropertyCard = ({ property, onSelect }: PropertyCardProps) => {
   return (
-    <Card className="overflow-hidden mb-6 rounded-xl shadow-sm">
-      <div className="flex flex-col md:flex-row">
-        <div className="relative md:w-full h-52">
+    <Card 
+      className="overflow-hidden mb-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer transform hover:scale-[1.01]"
+      onClick={() => onSelect(property)}
+    >
+      <div className="flex flex-col lg:flex-row">
+        {/* Image Section */}
+        <div className="relative lg:w-2/5 h-64 lg:h-56">
           <img
-            src={property.imageUrl}
-            alt={property.title}
+            src={property?.imageUrl || property?.image_url}
+            alt={property?.title}
             className="w-full h-full object-cover"
           />
-          <div className="absolute top-2 left-2">
-            <Badge className="bg-purple-600 text-white text-xs py-1 px-2">
-              MUST SEE
-            </Badge>
-          </div>
-          <div className="absolute bottom-2 left-2 bg-gray-800/70 text-white px-2 py-1 rounded text-xs">
-            28
-          </div>
+          <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
+          {/* <div className="absolute bottom-3 left-3 bg-black/60 text-white px-3 py-1 rounded-full text-xs font-medium">
+            28 Photos
+          </div> */}
+          {/* {property?.isPremium && (
+            <div className="absolute top-3 right-3">
+              <Badge className="bg-gradient-to-r from-amber-400 to-amber-600 text-white font-medium py-1 px-3 shadow-lg">
+                ⭐ PREMIUM
+              </Badge>
+            </div>
+          )} */}
         </div>
 
-        <div className="flex-1 p-4">
-          <div className="flex justify-between">
-            <div>
-              <h3
-                className="text-lg font-medium cursor-pointer hover:text-purple-600 transition-colors"
-                onClick={() => onSelect(property)}
-              >
-                {property.title}
+        {/* Content Section */}
+        <div className="flex-1 bg-white bg-opacity-10 p-6 flex flex-col justify-between text-white">
+          <div>
+            <div className="mb-4">
+              <h3 className="text-xl font-bold text-purple-600 transition-colors mb-2">
+                {property?.title}
               </h3>
-              <p className="text-sm text-muted-foreground">
-                {property.location}
+              <p className="flex items-center text-white mb-2">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2 text-purple-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+                {property?.location}
               </p>
-              <p className="text-xs text-muted-foreground mt-1">
-                {property.id === "1"
-                  ? "5bed Detached+bq!!! / House FOR Sale"
-                  : "5 Bedroom House / House FOR Sale"}
+              <p className="text-sm text-white mb-3">
+                {property?.listing || `${property?.bedroom || property?.beds} Bedroom House / House FOR Sale`}
               </p>
-
-              <div className="flex gap-2 mt-3">
-                {property.features.map((feature, index) => (
-                  <Badge
-                    key={index}
-                    variant="outline"
-                    className="text-xs bg-blue-50 text-blue-600 border-blue-200"
-                  >
-                    {feature}
-                  </Badge>
-                ))}
-              </div>
             </div>
-
-            {/* <div className="text-right">
-              <p className="text-lg font-bold">{property.price}</p>
-              <p className="text-xs text-muted-foreground">
-                PID: {property.pid}
-              </p>
-              <div className="flex items-center mt-2 justify-end">
-                <p className="text-sm">
-                  {property.beds} Beds {property.baths} Baths
-                </p>
-              </div>
-
-              <div className="mt-8">
-                <Badge
-                  variant="outline"
-                  className="bg-amber-50 text-amber-600 border-amber-200 flex items-center gap-1"
-                >
-                  Premium Gold
-                </Badge>
-              </div>
-            </div> */}
           </div>
 
-          {/* <div className="flex justify-between mt-4 items-end">
-            <div className="text-xs text-muted-foreground">
-              {property.updatedDate}
+          {/* Bottom Section */}
+          <div className="flex flex-col mt-4">
+            <div className="space-y-2">
+              <div className="flex items-center gap-4 text-sm text-white">
+                <span className="flex items-center gap-1">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2V7z" />
+                  </svg>
+                  {property?.bedroom || property?.beds} Beds
+                </span>
+                <span className="flex items-center gap-1">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 14v3m4-3v3m4-3v3M3 21h18M3 10h18M3 7l9-4 9 4M4 10h16v11H4V10z" />
+                  </svg>
+                  {property?.bathrooms || property?.baths} Baths
+                </span>
+              </div>
+              {property?.pid && (
+                <p className="text-xs text-white">PID: {property?.pid}</p>
+              )}
             </div>
-
-            <div className="flex gap-2">
-              <Button className="bg-blue-500 hover:bg-blue-600 rounded-md">
-                <PhoneCall size={16} className="mr-2" /> Call
-              </Button>
-              <Button
-                variant="outline"
-                className="bg-green-500 text-white hover:bg-green-600 border-none rounded-md"
-              >
-                <MessageSquare size={16} />
-              </Button>
+            <div className="text-left mt-2">
+              <p className="text-xl font-bold text-purple-700 mb-1">{property?.price}</p>
+              <div className="flex items-center text-xs text-green-600">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                View Details
+              </div>
             </div>
-          </div> */}
+          </div>
         </div>
       </div>
     </Card>
@@ -271,6 +290,10 @@ const PropertyListing = () => {
 
   const properties = usePropertyStore((store) => store.properties);
   useEffect(() => console.log(properties, 32233), [properties]);
+
+  // If properties from store is empty, use mockProperties
+  const displayProperties = properties.length > 0 ? properties : [];
+  console.log(displayProperties, 32233, 'display properties');
 
   const handleSelectProperty = (property: Property) => {
     setSelectedProperty(property);
@@ -288,18 +311,35 @@ const PropertyListing = () => {
           onBack={handleBackToListing}
         />
       ) : (
-        <div className="space-y-4">
-          {mockProperties.map((property) => (
-            <PropertyCard
-              key={property.id}
-              property={property}
-              onSelect={handleSelectProperty}
-            />
-          ))}
-        </div>
+        <div className="w-full mx-auto py-6">
+          {displayProperties.length !== 0 && (
+            <>
+              <h2 className="text-2xl font-bold mb-6 text-purple-600">Available Properties</h2>
+              <div className="space-y-6">
+                  {displayProperties.map((property) => (
+                    <PropertyCard
+                      key={property?.id}
+                      property={property}
+                      onSelect={handleSelectProperty}
+                    />
+                    // <>{JSON.stringify(property)}</>
+                  ))}
+              </div>
+            </>
+          )}
+
+          {/* If no properties are available, show a message */}
+        {displayProperties.length === 0 && (
+          <div className="text-center text-white">
+            No properties available.
+          </div>
+        )}
+      </div>
       )}
     </ScrollArea>
   );
-};
+};  
+
+
 
 export default PropertyListing;

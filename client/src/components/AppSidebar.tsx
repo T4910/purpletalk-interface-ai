@@ -46,6 +46,8 @@ import SpinLoader from "./SpinLoader";
 import { useChildMatches } from "@tanstack/react-router";
 import { useMatchRoute } from "@tanstack/react-router";
 import { useLocation } from "@tanstack/react-router";
+import { usePropertiesPanel } from "@/hooks/usePropertiesPanel";
+import { usePropertyStore } from "@/store/usePropertyStore";
 
 type TChatsByDate = Record<string, { id: string; title: string }[]>;
 
@@ -139,6 +141,9 @@ const ChatHistory = () => {
   const matches = useRouterState();
   const groupedChatsByDate = groupConversationsByDate(conversations);
   const chatsByDateArray = Object.entries(groupedChatsByDate);
+  const clearProperties = usePropertyStore((store) => store.clearProperties);
+  const propertyPanelSetIsOpen = usePropertiesPanel((store) => store.toggle);
+
 
   return (
     <>
@@ -157,7 +162,11 @@ const ChatHistory = () => {
                       <SidebarMenuButton asChild>
                         <Link
                           to="/c/$id"
-                          onClick={() => setOpenMobile(false)}
+                          onClick={() => {
+                            setOpenMobile(false)
+                            // propertyPanelSetIsOpen();
+                            clearProperties();
+                          }}
                           params={{ id: chat.id }}
                           className="[&.active]:text-primary [&.active]:font-bold [&.active]:opacity-100 opacity-60"
                         >
