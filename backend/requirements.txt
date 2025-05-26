@@ -13,6 +13,8 @@ astrapy==1.5.2
 asttokens==3.0.0
 attrs==25.3.0
 auth0-python==4.9.0
+autobahn==24.4.2
+Automat==25.4.16
 backoff==2.2.1
 banks==2.1.2
 bcrypt==4.3.0
@@ -23,6 +25,7 @@ build==1.2.2.post1
 cachetools==5.5.2
 certifi==2025.4.26
 cffi==1.17.1
+channels==4.2.2
 chardet==5.2.0
 charset-normalizer==3.4.2
 chroma-hnswlib==0.7.6
@@ -31,11 +34,13 @@ click==8.2.0
 cohere==5.15.0
 colorama==0.4.6
 coloredlogs==15.0.1
+constantly==23.10.4
 Crawl4AI==0.6.3
 crewai==0.119.0
 crewai-tools==0.44.0
 cryptography==44.0.3
 cssselect==1.3.0
+daphne==4.2.0
 dataclasses-json==0.6.7
 decorator==5.2.1
 Deprecated==1.2.18
@@ -83,9 +88,11 @@ huggingface-hub==0.31.2
 humanfriendly==10.0
 humanize==4.12.3
 hyperframe==6.1.0
+hyperlink==21.0.0
 idna==3.10
 importlib_metadata==8.6.1
 importlib_resources==6.5.2
+incremental==24.7.2
 instructor==1.8.1
 ipython==9.2.0
 ipython_pygments_lexers==1.1.1
@@ -223,6 +230,8 @@ rich==13.9.4
 rpds-py==0.24.0
 rsa==4.9.1
 schema==0.7.7
+service-identity==24.2.0
+setuptools==80.8.0
 shellingham==1.5.4
 six==1.17.0
 smmap==5.0.2
@@ -247,6 +256,8 @@ tomli_w==1.2.0
 tornado==6.4.2
 tqdm==4.67.1
 traitlets==5.14.3
+Twisted==24.11.0
+txaio==23.1.1
 typer==0.15.3
 types-requests==2.32.0.20250515
 typing-inspect==0.9.0
@@ -268,4 +279,5 @@ wrapt==1.17.2
 xxhash==3.5.0
 yarl==1.20.0
 zipp==3.21.0
+zope.interface==7.2
 zstandard==0.23.0
