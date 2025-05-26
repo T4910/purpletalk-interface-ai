@@ -110,7 +110,7 @@
       "listing":"when the house was listed",
       "phonenumber":"phone number of the agent",
       "property_type":"type of property (house/apartment/land)",
-      "amenities": ["list of amenities like swimming pool, parking, etc."
+      "amenities": ["list of amenities like swimming pool, parking, etc."]
       ],
       [....]
       }~!J (then you can add the things you want to say after showing the listings)
