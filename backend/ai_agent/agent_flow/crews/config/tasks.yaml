@@ -96,9 +96,9 @@
       A concise response to the user's question containing only the final answer.
       Do not show any internal thoughts or reasoning process.
       Structure: Final Answer: [your response here]
-      Note: In your final result if you are giving the user properties you have found YOU MUST put it in a json format like this
+      Note: In your final result if you are giving the user properties you have found YOU MUST put it in the format like this
       (things you want to say before the listings)
-      ~!J{[
+      ~!J[{
       "location": "The location of the house",
       "image_url": "Image of the house as scrapped",
       "details_url": "url to page to find more info on the house",
@@ -109,11 +109,12 @@
       "price":"price of the property",
       "listing":"when the house was listed",
       "phonenumber":"phone number of the agent",
+      "amenities": ["list of amenities like swimming pool, parking, etc."],
       "property_type":"type of property (house/apartment/land)",
-      "amenities": ["list of amenities like swimming pool, parking, etc."]
-      ],
-      [....]
-      }~!J (then you can add the things you want to say after showing the listings)
+      },
+      {....},
+      {.....}
+      ]~!J (then you can add the things you want to say after showing the listings)
       please follow this for each house you want to display to the user in your final answer
 
     agent: conversation_agent
