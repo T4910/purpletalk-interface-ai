@@ -1,5 +1,6 @@
 import { Message } from "@/store/useChatStore";
 import { cn, extractJsonAndTextParts, extractJsonBetweenMarkers } from "@/lib/utils";
+import { parseMarkdown, renderParsedElements } from "@/lib/markdown";
 import { Button } from "@/components/ui/button";
 import { usePropertiesPanel } from "@/hooks/usePropertiesPanel";
 import { usePropertyStore } from "@/store/usePropertyStore";
@@ -63,16 +64,19 @@ const ChatMessage = ({ message, onViewProperties }: ChatMessageProps) => {
         </div>
         <div className="w-full">
           <div className="prose prose-invert max-w-none">
-            {textBlocks[0].split("\n").map((paragraph, i) => (
-              <p
-                key={i}
-                className={
-                  paragraph.trim() === "" ? "h-4" : "mb-2 leading-relaxed"
-                }
-              >
-                {paragraph}
-              </p>
-            ))}
+            {textBlocks[0].split("\n").map((paragraph, i) => {
+              if (paragraph.trim() === "") {
+                return <div key={i} className="h-4" />;
+              }
+
+              const parsedElements = parseMarkdown(paragraph);
+              
+              return (
+                <p key={i} className="mb-2 leading-relaxed">
+                  {renderParsedElements(parsedElements)}
+                </p>
+              );
+            })}
 
             {!!jsonBlocks[0] && (
               <div className="mt-4">

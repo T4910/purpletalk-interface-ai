@@ -36,7 +36,7 @@ const ChatInterface = ({ chatId }: ChatInterfaceProps) => {
   const { mutate: sendMessage, isPending: isLoading } = useMutation({
     mutationFn: aiService.sendMessage,
     onSuccess: (response) => {
-      addMessage(response.content, "assistant");
+      // addMessage(response.content, "assistant");
       console.log("refetching all conversations...");
       queryClient.invalidateQueries({ queryKey: [QueryKeys.allConversations] });
       queryClient.invalidateQueries({ queryKey: [QueryKeys.conversation, chatId] });

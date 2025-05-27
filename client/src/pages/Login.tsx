@@ -9,8 +9,8 @@ import { toast } from "sonner";
 import { useGetUserQuery, useUserLoginMutation } from "@/services/provider/auth";
 
 const Login = () => {
-  const [username, setusername] = useState("AnotherAccountbyT");
-  const [password, setPassword] = useState("abcde1,,ddfgh1");
+  const [username, setusername] = useState() //("AnotherAccountbyT");
+  const [password, setPassword] = useState() //("abcde1,,ddfgh1");
   const search = useSearch({ from: '/login' })
   const { refetch } = useGetUserQuery()
   const navigate = useNavigate()
