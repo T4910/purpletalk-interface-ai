@@ -35,23 +35,23 @@ import SpinLoader from "./SpinLoader";
 import { useQueryClient } from "@tanstack/react-query";
 import { QueryKeys } from "@/services/keys";
 import { useNavigate } from "@tanstack/react-router";
+import { Badge } from "./ui/badge";
 
 export function NavUser() {
   const { isMobile } = useSidebar();
   const [settingsOpen, setSettingsOpen] = useState(false);
   const navigate = useNavigate()
-  const { mutate: logout, isPending: isLoggingOut } = useUserLogoutMutation();
+  const { mutateAsync: logout, isPending: isLoggingOut } = useUserLogoutMutation();
   const queryClient = useQueryClient()
   const { data: user } = useGetUserQuery()
 
   const handleLogout = () => {
     // Implement logout functionality here
-    logout();
-    queryClient.invalidateQueries({
-      queryKey: [QueryKeys.user],
+    logout().then(() => {
+      queryClient.clear()
+      console.log("Logging out...");
+      navigate({ to: "/", reloadDocument: true });
     });
-    navigate({to: "/", reloadDocument: true})
-    console.log("Logging out...");
   };
 
   const handleSettings = () => {
@@ -115,17 +115,12 @@ export function NavUser() {
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
               <DropdownMenuGroup>
-                <DropdownMenuItem>
-                  <UserCircleIcon className="mr-2 h-4 w-4" />
-                  Account
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <CreditCardIcon className="mr-2 h-4 w-4" />
-                  Billing
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <BellIcon className="mr-2 h-4 w-4" />
-                  Notifications
+                <DropdownMenuItem className="flex justify-between">
+                  <span className="flex items-center">
+                    <CreditCardIcon className="mr-2 h-4 w-4" />
+                    Billing
+                  </span>
+                  <Badge>{user.credits} credits</Badge>
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={handleSettings}>
                   <SettingsIcon className="mr-2 h-4 w-4" />

@@ -37,14 +37,19 @@ const ChatInterface = ({ chatId }: ChatInterfaceProps) => {
   const { mutate: sendMessage, isPending: isLoading } = useMutation({
     mutationFn: aiService.sendMessage,
     onSuccess: (response) => {
-      // addMessage(response.content, "assistant");
+      addMessage(response.content, "assistant");
       console.log("refetching all conversations...");
       queryClient.invalidateQueries({ queryKey: [QueryKeys.allConversations] });
       queryClient.invalidateQueries({ queryKey: [QueryKeys.conversation, chatId] });
+      queryClient.invalidateQueries({ queryKey: [QueryKeys.user] });
     },
     onError: (error) => {
       console.error("Error sending message:", error);
-      toast.error("Error sending message. Please try again.")
+      if(error.response.data.error === "Not enough credits") {
+        toast.error("You have exhausted your credits. Contact ttaiwo4910@gmail.com to top up or pay for more...");
+      } else {
+        toast.error("Error sending message. Please try again.")
+      }
     },
     retry: 3,
   });

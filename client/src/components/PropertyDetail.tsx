@@ -30,7 +30,7 @@ const PropertyDetail = ({ property, onBack }: PropertyDetailProps) => {
   };
 
   return (
-    <div className="w-full mx-auto">
+    <div className="w-full mx-auto lg:px-4">
       {/* Header with back button */}
       <div className="flex items-center justify-between mb-6">
         <Button 

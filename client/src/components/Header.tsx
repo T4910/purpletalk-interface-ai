@@ -2,8 +2,11 @@ import { Badge } from '@/components/ui/badge';
 import React from 'react'
 import SidebarButton from './SidebarButton';
 import { TopNavUser } from './TopNavUser';
+import { usePropertiesPanel } from '@/hooks/usePropertiesPanel';
 
-export default function Header() {        
+export default function Header() {    
+    const { isOpen } = usePropertiesPanel();   
+
     return (
         <div className="min-h-16 sticky top-0 border-b border-border/50 flex items-center px-4 justify-between gap-4">
         <div className="flex items-center gap-4">
@@ -25,7 +28,7 @@ export default function Header() {
             </Badge>
             </div>
         </div>
-        <TopNavUser />
+        {!isOpen && <TopNavUser />}
         </div>
     );
 }

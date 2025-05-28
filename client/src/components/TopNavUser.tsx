@@ -30,23 +30,26 @@ import { useGetUserQuery, useUserLogoutMutation } from "@/services/provider/auth
 import { useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import SpinLoader from "./SpinLoader";
+import { Badge } from "./ui/badge";
+import { useSidebar } from "./ui/sidebar";
 
 export function TopNavUser() {
   const [settingsOpen, setSettingsOpen] = useState(false);
-    const navigate = useNavigate();
-    const { data: user } = useGetUserQuery()
-    const { mutate: logout, isPending: isLoggingOut } = useUserLogoutMutation();
-    const queryClient = useQueryClient();
+  const { open } = useSidebar();
+  const navigate = useNavigate();
+  const { data: user } = useGetUserQuery()
+  const { mutateAsync: logout, isPending: isLoggingOut } = useUserLogoutMutation();
+  const queryClient = useQueryClient();
 
+  if(open) return null;
 
   const handleLogout = () => {
     // Implement logout functionality here
-    logout();
-    queryClient.invalidateQueries({
-      queryKey: [QueryKeys.user],
+    logout().then(() => {
+      queryClient.clear()
+      console.log("Logging out...");
+      navigate({ to: "/", reloadDocument: true });
     });
-    navigate({ to: "/", reloadDocument: true });
-    console.log("Logging out...");
   };
   const handleSettings = () => {
     setSettingsOpen(true);
@@ -84,13 +87,12 @@ export function TopNavUser() {
           </DropdownMenuLabel>
           <DropdownMenuSeparator />
           <DropdownMenuGroup>
-            <DropdownMenuItem>
-              <UserCircleIcon className="mr-2 h-4 w-4" />
-              <span>Profile</span>
-            </DropdownMenuItem>
-            <DropdownMenuItem>
-              <CreditCardIcon className="mr-2 h-4 w-4" />
-              <span>Billing</span>
+            <DropdownMenuItem className="flex justify-between">
+                <span className="flex items-center">
+                  <CreditCardIcon className="mr-2 h-4 w-4" />
+                  Billing
+                </span>
+                <Badge>{user.credits} credits</Badge>
             </DropdownMenuItem>
             <DropdownMenuItem onClick={handleSettings}>
               <SettingsIcon className="mr-2 h-4 w-4" />

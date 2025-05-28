@@ -17,10 +17,10 @@ import { useUserRegisterMutation } from "@/services/provider/auth";
 import { useNavigate } from "@tanstack/react-router";
 
 const Signup = () => {
-  const [name, setName] = useState("AnotherAccountbyT");
-  const [email, setEmail] = useState("taiwo.emmanuel@lmu.edu.ng");
-  const [password, setPassword] = useState("abcde1,,ddfgh1");
-  const [passwordConfirm, setPasswordConfirm] = useState("abcde1,,ddfgh1");
+  const [name, setName] = useState('')//("AnotherAccountbyT");
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('')//("abcde1,,ddfgh1");
+  const [passwordConfirm, setPasswordConfirm] = useState('')//("abcde1,,ddfgh1");
   const navigate = useNavigate();
 
   const { mutate: register, isPending: isLoading } = useUserRegisterMutation();

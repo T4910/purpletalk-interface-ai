@@ -12,6 +12,9 @@ from django.template.loader import render_to_string
 from django.utils.encoding import force_bytes, force_str
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode, urlencode
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
+from credits.utils import add_credits
+from credits.models import CreditWallet
+
 
 from .serializers import (
     SignupSerializer,
@@ -63,6 +66,14 @@ class SignupView(generics.CreateAPIView):
 
     def perform_create(self, serializer):
         user = serializer.save()
+        email = user.email.lower()
+
+        CreditWallet.objects.get_or_create(user=user)
+
+        # check if bright data email
+        if email.endswith("@lmu.edu.ng") or email.endswith("@brightdata.com"):
+            add_credits(user, amount=25, reason="Signup bonus for LMU or Bright Data")
+
         # Send confirmation email after user creation
         token_generator = PasswordResetTokenGenerator()
         token = token_generator.make_token(user)

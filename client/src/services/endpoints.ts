@@ -28,6 +28,7 @@ export const balance = () => '/api/balance/';
 export const userPlugins = () => '/api/user/plugins/';
 
 export const deleteUser = () => '/api/user/delete/';
+// export const userCredits = () => '/api/credits/';
 
 // export const messages = (params: q.MessagesListParams) => {
 //     const { conversationId, messageId, ...rest } = params;

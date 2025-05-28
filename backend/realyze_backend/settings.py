@@ -72,6 +72,7 @@ INSTALLED_APPS = [
     
     'authentication', # Your authentication app
     'chat', # Chat app
+    'credits',
     'ai_agent', # AI agent app
 ]
 

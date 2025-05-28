@@ -255,9 +255,11 @@ class ResendEmailConfirmationSerializer(serializers.Serializer):
 
 # You might need a serializer for user details, potentially including 2FA status
 class UserDetailsSerializer(serializers.ModelSerializer):
+    credits = serializers.FloatField(source='creditwallet.total_credits', read_only=True)
+
     class Meta:
         model = CustomUser
-        fields = ('id', 'username', 'email', 'is_active', 'is_2fa_enabled') # Include is_active and is_2fa_enabled
+        fields = ('id', 'username', 'email', 'is_active', 'is_2fa_enabled', 'credits') # Include is_active and is_2fa_enabled
 
 # class UserDetailsView(generics.RetrieveAPIView):
 #     permission_classes = (IsAuthenticated,)

@@ -1,16 +1,14 @@
 from rest_framework import generics, status
 from rest_framework.views import APIView
-from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from .models import Conversation, Message
 from .serializers import ConversationSerializer, MessageSerializer
 from ai_agent.agent_flow.chat_controller import handle_message
 from ai_agent.serializers import AgentAPISerializer
-from django.db.models import OuterRef, Subquery, Count
-import asyncio
+from django.db.models import Count
 import traceback
-from asgiref.sync import async_to_sync
-from django.http import StreamingHttpResponse
+from credits.utils import deduct_credits
 
 class ConversationListView(generics.ListCreateAPIView):
     permission_classes = (IsAuthenticated,)
@@ -65,10 +63,13 @@ class AIChatMessageView(APIView):
 
         # 3. Get AI response (sync, not streaming)
         try:
+            deduct_credits(request.user, amount=0.5, reason="AI chat message")
             session_id, ai_reply = handle_message(session_id, user_input)
+        except ValueError:
+            return Response({"error": "Not enough credits"}, status=402)
         except Exception as e:
-            return Response({'error': 'AI did not respond'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
             traceback.print_exc(e)
+            return Response({'error': 'AI did not respond'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
         # 2. Save user message
         # if conversation. > 1:

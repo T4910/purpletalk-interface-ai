@@ -54,7 +54,7 @@ const rootRoute = createRootRouteWithContext<MyRouterContext>()({
         console.log("User is not authenticated");
         return { isAuthenticated: null, isActive: null, user: null };
       }
-      console.log("User is auth");
+      console.log("User is auth", user);
       return { isAuthenticated: !!user.id, isActive: user.is_active, user };
     } catch {
       console.log("Error fetching user data");

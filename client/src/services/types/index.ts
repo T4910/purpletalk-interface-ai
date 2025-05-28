@@ -10,6 +10,7 @@ export type TUser = {
   email: string;
   is_active: string;
   is_2fa_enabled: string;
+  credits: number;
 };
 
 export type TBackendError = {
