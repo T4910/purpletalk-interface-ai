@@ -6,7 +6,7 @@ from .models import Conversation, Message
 from .serializers import ConversationSerializer, MessageSerializer
 from ai_agent.agent_flow.chat_controller import handle_message
 from ai_agent.serializers import AgentAPISerializer
-from django.db.models import OuterRef, Subquery
+from django.db.models import OuterRef, Subquery, Count
 import asyncio
 import traceback
 from asgiref.sync import async_to_sync
@@ -57,18 +57,23 @@ class AIChatMessageView(APIView):
         # 1. Find or create the conversation
         if session_id:
             try:
-                conversation = Conversation.objects.get(session_id=session_id, user=user)
+                conversation = Conversation.objects.annotate(message_count=Count('messages')).get(session_id=session_id, user=user)
             except Conversation.DoesNotExist:
                 return Response({'error': 'Conversation not found or does not belong to user.'}, status=status.HTTP_404_NOT_FOUND)
         else:
             return Response({'error': 'session_id is required.'}, status=status.HTTP_400_BAD_REQUEST)
 
-
         # 3. Get AI response (sync, not streaming)
-        session_id, ai_reply = handle_message(session_id, user_input)  # Unpack tuple, not coroutine
+        try:
+            session_id, ai_reply = handle_message(session_id, user_input)
+        except Exception as e:
+            return Response({'error': 'AI did not respond'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            traceback.print_exc(e)
 
         # 2. Save user message
-        Message.objects.create(conversation=conversation, sender='user', content=user_input)
+        # if conversation. > 1:
+        if conversation.message_count != 1:
+            Message.objects.create(conversation=conversation, sender='user', content=user_input)
 
         # 4. Save AI message
         ai_message = Message.objects.create(conversation=conversation, sender='assistant', content=ai_reply)

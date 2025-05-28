@@ -10,24 +10,20 @@ FROM python:3.11-slim
 
 WORKDIR /app
 
+# Install system dependencies for Playwright browsers
 # Install Python dependencies
 COPY ./backend/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy backend source
+# Install Playwright browsers (required if using playwright-python)
+RUN playwright install
+
+# Rest of your Dockerfile remains the same...
 COPY ./backend .
-
-# Copy built frontend into Django static files
 COPY --from=frontend-build /frontend/dist ./static/
-
-# Expose port
 EXPOSE 8000
-
-# Add and make the startup script executable
 COPY ./scripts/start-django.sh /start.sh
 COPY ./scripts/fix-index-html.sh /fix-index-html.sh
 RUN chmod +x /start.sh /fix-index-html.sh
-
 RUN /fix-index-html.sh
-
 CMD ["/start.sh"]

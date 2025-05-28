@@ -71,12 +71,12 @@ const NewChat = () => {
           <div className="space-y-3 max-md:px-4">
             <Button
               onClick={() =>
-                handleStartChat("Help me find a property in Lagos")
+                handleStartChat("Help me find a property in New York")
               }
               className="w-full py-6 bg-chat-input-bg hover:bg-chat-input-bg/80 text-left justify-start rounded-xl border border-border/50"
             >
               <ArrowLeft className="mr-1" />
-              Help me find a property in Lagos
+              Help me find a property in New York
             </Button>
 
             <Button

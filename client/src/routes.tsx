@@ -106,7 +106,19 @@ const appRoute = createRoute({
       });
     }
   },
-  errorComponent: () => <div>Something went wrong.</div>,
+  errorComponent: () => (
+      <div className="flex flex-col items-center justify-center min-h-screen">
+        <div className="text-lg text-gray-600 mb-6">
+          Looks like there was an issue loading the page.
+        </div>
+        <button
+        className="px-6 py-3 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition duration-300"
+        onClick={() => window.location.reload()}
+        >
+        Refresh Page
+        </button>
+      </div>
+    ),
 });
 
 const chatIndex = createRoute({

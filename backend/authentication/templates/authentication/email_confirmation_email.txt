@@ -1,4 +1,4 @@
-Hello {{ user.username }},
+Hello {{ user.username }}, this is from Realyze (not spam).
 
 Please click on the link below to confirm your email address:
 

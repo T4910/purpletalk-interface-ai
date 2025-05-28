@@ -23,6 +23,7 @@ import Header from "./Header";
 import SpinLoader from "./SpinLoader";
 import { useSendAiMessage } from "@/hooks/useChat";
 import { QueryKeys } from "@/services/keys";
+import { toast } from "sonner";
 
 interface ChatInterfaceProps {
   chatId?: string;
@@ -36,13 +37,14 @@ const ChatInterface = ({ chatId }: ChatInterfaceProps) => {
   const { mutate: sendMessage, isPending: isLoading } = useMutation({
     mutationFn: aiService.sendMessage,
     onSuccess: (response) => {
-      addMessage(response.content, "assistant");
+      // addMessage(response.content, "assistant");
       console.log("refetching all conversations...");
       queryClient.invalidateQueries({ queryKey: [QueryKeys.allConversations] });
       queryClient.invalidateQueries({ queryKey: [QueryKeys.conversation, chatId] });
     },
     onError: (error) => {
       console.error("Error sending message:", error);
+      toast.error("Error sending message. Please try again.")
     },
     retry: 3,
   });

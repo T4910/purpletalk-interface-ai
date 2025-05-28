@@ -6,15 +6,16 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { LogIn, Mail, Key } from "lucide-react";
 import { toast } from "sonner";
-import { useGetUserQuery, useUserLoginMutation } from "@/services/provider/auth";
+import { useGetUserQuery, useUserLoginMutation, useUserResendConfirmEmail } from "@/services/provider/auth";
 
 const Login = () => {
-  const [username, setusername] = useState("AnotherAccountbyT");
-  const [password, setPassword] = useState("abcde1,,ddfgh1");
+  const [username, setusername] = useState('') //("AnotherAccountbyT");
+  const [password, setPassword] = useState('') //("abcde1,,ddfgh1");
   const search = useSearch({ from: '/login' })
   const { refetch } = useGetUserQuery()
   const navigate = useNavigate()
   const { mutate: login, isPending: isLoading } = useUserLoginMutation()
+  const { mutateAsync: resendEmail } = useUserResendConfirmEmail()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -34,7 +35,20 @@ const Login = () => {
         navigate({ to: search.redirect || '/c/new', replace: true })
       },
       onError: (e) => {
-        toast.error("Login failed! Please try again later")
+        const notActiveError = e?.response.data.detail.non_field_errors[0] as string;
+        toast.error(notActiveError)
+        if(notActiveError.includes('Looks like you have not confirmed your emai')) {
+          toast.error(notActiveError)
+          const [_, email] = notActiveError.match(/\[(.*?)\]/);
+          console.log('resending....', email)
+          setTimeout(() => toast.promise(resendEmail({ email: email }), {
+            loading: 'Resending email...',
+            success: () => {
+              return `Confirm email has been resent (check spam just in case)`;
+            },
+            error: 'Error occured while resending email',
+          }), 2000)
+        }
       }
     })
   };

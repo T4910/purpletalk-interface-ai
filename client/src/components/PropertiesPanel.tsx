@@ -30,11 +30,7 @@ const PropertiesPanel = () => {
         </Button>
 
         <h2 className="text-lg font-medium">Available Properties</h2>
-        <TopNavUser user={{
-          name: "John Doe",
-          email: "john@example.com",
-          avatar: "/placeholder.svg",
-        }} />
+        <TopNavUser />
       </div>
 
       <div className="flex-1 overflow-hidden py-4 max-md:px-4 mx-auto">
