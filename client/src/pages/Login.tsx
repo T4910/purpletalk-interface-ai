@@ -36,6 +36,7 @@ const Login = () => {
       },
       onError: (e) => {
         const notActiveError = e?.response.data.detail.non_field_errors[0] as string;
+        toast.error(notActiveError)
         if(notActiveError.includes('Looks like you have not confirmed your emai')) {
           toast.error(notActiveError)
           const [_, email] = notActiveError.match(/\[(.*?)\]/);
