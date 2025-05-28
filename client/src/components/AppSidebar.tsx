@@ -72,7 +72,7 @@ const AppSidebar = () => {
           <div className="flex gap-2 justify-between items-center flex-1">
             <SidebarButton />
             <span>
-              <Button
+              {/* <Button
                 variant="ghost"
                 className="w-10 p-0 bg-sidebar rounded-md"
               >
@@ -83,7 +83,7 @@ const AppSidebar = () => {
                 className="w-10 p-0 bg-sidebar rounded-md"
               >
                 <Bookmark className="size-6" />
-              </Button>
+              </Button> */}
               <Button
                 variant="ghost"
                 className="w-10 p-0 bg-sidebar rounded-md"

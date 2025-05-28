@@ -14,7 +14,7 @@ const Login = () => {
   const search = useSearch({ from: '/login' })
   const { refetch } = useGetUserQuery()
   const navigate = useNavigate()
-  const { mutate: login, isPending: isLoading } = useUserLoginMutation()
+  const { mutate: login, isPending: isLoading, isSuccess } = useUserLoginMutation()
   const { mutateAsync: resendEmail } = useUserResendConfirmEmail()
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -110,8 +110,8 @@ const Login = () => {
                   />
                 </div>
               </div>
-              <Button type="submit" className="w-full" disabled={isLoading}>
-                {isLoading ? "Signing in..." : "Sign in"}
+              <Button type="submit" className="w-full" disabled={(isLoading || isSuccess)}>
+                {(isLoading || isSuccess) ? "Signing in..." : "Sign in"}
               </Button>
             </form>
           </CardContent>

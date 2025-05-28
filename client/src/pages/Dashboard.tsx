@@ -112,7 +112,7 @@ export default function Dashboard() {
         <h1 className="text-3xl font-bold mb-6">Dashboard</h1>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        {/* <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           <StatsCard
             title="Total Revenue"
             value="$1,250.00"
@@ -145,10 +145,10 @@ export default function Dashboard() {
             description="Meets growth projections"
             subtitle="Steady performance"
           />
-        </div>
+        </div> */}
 
         {/* Chart Section */}
-        <Card className="mt-6">
+        {/* <Card className="mt-6">
           <CardHeader>
             <CardTitle>Property Price Trends</CardTitle>
             <CardDescription>Total for the last 3 months</CardDescription>
@@ -242,7 +242,7 @@ export default function Dashboard() {
               </ChartContainer>
             </div>
           </CardContent>
-        </Card>
+        </Card> */}
 
         {/* Properties Table/Grid Section */}
         <Card className="mt-6">
@@ -308,7 +308,7 @@ export default function Dashboard() {
 
 // Custom tooltip for the chart
 const CustomTooltip: React.FC<any> = ({ active, payload }) => {
-  if (active && payload && payload.length) {
+  if (active && payload && payload.length) {  
     return (
       <div className="bg-background border border-border p-3 rounded-lg shadow-lg">
         <p className="text-sm font-medium">{payload[0].payload.date}</p>
