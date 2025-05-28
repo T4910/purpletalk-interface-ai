@@ -121,13 +121,7 @@ const AppSidebar = () => {
       </SidebarContent>
 
       <SidebarFooter>
-        <NavUser
-          user={{
-            name: "John Doe",
-            email: "john@example.com",
-            avatar: "/placeholder.svg",
-          }}
-        />
+        <NavUser />
       </SidebarFooter>
     </Sidebar>
   );
@@ -151,7 +145,7 @@ const ChatHistory = () => {
       {isPending
         ? "Loading..."
         : chatsByDateArray.length === 0
-        ? "No chats"
+        ? <div className="mx-auto py-8 grid place-content-center">No chats</div>
         : chatsByDateArray.map(([date, chats]) => (
             <SidebarGroup key={date}>
               <SidebarGroupLabel>{date}</SidebarGroupLabel>

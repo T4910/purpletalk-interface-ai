@@ -26,22 +26,15 @@ import {
 import { Button } from "@/components/ui/button";
 import { UserSettings } from "./UserSettings";
 import { QueryKeys } from "@/services/keys";
-import { useUserLogoutMutation } from "@/services/provider/auth";
+import { useGetUserQuery, useUserLogoutMutation } from "@/services/provider/auth";
 import { useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import SpinLoader from "./SpinLoader";
 
-export function TopNavUser({
-  user,
-}: {
-  user: {
-    name: string;
-    email: string;
-    avatar: string;
-  };
-}) {
+export function TopNavUser() {
   const [settingsOpen, setSettingsOpen] = useState(false);
     const navigate = useNavigate();
+    const { data: user } = useGetUserQuery()
     const { mutate: logout, isPending: isLoggingOut } = useUserLogoutMutation();
     const queryClient = useQueryClient();
 
@@ -65,9 +58,9 @@ export function TopNavUser({
         <DropdownMenuTrigger asChild>
           <Button variant="ghost" className="relative h-8 w-8 rounded-full">
             <Avatar className="h-8 w-8">
-              <AvatarImage src={user.avatar} alt={user.name} />
+              <AvatarImage src={'user.avatar'} alt={user.username} />
               <AvatarFallback>
-                {user.name
+                {user.username
                   .split(" ")
                   .map((n) => n[0])
                   .join("")
@@ -83,7 +76,7 @@ export function TopNavUser({
         >
           <DropdownMenuLabel className="font-normal">
             <div className="flex flex-col space-y-1">
-              <p className="text-sm font-medium leading-none">{user.name}</p>
+              <p className="text-sm font-medium leading-none">{user.username}</p>
               <p className="text-xs leading-none text-muted-foreground">
                 {user.email}
               </p>

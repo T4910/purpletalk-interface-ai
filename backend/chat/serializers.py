@@ -9,7 +9,7 @@ class MessageSerializer(serializers.ModelSerializer):
 
 class ConversationSerializer(serializers.ModelSerializer):
     # Include messages nested within the conversation
-    messages = MessageSerializer(many=True, read_only=True)
+    messages = MessageSerializer(many=False, read_only=True)
 
     class Meta:
         model = Conversation

@@ -14,7 +14,7 @@ const App = () => (
     <AuthContextProvider>
       <TooltipProvider>
         <Toaster />
-        <Sonner />
+        <Sonner closeButton/>
         <AuthRouterProvider />
       </TooltipProvider>
     </AuthContextProvider>

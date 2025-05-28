@@ -127,7 +127,6 @@ class TwoFactorVerifyView(APIView):
 
         if not user_id or not code:
             return Response({"detail": "User ID and code are required."}, status=status.HTTP_400_BAD_REQUEST)
-            return Response({"detail": "User ID and code are required."}, status=status.HTTP_400_BAD_REQUEST)
 
         try:
             user = CustomUser.objects.get(id=user_id)

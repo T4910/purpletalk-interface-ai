@@ -65,7 +65,11 @@ class AIChatMessageView(APIView):
 
 
         # 3. Get AI response (sync, not streaming)
-        session_id, ai_reply = handle_message(session_id, user_input)  # Unpack tuple, not coroutine
+        try:
+            session_id, ai_reply = handle_message(session_id, user_input)
+        except Exception as e:
+            return Response({'error': 'AI did not respond'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            traceback.print_exc(e)
 
         # 2. Save user message
         Message.objects.create(conversation=conversation, sender='user', content=user_input)

@@ -58,8 +58,10 @@ class LoginSerializer(serializers.Serializer):
                 # If authentication failed, check if a user with this username exists but is inactive
                 try:
                     user_by_username = CustomUser.objects.get(username=username)
-                    if not user_by_username.is_active:
-                        raise serializers.ValidationError('username not confirmed. Please check your inbox.', code='authentication')
+                    if not user_by_username.is_active:         
+                        # Generate and send a new confirmation email
+                        
+                        raise serializers.ValidationError(f'Looks like you have not confirmed your email: [{user_by_username.email}]. Please check your inbox (spam as well).', code='authentication')
                 except CustomUser.DoesNotExist:
                     # User with this username does not exist, or credentials are truly invalid
                     pass # Fall through to the general Invalid credentials error
@@ -85,6 +87,8 @@ class RequestPasswordResetSerializer(serializers.Serializer):
     def validate_email(self, value):
         try:
             user = CustomUser.objects.get(email=value)
+            # if not user.is_active:
+            #     raise serializers.ValidationError('Looks like you have not confirmed your email: . Please check your inbox (spam as well).', code='authentication')
         except CustomUser.DoesNotExist:
             raise serializers.ValidationError("User with this email does not exist.")
         return value

@@ -3,14 +3,7 @@ import React from 'react'
 import SidebarButton from './SidebarButton';
 import { TopNavUser } from './TopNavUser';
 
-export default function Header() {
-  // Mock user data - replace with actual user data from your auth context
-    const user = {
-        name: "John Doe",
-        email: "john@example.com",
-        avatar: "/placeholder.svg",
-    };
-        
+export default function Header() {        
     return (
         <div className="min-h-16 sticky top-0 border-b border-border/50 flex items-center px-4 justify-between gap-4">
         <div className="flex items-center gap-4">
@@ -32,7 +25,7 @@ export default function Header() {
             </Badge>
             </div>
         </div>
-        <TopNavUser user={user} />
+        <TopNavUser />
         </div>
     );
 }

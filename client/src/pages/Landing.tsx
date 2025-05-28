@@ -283,27 +283,33 @@ const Landing = () => {
             <div className="grid grid-cols-2 md:grid-cols-3 gap-8 text-center md:text-left">
               <div>
                 <h3 className="text-white font-medium mb-4">Product</h3>
-                <ul className="space-y-2">
-                  <Link
-                    to="/"
-                    hash="features"
-                    className="text-gray-400 hover:text-white text-sm"
-                  >
-                    Features
-                  </Link>
-                  <Link
-                    to="/"
-                    hash="how-it-works"
-                    className="text-gray-400 hover:text-white text-sm"
-                  >
-                    How it Works
-                  </Link>
-                  <Link
-                    to="/signup"
-                    className="text-gray-400 hover:text-white text-sm"
-                  >
-                    Sign Up
-                  </Link>
+                <ul className="space-y-2 flex-col">
+                  <li>
+                    <Link
+                      to="/"
+                      hash="features"
+                      className="text-gray-400 hover:text-white text-sm"
+                    >
+                      Features
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      to="/"
+                      hash="how-it-works"
+                      className="text-gray-400 hover:text-white text-sm"
+                    >
+                      How it Works
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      to="/signup"
+                      className="text-gray-400 hover:text-white text-sm"
+                    >
+                      Sign Up
+                    </Link>
+                  </li>
                 </ul>
               </div>
               <div>
@@ -342,7 +348,7 @@ const Landing = () => {
                 <h3 className="text-white font-medium mb-4">Contributors</h3>
                 <div className="flex items-center justify-center md:justify-start space-x-4">
                   <Link
-                    href="https://github.com/yourusername"
+                    href="https://github.com/T4910/purpletalk-interface-ai/"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-gray-400 hover:text-white"
