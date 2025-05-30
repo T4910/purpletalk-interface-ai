@@ -59,8 +59,8 @@ const Signup = () => {
           console.log(res);
         },
         onError: (e) => {
-          toast.error("Registration failesd!");
-          // console.log(e.response.data, 23982)
+          toast.error(`Registration failesd! Error: ${Object.values(e.response.data)[0]}`);
+          console.log(e.response.data, 23982)
         },
       }
     );
@@ -85,8 +85,8 @@ const Signup = () => {
               <UserPlus className="h-5 w-5" />
               Create an account
             </CardTitle>
-            <CardDescription>
-              Enter your information to create your account
+            <CardDescription className="text-center">
+              Enter your information to create your account. Register with a Landmark or Brightdata emails get more credits.
             </CardDescription>
           </CardHeader>
           <CardContent>

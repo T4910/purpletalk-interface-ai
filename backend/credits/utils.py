@@ -24,3 +24,8 @@ def add_credits(user, amount, reason):
         reason=reason,
         transaction_type='add'
     )
+
+
+def get_user_credits(user):
+    wallet = CreditWallet.objects.get(user=user)
+    return wallet.total_credits
