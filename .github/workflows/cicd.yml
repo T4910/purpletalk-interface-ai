@@ -51,11 +51,21 @@ jobs:
             USER: ${{ secrets.EC2_USER }}
           run: |
             echo "$PRIVATE_KEY" > github-ec2.pem && chmod 600 github-ec2.pem
-            ssh -o StrictHostKeyChecking=no -i github-ec2.pem ${USER}@${HOST}
-            echo "Shutting down..."
-            cd app && docker-compose down
-            echo "Clear cache..."
-            docker system prune -f --all
-            echo "Download and startup"
-            docker pull ${{ secrets.DOCKER_USERNAME }}/realyze-application-image:latest
-            docker-compose --env-file .env up -d --build
+
+            ssh -o StrictHostKeyChecking=no -i github-ec2.pem ${USER}@${HOST} << 'EOF'
+                echo "Connecting to EC2..."
+
+                cd /home/ec2-user/app
+
+                echo "Shutting down..."
+                docker-compose down
+
+                echo "Clearing Docker cache..."
+                docker system prune -f --all
+
+                echo "Pulling latest image..."
+                docker pull ${{ secrets.DOCKER_USERNAME }}/realyze-application-image:latest
+
+                echo "Starting up application..."
+                docker-compose --env-file .env up -d --build
+            EOF
