@@ -17,10 +17,10 @@ import { useUserRegisterMutation } from "@/services/provider/auth";
 import { useNavigate } from "@tanstack/react-router";
 
 const Signup = () => {
-  const [name, setName] = useState('')//("AnotherAccountbyT");
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('')//("abcde1,,ddfgh1");
-  const [passwordConfirm, setPasswordConfirm] = useState('')//("abcde1,,ddfgh1");
+  const [name, setName] = useState(""); //("AnotherAccountbyT");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState(""); //("abcde1,,ddfgh1");
+  const [passwordConfirm, setPasswordConfirm] = useState(""); //("abcde1,,ddfgh1");
   const navigate = useNavigate();
 
   const { mutate: register, isPending: isLoading } = useUserRegisterMutation();
@@ -59,8 +59,10 @@ const Signup = () => {
           console.log(res);
         },
         onError: (e) => {
-          toast.error(`Registration failesd! Error: ${Object.values(e.response.data)[0]}`);
-          console.log(e.response.data, 23982)
+          toast.error(
+            `Registration failesd! Error: ${Object.values(e.response.data)[0]}`
+          );
+          console.log(e.response.data, 23982);
         },
       }
     );
@@ -86,7 +88,8 @@ const Signup = () => {
               Create an account
             </CardTitle>
             <CardDescription className="text-center">
-              Enter your information to create your account. Register with a Landmark or Brightdata emails get more credits.
+              Enter your information to create your account. Register with a
+              Landmark or Brightdata email get more credits.
             </CardDescription>
           </CardHeader>
           <CardContent>

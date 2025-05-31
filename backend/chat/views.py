@@ -8,7 +8,7 @@ from ai_agent.agent_flow.chat_controller import handle_message
 from ai_agent.serializers import AgentAPISerializer
 from django.db.models import Count
 import traceback
-from credits.utils import deduct_credits
+from credits.utils import deduct_credits, get_user_credits
 
 class ConversationListView(generics.ListCreateAPIView):
     permission_classes = (IsAuthenticated,)
@@ -98,6 +98,11 @@ class CreateConversationWithMessageView(generics.CreateAPIView):
         user_input = request.data.get('user_input')
         if not user_input:
             return Response({'error': 'user_input is required.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        user_credits = get_user_credits(request.user)
+        if user_credits < 0.5:
+            return Response({"error": "Not enough credits"}, status=402)
+        
         # Create conversation
         conversation = Conversation.objects.create(user=request.user)
         # Save first message

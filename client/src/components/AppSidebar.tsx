@@ -136,7 +136,7 @@ const ChatHistory = () => {
   const groupedChatsByDate = groupConversationsByDate(conversations);
   const chatsByDateArray = Object.entries(groupedChatsByDate);
   const clearProperties = usePropertyStore((store) => store.clearProperties);
-  const propertyPanelSetIsOpen = usePropertiesPanel((store) => store.toggle);
+  const closePropertyPanel = usePropertiesPanel((store) => store.close);
 
 
   return (
@@ -158,18 +158,18 @@ const ChatHistory = () => {
                           to="/c/$id"
                           onClick={() => {
                             setOpenMobile(false)
-                            // propertyPanelSetIsOpen();
+                            closePropertyPanel();
                             clearProperties();
                           }}
                           params={{ id: chat.id }}
                           className="[&.active]:text-primary [&.active]:font-bold [&.active]:opacity-100 opacity-60"
                         >
-                          <span>{chat.title}</span>
                           {`/c/${chat.id}` === matches.location.pathname &&
                             `/c/${chat.id}` !==
                               matches.resolvedLocation.pathname && (
                               <SpinLoader className="" />
                             )}
+                          <span>{chat.title}</span>
                         </Link>
                       </SidebarMenuButton>
                     </SidebarMenuItem>

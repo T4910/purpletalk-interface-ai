@@ -15,15 +15,19 @@ WORKDIR /app
 COPY ./backend/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Install Playwright browsers (required if using playwright-python)
-RUN playwright install
+# Install Playwright and browsers
+RUN pip install playwright
+RUN python -m playwright install --with-deps chromium
 
-# Rest of your Dockerfile remains the same...
-COPY ./backend .
+# Copy backend and frontend files
+COPY ./backend ./
 COPY --from=frontend-build /frontend/dist ./static/
-EXPOSE 8000
+
+# Setup scripts
 COPY ./scripts/start-django.sh /start.sh
 COPY ./scripts/fix-index-html.sh /fix-index-html.sh
 RUN chmod +x /start.sh /fix-index-html.sh
 RUN /fix-index-html.sh
+
+EXPOSE 8000
 CMD ["/start.sh"]
