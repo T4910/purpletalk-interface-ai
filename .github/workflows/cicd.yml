@@ -64,7 +64,7 @@ jobs:
                 docker system prune -f --all
 
                 echo "Pulling latest image..."
-                docker pull ${{ secrets.DOCKER_USERNAME }}/realyze-application-image:latest
+                docker pull ${{ secrets.DOCKER_USERNAME }}/realyze-application-image:main
 
                 echo "Starting up application..."
                 docker-compose --env-file .env up -d --build
