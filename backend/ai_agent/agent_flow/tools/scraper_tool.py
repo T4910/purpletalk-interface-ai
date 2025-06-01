@@ -1,5 +1,7 @@
 from typing import Type
-
+from azure.ai.inference import ChatCompletionsClient
+from azure.ai.inference.models import SystemMessage, UserMessage
+from azure.core.credentials import AzureKeyCredential
 from crewai.tools import BaseTool
 from pydantic import BaseModel, Field
 import asyncio
@@ -57,5 +59,27 @@ class ScraperTool(BaseTool):
 
     def _run(self,url: str) -> str:
         scraped_content = asyncio.run(main(url))
-        return scraped_content
+
+
+
+        endpoint = os.getenv("AZURE_ENDPOINT")
+        model_name = os.getenv("MODEL_NAME")
+        api = os.getenv("AZURE_API")
+
+        client = ChatCompletionsClient(
+            endpoint=endpoint,
+            credential=AzureKeyCredential(api),
+            api_version="2024-05-01-preview"
+        )
+
+        response = client.complete(
+            messages=[
+                SystemMessage(content="You are a helpful assistant. You are are going to receive scraped data from the user, your job is to streamline the scraped data showing inportant info (e.g property info .. etc) "),
+                UserMessage(content=f"Help me streamline {scraped_content}"),
+            ],
+            model=model_name
+        )
+
+        return response.choices[0].message.content
+
 
