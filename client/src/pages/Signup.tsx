@@ -60,7 +60,7 @@ const Signup = () => {
         },
         onError: (e) => {
           toast.error(
-            `Registration failesd! Error: ${Object.values(e.response.data)[0]}`
+            `Registration failed! Error: ${Object.values(e.response.data)[0]}`
           );
           console.log(e.response.data, 23982);
         },
@@ -95,7 +95,7 @@ const Signup = () => {
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="name">Full Name</Label>
+                <Label htmlFor="name">Username</Label>
                 <div className="relative">
                   <User className="absolute left-3 top-2.5 h-5 w-5 text-muted-foreground" />
                   <Input
