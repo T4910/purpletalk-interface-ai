@@ -90,7 +90,14 @@ export const deleteConversation = () => `${conversationsRoot}/`;
 export const deleteAllConversation = () => `${conversationsRoot}/all/`;
 export const importConversation = () => `${conversationsRoot}/import`;
 
-export const genTitle = () => `${conversationsRoot}/gen_title/`;
+export const favoritePropertyRoot = "/api/favorites";
+export const getFavoriteProperties = () => `${favoritePropertyRoot}/`;
+export const getFavoritePropertiesByUrl = (url: string) => `${favoritePropertyRoot}/by-url/${buildQuery({details_url: url})}`;
+export const getFavoriteProperty = (id: string) => `${favoritePropertyRoot}/${id}/`;
+export const createFavoriteProperty = (url: string) => `${favoritePropertyRoot}/add/${buildQuery({details_url: url})}`;
+export const deleteFavoriteProperty = (id: string) => `${favoritePropertyRoot}/${id}/`;
+
+export const genTitle = (converstionId: string) => `${conversationsRoot}/gen_title/?conversationId=${converstionId}`;
 
 export const forkConversation = () => `${conversationsRoot}/fork`;
 

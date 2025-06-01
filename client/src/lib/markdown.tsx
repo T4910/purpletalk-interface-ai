@@ -91,7 +91,7 @@ export function renderParsedElements(elements: ParsedElement[]): React.ReactNode
         return (
           <strong 
             key={index} 
-            className="text-lg font-bold text-purple-300 block my-2"
+            className="text-lg font-bold text-purple-300 my-2"
           >
             {element.content}
           </strong>

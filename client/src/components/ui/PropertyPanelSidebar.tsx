@@ -1,28 +1,38 @@
-import * as React from "react"
+import * as React from "react";
 
-import { useIsMobile } from "@/hooks/use-mobile"
-import { cn } from "@/lib/utils"
-import { Sheet, SheetContent } from "@/components/ui/sheet"
-import {
-  TooltipProvider
-} from "@/components/ui/tooltip"
+import { useIsMobile } from "@/hooks/use-mobile";
+import { cn } from "@/lib/utils";
+import { Sheet, SheetContent } from "@/components/ui/sheet";
+import { TooltipProvider } from "@/components/ui/tooltip";
 import PropertiesPanel from "@/components/PropertiesPanel";
 import { usePropertiesPanel } from "@/hooks/usePropertiesPanel";
-import { Button } from "@/components/ui/button"
+import { Button } from "@/components/ui/button";
 // import { Drawer } from "vaul"
-import { Drawer, DrawerTrigger, DrawerContent, DrawerHeader, DrawerTitle, DrawerDescription, DrawerFooter, DrawerClose } from "./drawer"
-import { PropertyPanelSidebarContext, TPropertyPanelSidebarContext, usePropertyPanelSidebar } from "./usePropertyPanelContext"
+import {
+  Drawer,
+  DrawerTrigger,
+  DrawerContent,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerDescription,
+  DrawerFooter,
+  DrawerClose,
+} from "./drawer";
+import {
+  PropertyPanelSidebarContext,
+  TPropertyPanelSidebarContext,
+  usePropertyPanelSidebar,
+} from "./usePropertyPanelContext";
 
-const PropertyPanelSIDEBAR_WIDTH_MOBILE = "0rem"
-const PropertyPanelSIDEBAR_KEYBOARD_SHORTCUT = "p"
-
+const PropertyPanelSIDEBAR_WIDTH_MOBILE = "0rem";
+const PropertyPanelSIDEBAR_KEYBOARD_SHORTCUT = "p";
 
 const PropertyPanelSidebarProvider = React.forwardRef<
   HTMLDivElement,
   React.ComponentProps<"div"> & {
-    propertyPaneldefaultOpen?: boolean
-    propertyPanelopen?: boolean
-    propertyPanelonOpenChange?: (open: boolean) => void
+    propertyPaneldefaultOpen?: boolean;
+    propertyPanelopen?: boolean;
+    propertyPanelonOpenChange?: (open: boolean) => void;
     // id: string
   }
 >(
@@ -38,34 +48,34 @@ const PropertyPanelSidebarProvider = React.forwardRef<
     },
     ref
   ) => {
-    const isMobile = useIsMobile()
-    const [openMobile, setOpenMobile] = React.useState(false)
-    const globalStoreSetOpen  = usePropertiesPanel(store => store.setOpen)
+    const isMobile = useIsMobile({ breakpoint: 1024 });
+    const [openMobile, setOpenMobile] = React.useState(false);
+    const globalStoreSetOpen = usePropertiesPanel((store) => store.setOpen);
 
     // This is the internal state of the PropertyPanelsidebar.
     // We use openProp and setOpenProp for control from outside the component.
-    const [_open, _setOpen] = React.useState(propertyPaneldefaultOpen)
-    const open = openProp ?? _open
+    const [_open, _setOpen] = React.useState(propertyPaneldefaultOpen);
+    const open = openProp ?? _open;
     const setOpen = React.useCallback(
       (value: boolean | ((value: boolean) => boolean)) => {
-        const openState = typeof value === "function" ? value(open) : value
+        const openState = typeof value === "function" ? value(open) : value;
         if (setOpenProp) {
-          setOpenProp(openState)
-          globalStoreSetOpen(openState)
+          setOpenProp(openState);
+          globalStoreSetOpen(openState);
         } else {
-          _setOpen(openState)
-          globalStoreSetOpen(openState)
+          _setOpen(openState);
+          globalStoreSetOpen(openState);
         }
       },
       [setOpenProp, open, globalStoreSetOpen]
-    )
+    );
 
     // Helper to toggle the PropertyPanelsidebar.
     const togglePropertyPanelSidebar = React.useCallback(() => {
       return isMobile
         ? setOpenMobile((open) => !open)
-        : setOpen((open) => !open)
-    }, [isMobile, setOpen, setOpenMobile])
+        : setOpen((open) => !open);
+    }, [isMobile, setOpen, setOpenMobile]);
 
     // Adds a keyboard shortcut to toggle the PropertyPanelsidebar.
     React.useEffect(() => {
@@ -74,18 +84,18 @@ const PropertyPanelSidebarProvider = React.forwardRef<
           event.key === PropertyPanelSIDEBAR_KEYBOARD_SHORTCUT &&
           (event.metaKey || event.ctrlKey)
         ) {
-          event.preventDefault()
-          togglePropertyPanelSidebar()
+          event.preventDefault();
+          togglePropertyPanelSidebar();
         }
-      }
+      };
 
-      window.addEventListener("keydown", handleKeyDown)
-      return () => window.removeEventListener("keydown", handleKeyDown)
-    }, [togglePropertyPanelSidebar])
+      window.addEventListener("keydown", handleKeyDown);
+      return () => window.removeEventListener("keydown", handleKeyDown);
+    }, [togglePropertyPanelSidebar]);
 
     // We add a state so that we can do data-state="expanded" or "collapsed".
     // This makes it easier to style the PropertyPanelsidebar with Tailwind classes.
-    const state = open ? "expanded" : "collapsed"
+    const state = open ? "expanded" : "collapsed";
 
     const contextValue = React.useMemo<TPropertyPanelSidebarContext>(
       () => ({
@@ -98,8 +108,17 @@ const PropertyPanelSidebarProvider = React.forwardRef<
         togglePropertyPanelSidebar,
         id: props.id,
       }),
-      [state, open, setOpen, isMobile, openMobile, setOpenMobile, togglePropertyPanelSidebar, props.id]
-    )
+      [
+        state,
+        open,
+        setOpen,
+        isMobile,
+        openMobile,
+        setOpenMobile,
+        togglePropertyPanelSidebar,
+        props.id,
+      ]
+    );
 
     return (
       <PropertyPanelSidebarContext.Provider value={contextValue}>
@@ -121,17 +140,17 @@ const PropertyPanelSidebarProvider = React.forwardRef<
           </div>
         </TooltipProvider>
       </PropertyPanelSidebarContext.Provider>
-    )
+    );
   }
-)
-PropertyPanelSidebarProvider.displayName = "PropertyPanelSidebarProvider"
+);
+PropertyPanelSidebarProvider.displayName = "PropertyPanelSidebarProvider";
 
 const PropertyPanelSidebar = React.forwardRef<
   HTMLDivElement,
   React.ComponentProps<"div"> & {
-    side?: "left" | "right"
-    variant?: "PropertyPanelsidebar" | "floating" | "inset"
-    collapsible?: "offcanvas" | "icon" | "none"
+    side?: "left" | "right";
+    variant?: "PropertyPanelsidebar" | "floating" | "inset";
+    collapsible?: "offcanvas" | "icon" | "none";
   }
 >(
   (
@@ -145,7 +164,12 @@ const PropertyPanelSidebar = React.forwardRef<
     },
     ref
   ) => {
-    const { propertyPanelisMobile, state, propertyPanelopenMobile, propertyPanelsetOpenMobile } = usePropertyPanelSidebar()
+    const {
+      propertyPanelisMobile,
+      state,
+      propertyPanelopenMobile,
+      propertyPanelsetOpenMobile,
+    } = usePropertyPanelSidebar();
 
     if (propertyPanelisMobile) {
       return (
@@ -165,7 +189,9 @@ const PropertyPanelSidebar = React.forwardRef<
                 <Button variant="outline">Cancel</Button>
               </DrawerClose>
             </DrawerFooter> */}
-            <div className="flex h-[90dvh] w-[100dvw] mx-auto flex-col">{children}</div>
+            <div className="flex h-[90dvh] w-[100dvw] mx-auto flex-col">
+              {children}
+            </div>
           </DrawerContent>
         </Drawer>
       );
@@ -185,7 +211,7 @@ const PropertyPanelSidebar = React.forwardRef<
           className={cn(
             "duration-200 relative h-svh w-[70vw] bg-transparent transition-[width] ease-linear",
             "group-data-[collapsible=offcanvas]:w-0",
-            "group-data-[side=right]:rotate-180",
+            "group-data-[side=right]:rotate-180"
           )}
         />
         <div
@@ -203,11 +229,10 @@ const PropertyPanelSidebar = React.forwardRef<
           </div>
         </div>
       </div>
-    )
+    );
   }
-)
-PropertyPanelSidebar.displayName = "PropertyPanelSidebar"
-
+);
+PropertyPanelSidebar.displayName = "PropertyPanelSidebar";
 
 const PropertyPanelSidebarInset = React.forwardRef<
   HTMLDivElement,
@@ -223,21 +248,23 @@ const PropertyPanelSidebarInset = React.forwardRef<
       )}
       {...props}
     />
-  )
-})
-PropertyPanelSidebarInset.displayName = "PropertyPanelSidebarInset"
+  );
+});
+PropertyPanelSidebarInset.displayName = "PropertyPanelSidebarInset";
 
-const PropertiesPanelWrapper = ({ children }: { children: React.ReactNode }) => {
+const PropertiesPanelWrapper = ({
+  children,
+}: {
+  children: React.ReactNode;
+}) => {
   return (
     <PropertyPanelSidebarProvider>
-      <PropertyPanelSidebarInset>
-        {children}
-      </PropertyPanelSidebarInset>
+      <PropertyPanelSidebarInset>{children}</PropertyPanelSidebarInset>
       {/* <AppPropertyPanelSidebar /> */}
-        <PropertyPanelSidebar side="right"> 
-            <div className="flex-1 h-full border- border-border/50 overflow-hidden">
-                <PropertiesPanel />
-            </div>
+      <PropertyPanelSidebar side="right">
+        <div className="flex-1 h-full border- border-border/50 overflow-hidden">
+          <PropertiesPanel />
+        </div>
       </PropertyPanelSidebar>
     </PropertyPanelSidebarProvider>
   );
