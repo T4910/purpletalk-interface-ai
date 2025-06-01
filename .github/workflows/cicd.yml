@@ -60,6 +60,9 @@ jobs:
                 echo "Shutting down..."
                 docker-compose down
 
+                echo "Pulling latest image..."
+                docker pull ${{ secrets.DOCKER_USERNAME }}/realyze-application-image:main
+
                 echo "Starting up application..."
                 docker-compose --env-file .env up -d --build
             EOF
