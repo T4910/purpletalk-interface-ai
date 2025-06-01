@@ -19,12 +19,13 @@ import { Property } from "./PropertyListing";
 import { toast } from "sonner";
 import { Link } from "@tanstack/react-router";
 import {
-  useAddFavoriteProperty,
+  useAddFavoritePropertyByURL,
   useFavoritePropertiesByUrl,
   useFavoritePropertiesQuery,
-  useRemoveFavoriteProperty,
+  useRemoveFavoritePropertyByURL,
 } from "@/services/provider/favProperties";
 import SpinLoader from "./SpinLoader";
+import { cn } from "@/lib/utils";
 
 interface PropertyDetailProps {
   property: Property;
@@ -32,20 +33,21 @@ interface PropertyDetailProps {
 }
 
 const FavButton = ({ url }: { url: string }) => {
-  const { data: favProperty } = useFavoritePropertiesByUrl(url);
+  const { data: favProperty, error } = useFavoritePropertiesByUrl(url);
   const {
     mutate: fav,
     isPending: isAdding,
     isError: addErr,
     isIdle: addIsIdle,
-  } = useAddFavoriteProperty(url);
+  } = useAddFavoritePropertyByURL(url);
   const {
     mutate: unFav,
     isPending: isRemoving,
     isError: remErr,
-  } = useRemoveFavoriteProperty();
+  } = useRemoveFavoritePropertyByURL(url);
 
   const isFavorite = !!favProperty?.property?.details_url;
+  console.log("Getting fav by url error:", error);
 
   const handleToggleFavorite = () => {
     // setIsFavorite(!isFavorite);
@@ -54,11 +56,11 @@ const FavButton = ({ url }: { url: string }) => {
     //     ? "Property removed from favorites"
     //     : "Property added to favorites"
     // );
-    // if (isFavorite) {
-    //   unFav(url)
-    // } else {
-    if (!isFavorite) fav(url);
-    // }
+    if (isFavorite) {
+      unFav(url);
+    } else {
+      fav(url);
+    }
 
     // console.log(url, isFavorite)
   };
@@ -67,14 +69,17 @@ const FavButton = ({ url }: { url: string }) => {
     <Button
       variant="outline"
       size="sm"
-      className={`rounded-full ${
-        isFavorite && "text-red-500 border-red-500 hover:bg-red-500/30 "
-      } ${(isAdding || isRemoving) && "cursor-not-allowed !opacity-30"}`}
+      className={cn(
+        "rounded-full",
+        isFavorite && "text-red-500 border-red-500 hover:bg-red-500/30",
+        (isAdding || isRemoving) && "cursor-not-allowed !opacity-30",
+        isFavorite && !isAdding && !isRemoving && "bg-red-500"
+      )}
       onClick={handleToggleFavorite}
       disabled={isAdding || isRemoving}
     >
       <Heart size={16} />
-      {(isAdding || isRemoving) && <SpinLoader />}
+      {/* {(isAdding || isRemoving) && <SpinLoader />} */}
     </Button>
   );
 };

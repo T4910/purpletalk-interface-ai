@@ -93,8 +93,9 @@ export const importConversation = () => `${conversationsRoot}/import`;
 export const favoritePropertyRoot = "/api/favorites";
 export const getFavoriteProperties = () => `${favoritePropertyRoot}/`;
 export const getFavoritePropertiesByUrl = (url: string) => `${favoritePropertyRoot}/by-url/${buildQuery({details_url: url})}`;
+export const deleteFavoritePropertiesByUrl = (url: string) => `${favoritePropertyRoot}/by-url/${buildQuery({details_url: url})}`;
 export const getFavoriteProperty = (id: string) => `${favoritePropertyRoot}/${id}/`;
-export const createFavoriteProperty = (url: string) => `${favoritePropertyRoot}/add/${buildQuery({details_url: url})}`;
+export const createFavoritePropertyByURL = (url: string) => `${favoritePropertyRoot}/add/${buildQuery({details_url: url})}`;
 export const deleteFavoriteProperty = (id: string) => `${favoritePropertyRoot}/${id}/`;
 
 export const genTitle = (converstionId: string) => `${conversationsRoot}/gen_title/?conversationId=${converstionId}`;

@@ -192,7 +192,10 @@ function useFavoritePropertiesQuery() {
   ];
 
   const { data, isPending } = getFavPropertyService();
-  const moctData = data?.map(({ property }) => property);
+  const moctData = data?.map(({ property }) => ({
+    ...property,
+    // extra_data: property.extra_data as TPropertySnapshot['extra_data'],
+  }));
 
   return {
     data: moctData,
@@ -557,7 +560,6 @@ export default function PropertyFavoritesTable() {
                     className="h-24 text-center text-slate-400"
                   >
                     <span>No properties found.</span>
-                    <SpinLoader />
                   </TableCell>
                 </TableRow>
               )}

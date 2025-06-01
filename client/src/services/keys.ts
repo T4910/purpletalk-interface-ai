@@ -72,5 +72,7 @@ export enum MutationKeys {
     enableTwoFactor = 'enableTwoFactor',
     verifyTwoFactor = 'verifyTwoFactor',
     createFavoriteProperty = 'createFavoriteProperty',
-    removeFavoriteProperty = 'removeFavoriteProperty'
+    removeFavoriteProperty = 'removeFavoriteProperty',
+    createFavoritePropertyByURL = 'createFavoritePropertyByURL',
+    removeFavoritePropertyByURL = 'removeFavoritePropertyByURL'
 }

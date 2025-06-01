@@ -1,16 +1,27 @@
 import os
 import json
 import asyncio
-from crawl4ai import AsyncWebCrawler, CrawlerRunConfig, LLMExtractionStrategy, LLMConfig, ProxyConfig, BrowserConfig, CacheMode
+from crawl4ai import (
+    AsyncWebCrawler,
+    CrawlerRunConfig,
+    LLMExtractionStrategy,
+    LLMConfig,
+    ProxyConfig,
+    BrowserConfig,
+    CacheMode,
+)
 from urllib.parse import urlparse
 from pydantic import BaseModel, Field
 from typing import List, Optional
+
 
 # Define the data model for extraction using Pydantic
 class PropertyListing(BaseModel):
     location: Optional[str] = Field(None, description="The location of the house")
     image_url: Optional[str] = Field(None, description="Image of the house as scraped")
-    details_url: Optional[str] = Field(None, description="URL to page to find more info on the house")
+    details_url: Optional[str] = Field(
+        None, description="URL to page to find more info on the house"
+    )
     description: Optional[str] = Field(None, description="Description of the house")
     title: Optional[str] = Field(None, description="Title given to the house")
     bedroom: Optional[int] = Field(None, description="Number of bedrooms")
@@ -18,14 +29,19 @@ class PropertyListing(BaseModel):
     price: Optional[str] = Field(None, description="Price of the property")
     listing: Optional[str] = Field(None, description="When the house was listed")
     phonenumber: Optional[str] = Field(None, description="Phone number of the agent")
-    amenities: Optional[List[str]] = Field(None, description="List of amenities like swimming pool, parking, etc.")
-    property_type: Optional[str] = Field(None, description="Type of property (house/apartment/land)")
+    amenities: Optional[List[str]] = Field(
+        None, description="List of amenities like swimming pool, parking, etc."
+    )
+    property_type: Optional[str] = Field(
+        None, description="Type of property (house/apartment/land)"
+    )
+
 
 # Retrieve proxy credentials from environment variables
-proxy_username = os.environ.get('PROXY_USERNAME')
-proxy_password = os.environ.get('PROXY_PASSWORD')
-proxy_host = os.environ.get('PROXY_HOST')
-proxy_port = os.environ.get('PROXY_PORT')
+proxy_username = os.environ.get("PROXY_USERNAME")
+proxy_password = os.environ.get("PROXY_PASSWORD")
+proxy_host = os.environ.get("PROXY_HOST")
+proxy_port = os.environ.get("PROXY_PORT")
 
 
 async def extract_listing_data(url: str) -> List[PropertyListing]:
@@ -40,7 +56,7 @@ async def extract_listing_data(url: str) -> List[PropertyListing]:
     """
 
     # Construct the proxy configuration
-    
+
     proxy_config = ProxyConfig(
         username=proxy_username,
         password=proxy_password,
@@ -57,7 +73,7 @@ async def extract_listing_data(url: str) -> List[PropertyListing]:
     # Configure LLM
     llm_config = LLMConfig(
         provider=os.environ.get("OPENAI_MODEL_NAME"),
-        api_token=os.environ.get("OPENAI_API_KEY")
+        api_token=os.environ.get("OPENAI_API_KEY"),
     )
 
     # Define the extraction strategy
@@ -65,14 +81,14 @@ async def extract_listing_data(url: str) -> List[PropertyListing]:
         llm_config=llm_config,
         schema=PropertyListing.model_json_schema(),
         extraction_type="schema",
-        instruction="Extract property listings with the specified fields."
+        instruction="Extract property listings with the specified fields.",
     )
 
     # Crawler run configuration
     run_config = CrawlerRunConfig(
         cache_mode=CacheMode.BYPASS,
         extraction_strategy=extraction_strategy,
-        # wait_until="domcontentloaded",
+        wait_until="domcontentloaded",
         page_timeout=180000,
         # screenshot=True
     )
@@ -91,6 +107,7 @@ async def extract_listing_data(url: str) -> List[PropertyListing]:
         raise ValueError(f"Failed to parse extracted content: {e}")
 
     return listings
+
 
 def extract_listing_data_sync(url: str) -> List[PropertyListing]:
     """

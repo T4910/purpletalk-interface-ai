@@ -15,10 +15,18 @@ export const getFavoriteProperty = (id: string) => {
     return request.get<t.TFavoriteProperty>(endpoints.getFavoriteProperty(id));
 }
 
-export const addToFavoriteProperty = (params: t.TAddToFavoriteParams) => {
-    return request.post<{ success: true } | { success: false, error: unknown }>(endpoints.createFavoriteProperty(params.url));
+// export const addToFavoriteProperty = (params: t.TAddToFavoriteParams) => {
+//     return request.post<{ success: true } | { success: false, error: unknown }>(endpoints.createFavoriteProperty(params.url));
+// }
+
+export const addToFavoritePropertyByURL = (params: t.TAddToFavoriteParams) => {
+    return request.post<{ success: true } | { success: false, error: unknown }>(endpoints.createFavoritePropertyByURL(params.url));
 }
 
-export const removeFromFavoriteProperty = (url: string) => {
-    return request.delete<{ success: true } | { success: false, error: unknown }>(endpoints.deleteFavoriteProperty(url));
+export const removeFromFavoriteProperty = (id: string) => {
+    return request.delete<{ success: true } | { success: false, error: unknown }>(endpoints.deleteFavoriteProperty(id));
+}
+
+export const removeFavoritePropertyByURL = (url: string) => {
+    return request.delete<{ success: true } | { success: false, error: unknown }>(endpoints.deleteFavoritePropertiesByUrl(url));
 }
