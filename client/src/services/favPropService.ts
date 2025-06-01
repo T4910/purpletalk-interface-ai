@@ -20,7 +20,10 @@ export const getFavoriteProperty = (id: string) => {
 // }
 
 export const addToFavoritePropertyByURL = (params: t.TAddToFavoriteParams) => {
-    return request.post<{ success: true } | { success: false, error: unknown }>(endpoints.createFavoritePropertyByURL(params.url));
+    return request.post<{ success: true } | { success: false, error: unknown }>(endpoints.createFavoritePropertyByURL(params.url), {
+        messageId: params.messageId,
+        conversationId: params.conversationId
+    });
 }
 
 export const removeFromFavoriteProperty = (id: string) => {

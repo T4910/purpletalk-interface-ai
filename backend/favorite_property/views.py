@@ -32,6 +32,8 @@ class AddFavoriteProperty(APIView):
 
     def post(self, request):
         url = request.query_params.get("details_url")
+        conversationId = request.data.get("conversationId")
+        messageId = request.data.get("messageId")
         if not url:
             return Response(
                 {"error": "Missing `details_url` query parameter."},
@@ -64,28 +66,40 @@ class AddFavoriteProperty(APIView):
                 parsed_listing_date = None  # fallback if format is wrong
 
             # Get or create a snapshot
-            property_snapshot, _ = PropertySnapshot.objects.get_or_create(
-                details_url=listing_data.details_url,
-                defaults={
-                    "location": listing_data.location,
-                    "image_url": listing_data.image_url,
-                    "title": listing_data.title,
-                    "description": listing_data.description,
-                    "bedroom": listing_data.bedroom,
-                    "bathroom": listing_data.bathrooms,
-                    "listing_time": parsed_listing_date,
-                    "amenities": listing_data.amenities,
-                    "property_type": listing_data.property_type,
-                    "contact": listing_data.phonenumber,
-                    "price": listing_data.price,
-                    "extra_data": listing_data.model_dump(),  # Save all data as fallback
-                    "initiator": "user",
-                },
-            )
+            try:
+                property_snapshot, _ = PropertySnapshot.objects.get_or_create(
+                    details_url=listing_data.details_url,
+                    defaults={
+                        "location": listing_data.location,
+                        "image_url": listing_data.image_url,
+                        "title": listing_data.title,
+                        "description": listing_data.description,
+                        "bedroom": listing_data.bedroom,
+                        "bathroom": listing_data.bathrooms,
+                        "listing_time": parsed_listing_date,
+                        "amenities": listing_data.amenities,
+                        "property_type": listing_data.property_type,
+                        "contact": listing_data.phonenumber,
+                        "price": listing_data.price,
+                        "extra_data": listing_data.model_dump(),  # Save all data as fallback
+                        "initiator": "user",
+                    },
+                )
+            except Exception as e:
+                property_snapshot, _ = PropertySnapshot.objects.get_or_create(
+                    details_url=listing_data.details_url,
+                    defaults={
+                        "extra_data": listing_data.model_dump(),  # Save all data as fallback
+                        "initiator": "user",
+                    },
+                )
+                print(e)
 
             # Favorite for this user
             favorite, created = FavoriteProperty.objects.get_or_create(
-                user=request.user, property=property_snapshot
+                user=request.user,
+                property=property_snapshot,
+                chat_location=f"{conversationId}#{messageId}",
             )
 
             return Response(

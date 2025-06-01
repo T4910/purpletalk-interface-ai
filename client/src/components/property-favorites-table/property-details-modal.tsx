@@ -57,7 +57,7 @@ const PropertyDetailsHeader = memo(function PropertyDetailsHeader({
   onClose: () => void;
 }) {
   const handleGoToProperty = useCallback(() => {
-    window.open(property.details_url, "_blank");
+    window.open(property.details_url, "_blank", "noopener,noreferrer");
   }, [property]);
 
   return (

@@ -1,5 +1,9 @@
 import { Message } from "@/store/useChatStore";
-import { cn, extractJsonAndTextParts, extractJsonBetweenMarkers } from "@/lib/utils";
+import {
+  cn,
+  extractJsonAndTextParts,
+  extractJsonBetweenMarkers,
+} from "@/lib/utils";
 import { parseMarkdown, renderParsedElements } from "@/lib/markdown";
 import { Button } from "@/components/ui/button";
 import { usePropertiesPanel } from "@/hooks/usePropertiesPanel";
@@ -26,15 +30,16 @@ const ChatMessage = ({ message, onViewProperties }: ChatMessageProps) => {
 
   return (
     <div
+      id={message.id}
       className={cn(
         "py-5 px-4 md:px-6 flex animate-fade-in",
         isUser ? "bg-transparent" : "bg-secondary/10"
       )}
     >
       <div
-        className={`${
-          isUser ? "" : ""
-        } ${propertyPanelIsOpen ? 'max-w-sm' : 'max-w-3xl'} mx-auto w-full flex gap-4 md:gap-6`}
+        className={`${isUser ? "" : ""} ${
+          propertyPanelIsOpen ? "max-w-sm" : "max-w-3xl"
+        } mx-auto w-full flex gap-4 md:gap-6`}
       >
         <div className="flex-shrink-0 mt-1">
           {isUser ? (
@@ -70,7 +75,7 @@ const ChatMessage = ({ message, onViewProperties }: ChatMessageProps) => {
               }
 
               const parsedElements = parseMarkdown(paragraph);
-              
+
               return (
                 <p key={i} className="mb-2 leading-relaxed">
                   {renderParsedElements(parsedElements)}

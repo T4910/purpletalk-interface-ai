@@ -127,7 +127,9 @@ export type TFavoriteProperty = {
 }
 
 export type TAddToFavoriteParams = {
-  url: string
+    url: string,
+    messageId: string
+    conversationId: string
 }
 
 /**

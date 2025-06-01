@@ -28,11 +28,11 @@ export const useRemoveFavoriteProperty = () =>  {
     mutationFn: (id: string) => dataService.removeFromFavoriteProperty(id),
 })}
 
-export const useAddFavoritePropertyByURL = (url: string) =>  {
+export const useAddFavoritePropertyByURL = (url: string, messageId='', conversationId='') =>  {
     const queryClient = useQueryClient()
     return useMutation({
         mutationKey: [MutationKeys.createFavoritePropertyByURL, url],
-        mutationFn: (url: string) => dataService.addToFavoritePropertyByURL({ url }),  
+        mutationFn: (url: string) => dataService.addToFavoritePropertyByURL({ url, messageId, conversationId }),  
         onMutate: async (url) => {
             // prevent further queries
             queryClient.cancelQueries({ queryKey: [QueryKeys.favoriteProperty, url]})

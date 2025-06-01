@@ -46,7 +46,9 @@ const FavButton = ({ url }: { url: string }) => {
     isError: remErr,
   } = useRemoveFavoritePropertyByURL(url);
 
-  const isFavorite = !!favProperty?.property?.details_url;
+  const isFavorite =
+    !!favProperty?.property?.details_url ||
+    !!favProperty?.property?.extra_data.details_url;
   console.log("Getting fav by url error:", error);
 
   const handleToggleFavorite = () => {
@@ -73,7 +75,7 @@ const FavButton = ({ url }: { url: string }) => {
         "rounded-full",
         isFavorite && "text-red-500 border-red-500 hover:bg-red-500/30",
         (isAdding || isRemoving) && "cursor-not-allowed !opacity-30",
-        isFavorite && !isAdding && !isRemoving && "bg-red-500"
+        isFavorite && !isAdding && !isRemoving && "bg-red-500/30"
       )}
       onClick={handleToggleFavorite}
       disabled={isAdding || isRemoving}

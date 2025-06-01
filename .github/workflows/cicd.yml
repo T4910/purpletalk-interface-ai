@@ -60,8 +60,6 @@ jobs:
                 echo "Shutting down..."
                 docker-compose down
 
-                echo "Clearing Docker cache..."
-                docker system prune -f --all
 
                 echo "Starting up application..."
                 docker-compose --env-file .env up -d --build

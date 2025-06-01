@@ -61,6 +61,7 @@ class FavoriteProperty(models.Model):
     check_frequency = models.CharField(
         max_length=4, choices=CHECK_INTERVAL_CHOICES, default="none"
     )
+    chat_location = models.CharField(max_length=255, blank=True, null=True)
 
     class Meta:
         unique_together = ("user", "property")
