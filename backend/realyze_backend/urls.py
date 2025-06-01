@@ -26,5 +26,6 @@ urlpatterns = [
     path('api/auth/', include('authentication.urls')),
     path('api/chat/', include('chat.urls')),
     path('api/credits/', include('credits.urls')),
+    path('api/favorites/', include('favorite_property.urls')),
     re_path(r"^(?!api).*", TemplateView.as_view(template_name="index.html")),
 ]

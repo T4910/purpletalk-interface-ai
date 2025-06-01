@@ -79,3 +79,68 @@ export type TChatPreview = {
 export type TChatsByDate = {
   [date: string]: TChatPreview[];
 };
+
+// export type TProperty = {
+
+// }
+
+export type TPropertySnapshot = {
+  id: number
+  location: string
+  details_url: string
+  image_url: string | null
+  title: string
+  description: string
+  bedroom: number | null
+  bathroom: number | null
+  listing_time: string
+  amenities: string[] | null
+  property_type: string
+  contact: string | null
+  scraped_at: string
+  price: string | null
+  extra_data: {
+    price: string | null
+    title: string
+    bedroom: number | null
+    listing: string | null
+    location: string
+    amenities: string[] | null
+    bathrooms: number | null
+    image_url: string | null
+    description: string
+    details_url: string
+    phonenumber: string | null
+    property_type: string
+  }
+  initiator: string //"user" | "system"
+}
+
+export type TFavoriteProperty = {
+  id: string
+  user: string
+  property: TPropertySnapshot
+  added_at: Date
+  check_frequency: string
+  last_checked: Date
+  schedule_id: string
+}
+
+export type TAddToFavoriteParams = {
+  url: string
+}
+
+/**
+ *       "location": "The location of the house",
+      "image_url": "Image of the house as scrapped",
+      "details_url": "url to page to find more info on the house",
+      "description":"description of the house",
+      "title":"title given to the house",
+      "bedroom": "no of bedrooms",
+      "bathrooms": "no of bathrooms",
+      "price":"price of the property",
+      "listing":"when the house was listed",
+      "phonenumber":"phone number of the agent",
+      "amenities": ["list of amenities like swimming pool, parking, etc."],
+      "property_type":"type of property (house/apartment/land)",
+ */

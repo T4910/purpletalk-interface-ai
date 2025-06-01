@@ -7,17 +7,17 @@ import { Button } from "./ui/button";
 import SidebarButton from "./SidebarButton";
 
 export default function ChatLayout() {
-    return (
-        <SidebarProvider>
-        <div className="h-screen w-screen flex overflow-hidde bg-chat-bg text-foreground">
-            <AppSidebar />
+  return (
+    <SidebarProvider>
+      <div className="h-screen w-screen flex overflow-hidden bg-chat-bg text-foreground">
+        <AppSidebar />
 
-            <SidebarInset>
-            <div className="flex flex-col h-full overflow-hidden w-full">
-                <Outlet />
-            </div>
-            </SidebarInset>
+        {/* <SidebarInset> */}
+        <div className="flex flex-col h-full overflow-hidden w-full">
+          <Outlet />
         </div>
-        </SidebarProvider>
-    );
+        {/* </SidebarInset> */}
+      </div>
+    </SidebarProvider>
+  );
 }

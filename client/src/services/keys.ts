@@ -34,13 +34,10 @@ export enum QueryKeys {
     fileDownload = 'fileDownload',
     voices = 'voices',
     customConfigSpeech = 'customConfigSpeech',
-    prompts = 'prompts',
-    prompt = 'prompt',
-    promptGroups = 'promptGroups',
-    allPromptGroups = 'allPromptGroups',
-    promptGroup = 'promptGroup',
+    favoriteProperties = 'favoriteProperties',
+    favoriteProperty = 'favoriteProperty',
     categories = 'categories',
-    randomPrompts = 'randomPrompts',
+    randomfavoriteProperties = 'randomfavoriteProperties',
     roles = 'roles',
     conversationTags = 'conversationTags',
     health = 'health',
@@ -74,4 +71,6 @@ export enum MutationKeys {
     updateRole = 'updateRole',
     enableTwoFactor = 'enableTwoFactor',
     verifyTwoFactor = 'verifyTwoFactor',
+    createFavoriteProperty = 'createFavoriteProperty',
+    removeFavoriteProperty = 'removeFavoriteProperty'
 }

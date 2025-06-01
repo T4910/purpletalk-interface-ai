@@ -71,8 +71,6 @@ export function extractJsonAndTextParts(input: string): ExtractedParts {
   const jsonBlocks: any[] = [];
   const textBlocks: string[] = [];
 
-  console.log(input)
-
   let lastIndex = 0;
   let match: RegExpExecArray | null;
 

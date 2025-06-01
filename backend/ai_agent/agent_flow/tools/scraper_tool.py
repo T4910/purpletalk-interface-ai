@@ -6,22 +6,24 @@ import asyncio
 import os
 from crawl4ai import AsyncWebCrawler,BrowserConfig
 from crawl4ai.async_configs import CrawlerRunConfig
+from dotenv import load_dotenv
 
+load_dotenv()
 
 async def main(url: str) -> str:
         # Retrieve proxy credentials from environment variables
-        proxy_username = "brd-customer-hl_1f8d9bef-zone-web_unlocker1"
-        proxy_password = "r5kcre6hey8j"
-        proxy_host = "brd.superproxy.io"
-        proxy_port = 33335
+        proxy_username = os.environ.get('PROXY_USERNAME')
+        proxy_password = os.environ.get('PROXY_PASSWORD')
+        proxy_host = os.environ.get('PROXY_HOST')
+        proxy_port = os.environ.get('PROXY_PORT')
 
         # Construct the proxy URL
         from crawl4ai import ProxyConfig
 
         proxy_config = ProxyConfig(
-            server="brd.superproxy.io:33335",
-            username="brd-customer-hl_1f8d9bef-zone-web_unlocker1",
-            password="r5kcre6hey8j"
+            server=f"{proxy_host}:{proxy_port}",
+            username=proxy_username,
+            password=proxy_password
         )
 
         # Browser configuration
@@ -41,7 +43,6 @@ async def main(url: str) -> str:
 
 class ScraperToolInput(BaseModel):
     """Input schema for ScraperTool."""
-
     url: str = Field(..., description="The url of the website you want to scrape")
 
 
@@ -55,6 +56,6 @@ class ScraperTool(BaseTool):
 
 
     def _run(self,url: str) -> str:
-       scraped_content = asyncio.run(main(url))
-       return scraped_content
+        scraped_content = asyncio.run(main(url))
+        return scraped_content
 

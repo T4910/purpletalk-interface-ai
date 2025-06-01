@@ -20,8 +20,6 @@ export function getSharedLink(conversationId: string): Promise<t.TSharedLinkGetR
 }
  */
 
-import type { Message } from "../store/useChatStore";
-
 export const sendMessage = async ({ session_id, user_input }: { session_id: string, user_input: string }) => {
   const ai_response = await request.post<t.TAiChatResponse>(
     endpoints.sendAiMessage(),

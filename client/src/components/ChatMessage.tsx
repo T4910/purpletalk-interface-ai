@@ -17,7 +17,7 @@ const ChatMessage = ({ message, onViewProperties }: ChatMessageProps) => {
   // const propertiesInJson = extractJsonBetweenMarkers(message.content);
   const { jsonBlocks, textBlocks } = extractJsonAndTextParts(message.content);
 
-  console.log('Extract Json and text: ', extractJsonAndTextParts(message.content));
+  // console.log('Extract Json and text: ', extractJsonAndTextParts(message.content));
 
   const handleViewProperties = () => {
     setProperties(jsonBlocks[0]);
