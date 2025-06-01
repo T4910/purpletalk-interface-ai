@@ -74,7 +74,7 @@ class ScraperTool(BaseTool):
 
         response = client.complete(
             messages=[
-                SystemMessage(content="You are a helpful assistant. You are are going to receive scraped data from the user, your job is to streamline the scraped data showing inportant info (e.g property info .. etc) "),
+                SystemMessage(content="You are a helpful assistant. You are are going to receive scraped data from the user, your job is to streamline the scraped data showing inportant info (e.g property info with the image url .. etc) "),
                 UserMessage(content=f"Help me streamline {scraped_content}"),
             ],
             model=model_name
