@@ -104,7 +104,7 @@ const PropertyDetail = ({ property, onBack }: PropertyDetailProps) => {
         </Button>
         <div className="flex gap-2">
           <FavButton url={property.details_url} />
-          <Button variant="outline" size="sm" className="rounded-full">
+          <Button variant="outline" size="sm" className="rounded-full" asChild>
             <Link
               to={`${property.details_url}`}
               target="_blank"

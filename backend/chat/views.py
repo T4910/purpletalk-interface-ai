@@ -10,12 +10,15 @@ from django.db.models import Count
 import traceback
 from credits.utils import deduct_credits, get_user_credits
 
+
 class ConversationListView(generics.ListCreateAPIView):
     permission_classes = (IsAuthenticated,)
     serializer_class = ConversationSerializer
 
     def get_queryset(self):
-        return Conversation.objects.filter(user=self.request.user).order_by('-updated_at')
+        return Conversation.objects.filter(user=self.request.user).order_by(
+            "-updated_at"
+        )
 
     # def get_queryset(self):
     #     latest_message_subquery = Message.objects.filter(
@@ -29,13 +32,17 @@ class ConversationListView(generics.ListCreateAPIView):
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
 
+
 class MessageListView(generics.ListAPIView):
     permission_classes = (IsAuthenticated,)
     serializer_class = MessageSerializer
 
     def get_queryset(self):
-        session_id = self.kwargs['session_id']
-        return Message.objects.filter(conversation__user=self.request.user, conversation__session_id=session_id).order_by('timestamp')
+        session_id = self.kwargs["session_id"]
+        return Message.objects.filter(
+            conversation__user=self.request.user, conversation__session_id=session_id
+        ).order_by("timestamp")
+
 
 class AIChatMessageView(APIView):
     permission_classes = (IsAuthenticated,)
@@ -50,64 +57,91 @@ class AIChatMessageView(APIView):
         user_input = serializer.validated_data.get("user_input")
 
         if not user_input:
-            return Response({'error': 'user_input is required.'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {"error": "user_input is required."}, status=status.HTTP_400_BAD_REQUEST
+            )
 
         # 1. Find or create the conversation
         if session_id:
             try:
-                conversation = Conversation.objects.annotate(message_count=Count('messages')).get(session_id=session_id, user=user)
+                conversation = Conversation.objects.annotate(
+                    message_count=Count("messages")
+                ).get(session_id=session_id, user=user)
             except Conversation.DoesNotExist:
-                return Response({'error': 'Conversation not found or does not belong to user.'}, status=status.HTTP_404_NOT_FOUND)
+                return Response(
+                    {"error": "Conversation not found or does not belong to user."},
+                    status=status.HTTP_404_NOT_FOUND,
+                )
         else:
-            return Response({'error': 'session_id is required.'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {"error": "session_id is required."}, status=status.HTTP_400_BAD_REQUEST
+            )
 
         # 3. Get AI response (sync, not streaming)
         try:
-            deduct_credits(request.user, amount=0.5, reason="AI chat message")
             session_id, ai_reply = handle_message(session_id, user_input)
+            deduct_credits(request.user, amount=0.5, reason="AI chat message")
         except ValueError:
             return Response({"error": "Not enough credits"}, status=402)
         except Exception as e:
             traceback.print_exc(e)
-            return Response({'error': 'AI did not respond'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response(
+                {"error": "AI did not respond"},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
 
         # 2. Save user message
         # if conversation. > 1:
         if conversation.message_count != 1:
-            Message.objects.create(conversation=conversation, sender='user', content=user_input)
+            Message.objects.create(
+                conversation=conversation, sender="user", content=user_input
+            )
 
         # 4. Save AI message
-        ai_message = Message.objects.create(conversation=conversation, sender='assistant', content=ai_reply)
+        ai_message = Message.objects.create(
+            conversation=conversation, sender="assistant", content=ai_reply
+        )
 
         # Update conversation timestamp
         conversation.save()
-        
-        return Response({
-            "message_id": ai_message.id,
-            "agent_reply": ai_reply,
-            "session_id": conversation.session_id,
-            "sender": ai_message.sender,
-            "message_timestamp": ai_message.timestamp,
-        }, status=status.HTTP_200_OK)
+
+        return Response(
+            {
+                "message_id": ai_message.id,
+                "agent_reply": ai_reply,
+                "session_id": conversation.session_id,
+                "sender": ai_message.sender,
+                "message_timestamp": ai_message.timestamp,
+            },
+            status=status.HTTP_200_OK,
+        )
+
 
 class CreateConversationWithMessageView(generics.CreateAPIView):
     permission_classes = (IsAuthenticated,)
     serializer_class = ConversationSerializer
 
     def create(self, request):
-        user_input = request.data.get('user_input')
+        user_input = request.data.get("user_input")
         if not user_input:
-            return Response({'error': 'user_input is required.'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {"error": "user_input is required."}, status=status.HTTP_400_BAD_REQUEST
+            )
 
         user_credits = get_user_credits(request.user)
         if user_credits < 0.5:
             return Response({"error": "Not enough credits"}, status=402)
-        
+
         # Create conversation
         conversation = Conversation.objects.create(user=request.user)
         # Save first message
-        Message.objects.create(conversation=conversation, sender='user', content=user_input)
-        return Response({
-            "session_id": conversation.session_id,
-            "created_at": conversation.created_at,
-        }, status=status.HTTP_201_CREATED)
+        Message.objects.create(
+            conversation=conversation, sender="user", content=user_input
+        )
+        return Response(
+            {
+                "session_id": conversation.session_id,
+                "created_at": conversation.created_at,
+            },
+            status=status.HTTP_201_CREATED,
+        )

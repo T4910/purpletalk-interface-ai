@@ -60,7 +60,6 @@ jobs:
                 echo "Shutting down..."
                 docker-compose down
 
-
                 echo "Starting up application..."
                 docker-compose --env-file .env up -d --build
             EOF

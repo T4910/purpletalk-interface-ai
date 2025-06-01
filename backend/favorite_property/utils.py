@@ -10,7 +10,6 @@ from crawl4ai import (
     BrowserConfig,
     CacheMode,
 )
-from urllib.parse import urlparse
 from pydantic import BaseModel, Field
 from typing import List, Optional
 
