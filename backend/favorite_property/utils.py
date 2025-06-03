@@ -85,16 +85,16 @@ async def extract_listing_data(url: str) -> List[PropertyListing]:
 
     # Crawler run configuration
     run_config = CrawlerRunConfig(
-        cache_mode=CacheMode.BYPASS,
+        # cache_mode=CacheMode.BYPASS,
         extraction_strategy=extraction_strategy,
-        wait_until="networkidle",
-        page_timeout=180000,
+        # wait_until="networkidle",
+        # page_timeout=180000,
         # screenshot=True
     )
 
     # Perform the extraction
     async with AsyncWebCrawler(config=browser_config) as crawler:
-        result = await crawler.arun(url, config=run_config)
+        result = await crawler.arun(url=url, config=run_config)
         await asyncio.sleep(2)
     if not result.success:
         raise ValueError(f"Failed to extract data from {url}: {result.error_message}")

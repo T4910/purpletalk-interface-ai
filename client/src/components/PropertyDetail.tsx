@@ -74,7 +74,8 @@ const FavButton = ({ url }: { url: string }) => {
       className={cn(
         "rounded-full",
         isFavorite && "text-red-500 border-red-500 hover:bg-red-500/30",
-        (isAdding || isRemoving) && "cursor-not-allowed !opacity-30",
+        (isAdding || isRemoving) &&
+          "cursor-not-allowed !opacity-30 animate-pulse",
         isFavorite && !isAdding && !isRemoving && "bg-red-500/30"
       )}
       onClick={handleToggleFavorite}

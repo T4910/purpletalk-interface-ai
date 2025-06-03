@@ -79,8 +79,8 @@ class AIChatMessageView(APIView):
 
         # 3. Get AI response (sync, not streaming)
         try:
-            session_id, ai_reply = handle_message(session_id, user_input)
             deduct_credits(request.user, amount=0.5, reason="AI chat message")
+            session_id, ai_reply = handle_message(session_id, user_input)
         except ValueError:
             return Response({"error": "Not enough credits"}, status=402)
         except Exception as e:
